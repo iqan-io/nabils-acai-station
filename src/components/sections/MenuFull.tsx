@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { menu } from "@/lib/brand";
+import { menu, type MenuSection } from "@/lib/brand";
 import { Sparkle, PalmFrond } from "@/components/shared/Ornaments";
 
 // Only the strongest, enhanced food shots earn an image. Sections not listed
@@ -52,6 +52,148 @@ const featuredImage: Record<
     alt: "Two sparkling probiotic splash drinks with citrus, ice and condensation",
   },
 };
+
+const mobileSectionOrder = [
+  "Açaí — Build Your Own",
+  "Dubai Chocolate",
+  "Strawberry Cups",
+  "Brownies",
+  "Classic Crêpes",
+  "Signature Crêpes",
+  "Waffle Snack Pack",
+  "Fruit Cocktails",
+  "Mocktails",
+  "Probiotic Splash",
+  "Matcha",
+  "Iced Lattes",
+  "Milkshakes",
+] as const;
+
+const desktopSectionColumns = [
+  [
+    "Açaí — Build Your Own",
+    "Strawberry Cups",
+    "Classic Crêpes",
+    "Signature Crêpes",
+    "Fruit Cocktails",
+  ],
+  [
+    "Dubai Chocolate",
+    "Brownies",
+    "Waffle Snack Pack",
+    "Mocktails",
+    "Probiotic Splash",
+    "Matcha",
+    "Iced Lattes",
+    "Milkshakes",
+  ],
+] as const;
+
+const menuByTitle = new Map(menu.map((section) => [section.title, section]));
+
+function getOrderedSections(titles: readonly string[]) {
+  return titles
+    .map((title) => menuByTitle.get(title))
+    .filter((section): section is MenuSection => Boolean(section));
+}
+
+const mobileMenuSections = getOrderedSections(mobileSectionOrder);
+const desktopMenuColumns = desktopSectionColumns.map(getOrderedSections);
+
+function sectionId(title: string) {
+  return title
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+function MenuSectionCard({ section }: { section: MenuSection }) {
+  const media = featuredImage[section.title];
+
+  return (
+    <article
+      id={sectionId(section.title)}
+      className="break-inside-avoid scroll-mt-24"
+    >
+      <div className="overflow-hidden rounded-[1.75rem] bg-white ring-1 ring-[var(--acai)]/12 shadow-[0_22px_55px_-38px_rgba(31,11,37,0.55)]">
+        {media && (
+          <div
+            className={`relative ${
+              media.frameClass ?? "aspect-[3/4]"
+            } overflow-hidden bg-[var(--cream-warm)]`}
+          >
+            {/* Most source shots are portrait; waffle uses its own
+                landscape frame so it does not get over-cropped. */}
+            <Image
+              src={media.src}
+              alt={media.alt}
+              fill
+              sizes="(max-width: 768px) 100vw, 512px"
+              className="object-cover object-center"
+            />
+            <div
+              aria-hidden
+              className="absolute inset-0 ring-1 ring-inset ring-[var(--acai-deep)]/10"
+            />
+          </div>
+        )}
+
+        <div className="p-6 md:p-7">
+          <header>
+            <div className="flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.28em] text-[var(--acai)]/55">
+              <Sparkle className="size-2.5 text-[var(--saffron)]" />
+              Menu
+            </div>
+            <h2 className="mt-2 font-display text-2xl tracking-tight text-[var(--acai-deep)] md:text-3xl">
+              {section.title}
+            </h2>
+            {section.subtitle && (
+              <p className="mt-2 text-sm italic leading-relaxed text-[var(--acai-deep)]/70">
+                {section.subtitle}
+              </p>
+            )}
+          </header>
+
+          <ul className="mt-5">
+            {section.items.map((item) => (
+              <li key={item.name} className="py-2.5">
+                <div className="flex items-baseline gap-2">
+                  <span className="font-display text-[1.05rem] leading-tight text-[var(--acai-deep)]">
+                    {item.name}
+                  </span>
+                  {item.price && (
+                    <>
+                      <span
+                        aria-hidden
+                        className="mb-1 flex-1 border-b border-dotted border-[var(--acai)]/30"
+                      />
+                      <span className="shrink-0 font-semibold text-sm tracking-wide text-[var(--acai)]">
+                        {item.price}
+                      </span>
+                    </>
+                  )}
+                </div>
+                {item.note && (
+                  <p className="mt-0.5 text-[0.85rem] leading-snug text-[var(--acai-deep)]/65">
+                    {item.note}
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+
+          {section.footnote && (
+            <p className="mt-4 border-t border-[var(--acai)]/10 pt-4 text-xs italic leading-relaxed text-[var(--acai-deep)]/70">
+              {section.footnote}
+            </p>
+          )}
+        </div>
+      </div>
+    </article>
+  );
+}
 
 export function MenuHero() {
   return (
@@ -110,11 +252,8 @@ export function MenuFull() {
       />
 
       <div className="relative mx-auto max-w-5xl px-6 py-20 md:py-28 lg:px-10">
-        {/* Masonry of self-contained cards: each card sizes to its own
-            content, so short lists no longer leave dead space beside a tall
-            image. break-inside-avoid keeps a section whole within a column. */}
-        <div className="gap-6 md:columns-2 md:gap-7 [column-fill:_balance]">
-          {menu.map((section) => {
+        <div className="space-y-6 md:hidden">
+          {mobileMenuSections.map((section) => {
             const media = featuredImage[section.title];
             return (
               <article
@@ -125,7 +264,7 @@ export function MenuFull() {
                   .toLowerCase()
                   .replace(/[^a-z0-9]+/g, "-")
                   .replace(/^-|-$/g, "")}
-                className="mb-6 break-inside-avoid scroll-mt-24 md:mb-7"
+                className="break-inside-avoid scroll-mt-24"
               >
                 <div className="overflow-hidden rounded-[1.75rem] bg-white ring-1 ring-[var(--acai)]/12 shadow-[0_22px_55px_-38px_rgba(31,11,37,0.55)]">
                   {media && (
@@ -204,6 +343,16 @@ export function MenuFull() {
               </article>
             );
           })}
+        </div>
+
+        <div className="hidden gap-7 md:grid md:grid-cols-2 md:items-start">
+          {desktopMenuColumns.map((sections, columnIndex) => (
+            <div key={columnIndex} className="space-y-7">
+              {sections.map((section) => (
+                <MenuSectionCard key={section.title} section={section} />
+              ))}
+            </div>
+          ))}
         </div>
 
         <div className="mt-20 flex flex-col items-center gap-4 border-t border-[var(--acai)]/15 pt-12 text-center">
