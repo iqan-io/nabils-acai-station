@@ -25,7 +25,7 @@ export function Hero() {
         className="absolute inset-0 bg-cover bg-center opacity-40 blur-2xl scale-110"
         style={{
           backgroundImage:
-            "url('/images/enhanced/nabils-hero-acai-poster.png')",
+            "url('/images/enhanced/nabils-hero-acai-poster.webp')",
         }}
       />
       <div
@@ -177,8 +177,8 @@ export function Hero() {
             <div className="relative aspect-[4/5] overflow-hidden rounded-[1.75rem] bg-[var(--acai)] shadow-[0_40px_120px_-30px_rgba(0,0,0,0.85)] ring-1 ring-[var(--cream)]/15">
               <video
                 className="hero-video absolute inset-0 h-full w-full object-cover"
-                src="/videos/nabils-hero-acai-muted.mp4"
-                poster="/images/enhanced/nabils-hero-acai-poster.png"
+                src="/videos/nabils-hero-acai-opt.mp4"
+                poster="/images/enhanced/nabils-hero-acai-poster.webp"
                 autoPlay
                 loop
                 muted
