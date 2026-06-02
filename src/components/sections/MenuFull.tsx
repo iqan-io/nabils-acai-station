@@ -6,30 +6,50 @@ import { Sparkle, PalmFrond } from "@/components/shared/Ornaments";
 // Only the strongest, enhanced food shots earn an image. Sections not listed
 // here render as clean text cards — this is what kills the old dead space:
 // images are no longer forced one-per-section regardless of list length.
-const featuredImage: Record<string, { src: string; alt: string }> = {
+const featuredImage: Record<
+  string,
+  { src: string; alt: string; frameClass?: string }
+> = {
   "Açaí — Build Your Own": {
-    src: "/images/enhanced/signature-build-your-own-acai-v2.jpg",
-    alt: "A build-your-own açaí bowl topped with banana, strawberries and a tall drizzle",
+    src: "/images/enhanced/menu-acai.png",
+    alt: "A Nabil's açaí bowl topped with strawberries, banana and chocolate drizzle",
+  },
+  "Classic Crêpes": {
+    src: "/images/enhanced/menu-classic-crepe.png",
+    alt: "A classic Nabil's crêpe with strawberries, banana and sauce",
+  },
+  "Signature Crêpes": {
+    src: "/images/enhanced/menu-signature-crepe.png",
+    alt: "A signature Nabil's crêpe finished with pistachio, chocolate drizzle and crushed nuts",
   },
   "Strawberry Cups": {
-    src: "/images/enhanced/signature-dubai-strawberry-cup-v2.jpg",
-    alt: "A Dubai strawberry cup topped with milk chocolate and pistachio",
+    src: "/images/enhanced/menu-strawberry-cup.png",
+    alt: "A Nabil's strawberry cup topped with milk chocolate and pistachio",
+  },
+  "Dubai Chocolate": {
+    src: "/images/enhanced/menu-dubai-chocolate.png",
+    alt: "Nabil's pistachio milk chocolate bar with Dubai chocolate pieces",
   },
   "Brownies": {
-    src: "/images/menu/brownies.jpg",
-    alt: "A Dubai chocolate brownie bowl with strawberries and crushed pistachio",
+    src: "/images/enhanced/menu-brownie.png",
+    alt: "A Nabil's brownie dessert topped with glossy milk chocolate and crushed pistachio",
   },
   "Fruit Cocktails": {
     src: "/images/enhanced/fruit-cocktail-client-enhanced.jpg",
     alt: "A Nabil's fruit cocktail layered with fruit, ashta, cashew and honey",
   },
   "Waffle Snack Pack": {
-    src: "/images/enhanced/signature-waffle-snack-pack-v2.jpg",
+    src: "/images/enhanced/menu-waffle-snack-pack.png",
     alt: "A waffle snack pack with strawberries, banana and drizzle",
+    frameClass: "aspect-[4/3]",
   },
   "Mocktails": {
-    src: "/images/enhanced/blue-hawaii-mocktail-client-enhanced.jpg",
-    alt: "A bright blue Nabil's mocktail over ice on the counter",
+    src: "/images/enhanced/menu-mocktails.png",
+    alt: "A bright Nabil's mocktail over ice on the counter",
+  },
+  "Probiotic Splash": {
+    src: "/images/enhanced/menu-probiotic-splash.png",
+    alt: "Two sparkling probiotic splash drinks with citrus, ice and condensation",
   },
 };
 
@@ -109,10 +129,13 @@ export function MenuFull() {
               >
                 <div className="overflow-hidden rounded-[1.75rem] bg-white ring-1 ring-[var(--acai)]/12 shadow-[0_22px_55px_-38px_rgba(31,11,37,0.55)]">
                   {media && (
-                    <div className="relative aspect-[4/5] overflow-hidden bg-[var(--cream-warm)]">
-                      {/* Source shots are portrait with tall vertical subjects
-                          (drizzle peaks, cups) — a 4:5 frame matches their
-                          native ratio so nothing gets cropped off. */}
+                    <div
+                      className={`relative ${
+                        media.frameClass ?? "aspect-[3/4]"
+                      } overflow-hidden bg-[var(--cream-warm)]`}
+                    >
+                      {/* Most source shots are portrait; waffle uses its own
+                          landscape frame so it does not get over-cropped. */}
                       <Image
                         src={media.src}
                         alt={media.alt}
