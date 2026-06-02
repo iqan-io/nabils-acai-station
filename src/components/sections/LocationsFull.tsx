@@ -2,6 +2,19 @@ import Image from "next/image";
 import { brand, locations } from "@/lib/brand";
 import { Sparkle, StarRating, CedarLeaf } from "@/components/shared/Ornaments";
 
+const locationPhotos = [
+  {
+    src: "/images/locations/location-mount-lawley.png",
+    alt: "Nabil's Acai Station Mt Lawley dining room",
+    frameClass: "aspect-[4/5] rounded-[10rem_10rem_2rem_2rem]",
+  },
+  {
+    src: "/images/locations/location-ballajura.png",
+    alt: "Nabil's Lebanese Sweets Ballajura storefront",
+    frameClass: "aspect-[4/3] rounded-[2rem]",
+  },
+] as const;
+
 export function LocationsHero() {
   return (
     <section className="relative overflow-hidden bg-[var(--cream-warm)]">
@@ -39,14 +52,12 @@ export function LocationsFull() {
               className="grid scroll-mt-28 grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14"
             >
               <div className={`lg:col-span-6 ${idx === 1 ? "lg:order-2" : ""}`}>
-                <div className="relative aspect-[4/5] overflow-hidden rounded-[10rem_10rem_2rem_2rem] ring-1 ring-[var(--acai)]/15 shadow-[0_30px_60px_-30px_rgba(31,11,37,0.35)]">
+                <div
+                  className={`relative overflow-hidden ring-1 ring-[var(--acai)]/15 shadow-[0_30px_60px_-30px_rgba(31,11,37,0.35)] ${locationPhotos[idx].frameClass}`}
+                >
                   <Image
-                    src={
-                      idx === 0
-                        ? "/images/enhanced/location-mt-lawley-storefront-v2.jpg"
-                        : "/images/enhanced/location-ballajura-stall-v2.jpg"
-                    }
-                    alt={`${loc.name} storefront`}
+                    src={locationPhotos[idx].src}
+                    alt={locationPhotos[idx].alt}
                     fill
                     sizes="(max-width: 1024px) 100vw, 50vw"
                     className="object-cover"
