@@ -113,7 +113,7 @@ export const signatures = [
     price: "from $9",
     blurb:
       "Large · Regular · Small · Cone. Granola, banana and strawberries included — then drizzle and top your way.",
-    image: "/images/enhanced/signature-build-your-own-acai-v2.jpg",
+    image: "/images/enhanced/viral-bueno-tower.png",
     tag: "signature",
   },
   {
