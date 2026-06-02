@@ -101,11 +101,11 @@ export const reviews = [
 
 export const signatures = [
   {
-    name: "Viral Dubai Strawberry Cup",
-    price: "$17.50",
+    name: "Chocolate Covered Strawberries",
+    price: "from $12",
     blurb:
-      "Kataifi filling, fresh strawberries, milk chocolate and Dubai sauce. Sold out on TikTok, served year-round here.",
-    image: "/images/enhanced/signature-dubai-strawberry-cup-v2.jpg",
+      "Fresh strawberries dipped in milk chocolate, finished with pistachio, Biscoff and white chocolate drizzles.",
+    image: "/images/enhanced/viral-dubai-strawberry.png",
     tag: "viral",
   },
   {
@@ -117,19 +117,19 @@ export const signatures = [
     tag: "signature",
   },
   {
-    name: "Pistachio Açaí Bowl",
+    name: "Nabil's Pistachio Soft Serve",
     price: "from $10",
     blurb:
-      "Açaí under a slow pour of pistachio cream, fresh strawberries and banana. Nutty, glossy and built for pistachio lovers.",
-    image: "/images/enhanced/signature-matcha-bowl-v2.jpg",
+      "Creamy pistachio soft serve finished with crushed pistachios. Glossy, nutty and made for pistachio lovers.",
+    image: "/images/enhanced/viral-pistachio-soft-serve.png",
     tag: null,
   },
   {
-    name: "Waffle Snack Pack",
-    price: "$14",
+    name: "Dubai Bites",
+    price: "from $4",
     blurb:
-      "Warm waffle pieces with strawberries, banana and your choice of drizzle. Built like dessert, easy to share.",
-    image: "/images/enhanced/signature-waffle-snack-pack.jpg",
+      "Bite-sized Dubai chocolate pieces packed with crunchy kataifi and pistachio filling.",
+    image: "/images/enhanced/viral-dubai-bites.png",
     tag: null,
   },
   {
@@ -141,11 +141,11 @@ export const signatures = [
     tag: null,
   },
   {
-    name: "Lebanese Sweets",
-    price: "from $4",
+    name: "Dubai Chocolate",
+    price: "from $18",
     blurb:
-      "Where Nabil's started — baklava, knafeh and the classics. Made in-house, still served at the Ballajura stall every day.",
-    image: "/images/enhanced/lebanese-sweets-home-card.jpg",
+      "Nabil's viral Dubai chocolate with pistachio kataifi filling and a thick milk chocolate shell.",
+    image: "/images/enhanced/viral-dubai-chocolate.png",
     tag: null,
   },
 ] as const;
