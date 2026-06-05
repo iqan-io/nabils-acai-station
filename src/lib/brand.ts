@@ -101,36 +101,12 @@ export const reviews = [
 
 export const signatures = [
   {
-    name: "Chocolate Covered Strawberries",
-    price: "from $12",
-    blurb:
-      "Fresh strawberries dipped in milk chocolate, finished with pistachio, Biscoff and white chocolate drizzles.",
-    image: "/images/enhanced/viral-dubai-strawberry.png",
-    tag: "viral",
-  },
-  {
     name: "Build Your Own Açaí",
     price: "from $9",
     blurb:
       "Large · Regular · Small · Cone. Granola, banana and strawberries included — then drizzle and top your way.",
-    image: "/images/enhanced/viral-bueno-tower.png",
+    image: "/images/enhanced/viral-acai.png",
     tag: "signature",
-  },
-  {
-    name: "Nabil's Pistachio Soft Serve",
-    price: "from $10",
-    blurb:
-      "Creamy pistachio soft serve finished with crushed pistachios. Glossy, nutty and made for pistachio lovers.",
-    image: "/images/enhanced/viral-pistachio-soft-serve.png",
-    tag: null,
-  },
-  {
-    name: "Dubai Bites",
-    price: "from $4",
-    blurb:
-      "Bite-sized Dubai chocolate pieces packed with crunchy kataifi and pistachio filling.",
-    image: "/images/enhanced/viral-dubai-bites.png",
-    tag: null,
   },
   {
     name: "Fruit Cocktails",
