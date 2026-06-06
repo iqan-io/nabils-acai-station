@@ -99,7 +99,15 @@ export const reviews = [
   },
 ] as const;
 
-export const signatures = [
+export type Signature = {
+  name: string;
+  price: string;
+  blurb: string;
+  image: string;
+  tag: "viral" | "signature" | null;
+};
+
+export const signatures: Signature[] = [
   {
     name: "Build Your Own Açaí",
     price: "from $9",
@@ -124,7 +132,7 @@ export const signatures = [
     image: "/images/enhanced/viral-dubai-chocolate.png",
     tag: null,
   },
-] as const;
+];
 
 export type MenuItem = { name: string; price?: string; note?: string };
 export type MenuSection = {
