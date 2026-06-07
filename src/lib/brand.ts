@@ -320,3 +320,39 @@ export const menu: MenuSection[] = [
     ],
   },
 ];
+
+// Anchor id for a menu section. Must stay in sync with the ids rendered on the
+// menu page so navbar/category links land on the right section.
+export function menuSlug(title: string): string {
+  return title
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+export type MenuGroup = {
+  label: string;
+  /** Section titles (must match `menu` titles) grouped under this label. */
+  sections: string[];
+};
+
+// One source of truth for how the long menu is grouped — consumed by both the
+// navbar dropdown and the sticky category bar on the menu page.
+export const menuGroups: MenuGroup[] = [
+  { label: "Açaí & Bowls", sections: ["Açaí — Build Your Own"] },
+  {
+    label: "Crêpes & Waffles",
+    sections: ["Classic Crêpes", "Signature Crêpes", "Waffle Snack Pack"],
+  },
+  {
+    label: "Chocolate & Sweets",
+    sections: ["Dubai Chocolate", "Brownies", "Strawberry Cups"],
+  },
+  { label: "Fruit", sections: ["Fruit Cocktails"] },
+  {
+    label: "Drinks",
+    sections: ["Mocktails", "Probiotic Splash", "Matcha", "Iced Lattes", "Milkshakes"],
+  },
+];

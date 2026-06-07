@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { menu, type MenuSection } from "@/lib/brand";
+import { menu, menuSlug, type MenuSection } from "@/lib/brand";
 import { Sparkle, PalmFrond } from "@/components/shared/Ornaments";
 
 // Only the strongest, enhanced food shots earn an image. Sections not listed
@@ -100,22 +100,13 @@ function getOrderedSections(titles: readonly string[]) {
 const mobileMenuSections = getOrderedSections(mobileSectionOrder);
 const desktopMenuColumns = desktopSectionColumns.map(getOrderedSections);
 
-function sectionId(title: string) {
-  return title
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-}
-
 function MenuSectionCard({ section }: { section: MenuSection }) {
   const media = featuredImage[section.title];
 
   return (
     <article
-      id={sectionId(section.title)}
-      className="break-inside-avoid scroll-mt-24"
+      id={menuSlug(section.title)}
+      className="break-inside-avoid scroll-mt-36"
     >
       <div className="overflow-hidden rounded-[1.75rem] bg-white ring-1 ring-[var(--acai)]/12 shadow-[0_22px_55px_-38px_rgba(31,11,37,0.55)]">
         {media && (
@@ -224,20 +215,7 @@ export function MenuHero() {
           chocolate range, fruit cocktails, matcha, mocktails and more.
           Prices in AUD. Subject to availability — viral items go fast.
         </p>
-        <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-          <a
-            href="#acai-build-your-own"
-            className="inline-flex items-center gap-2 rounded-full bg-[var(--honey)] px-5 py-3 text-xs font-semibold uppercase tracking-[0.22em] text-[var(--acai-deep)] hover:bg-[var(--cream)] transition-colors"
-          >
-            Jump to açaí
-          </a>
-          <a
-            href="#dubai-chocolate"
-            className="inline-flex items-center gap-2 rounded-full border border-[var(--cream)]/30 px-5 py-3 text-xs font-semibold uppercase tracking-[0.22em] text-[var(--cream)] hover:bg-[var(--cream)]/10 transition-colors"
-          >
-            Jump to Dubai chocolate
-          </a>
-        </div>
+        {/* Section jump-links live in the sticky category bar below the hero. */}
       </div>
     </section>
   );
@@ -258,13 +236,8 @@ export function MenuFull() {
             return (
               <article
                 key={section.title}
-                id={section.title
-                  .normalize("NFD")
-                  .replace(/[̀-ͯ]/g, "")
-                  .toLowerCase()
-                  .replace(/[^a-z0-9]+/g, "-")
-                  .replace(/^-|-$/g, "")}
-                className="break-inside-avoid scroll-mt-24"
+                data-anchor={menuSlug(section.title)}
+                className="break-inside-avoid scroll-mt-36"
               >
                 <div className="overflow-hidden rounded-[1.75rem] bg-white ring-1 ring-[var(--acai)]/12 shadow-[0_22px_55px_-38px_rgba(31,11,37,0.55)]">
                   {media && (

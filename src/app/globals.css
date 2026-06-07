@@ -190,3 +190,12 @@ h3 {
     display: none;
   }
 }
+
+/* Horizontal scroll for the menu category bar without a visible scrollbar. */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

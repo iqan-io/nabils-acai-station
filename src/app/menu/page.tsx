@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { MenuHero, MenuFull } from "@/components/sections/MenuFull";
+import { CategoryNav } from "@/components/menu/CategoryNav";
 import { FinalCta } from "@/components/sections/FinalCta";
 import { pageMetadata } from "@/lib/seo";
 
@@ -20,6 +21,7 @@ export default function Page() {
   return (
     <>
       <MenuHero />
+      <CategoryNav />
       <MenuFull />
       <FinalCta />
     </>
