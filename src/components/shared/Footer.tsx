@@ -103,6 +103,11 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/about" className="hover:text-[var(--cream)]">
+                  About
+                </Link>
+              </li>
+              <li>
                 <Link href="/order" className="hover:text-[var(--cream)]">
                   Order
                 </Link>
