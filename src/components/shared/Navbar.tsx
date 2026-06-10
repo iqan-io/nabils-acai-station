@@ -14,6 +14,7 @@ type NavLink = { href: string; label: string };
 const links: NavLink[] = [
   { href: "/specials", label: "Specials" },
   { href: "/locations", label: "Locations" },
+  { href: "/about", label: "About" },
 ];
 
 // Build dropdown jump-links from the shared grouping. Each href points at an

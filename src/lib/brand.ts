@@ -99,6 +99,93 @@ export const reviews = [
   },
 ] as const;
 
+// ---------------------------------------------------------------------------
+// About / Our Story — founder + team.
+//
+// PLACEHOLDER CONTENT. Swap the names, photos and copy below once the client
+// supplies the real founder bio, headshots and staff list. Real photos go in
+// /public/images/team/ and are referenced as "/images/team/<file>". Until those
+// exist, every portrait falls back to the brand mascot medallion so nothing
+// 404s in dev or production.
+//
+// The `team` list is also the seed for the future "cheers" feature: each
+// member's `slug` will be the stable key votes are counted against, so pick
+// slugs you're happy to keep (changing a slug later resets that person's
+// count). See AGENTS notes / the plan for the voting backend.
+// ---------------------------------------------------------------------------
+
+const placeholderPortrait = "/images/enhanced/brand-mascot-medallion.jpg";
+
+export type Founder = {
+  name: string;
+  role: string;
+  photo: string;
+  /** Each string renders as its own paragraph. */
+  bio: string[];
+  pullQuote?: string;
+};
+
+export const founder: Founder = {
+  name: "Mahmoud Rahal",
+  role: "Owner",
+  photo: "/images/team/mahmoud-rahal.png",
+  bio: [
+    "Mahmoud grew up in the family business. Nabil's Lebanese Sweets — the Ballajura shop his father, Nabil, started more than 15 years ago — built its name on baklava and traditional Lebanese sweets long before açaí ever entered the picture.",
+    "When Dubai chocolate started going viral on TikTok, Mahmoud set about making his own. “After lots of trials we worked out the best recipe,” he says. The family had launched the açaí side of the shop the year before, and in January 2025 they added the Dubai chocolate range — the original bar, Dubai-filled brownies and açaí bowls.",
+    "The response was instant. After a feature from Big Bite Halal racked up more than 150,000 views, queues started forming out the front. “We were shocked,” Mahmoud says. “We sold out of all stock and are just trying to keep up with demand.” Same family, same kitchen — now serving some of Perth's most-wanted sweets, open till late.",
+  ],
+  pullQuote:
+    "“It was meant to be a little extra thing to our menu — and now it is the menu.”",
+};
+
+export type StaffMember = {
+  /** Stable key — also the vote key for the future cheers feature. */
+  slug: string;
+  name: string;
+  role: string;
+  photo: string;
+  location?: "Mount Lawley" | "Ballajura";
+  /** A light, fun line that gives each profile personality. */
+  funFact?: string;
+};
+
+// TODO(client): replace with the real roster + headshots. Order doesn't matter;
+// once cheers are live the leaderboard will reorder by monthly count.
+export const team: StaffMember[] = [
+  {
+    slug: "sample-one",
+    name: "Team Member One",
+    role: "Açaí Artist",
+    photo: placeholderPortrait,
+    location: "Mount Lawley",
+    funFact: "Can build a perfect Dubai strawberry cup with their eyes closed.",
+  },
+  {
+    slug: "sample-two",
+    name: "Team Member Two",
+    role: "Crêpe Specialist",
+    photo: placeholderPortrait,
+    location: "Mount Lawley",
+    funFact: "Holds the unofficial record for fastest Nutella fold.",
+  },
+  {
+    slug: "sample-three",
+    name: "Team Member Three",
+    role: "Front of House",
+    photo: placeholderPortrait,
+    location: "Ballajura",
+    funFact: "Knows every regular's order before they reach the counter.",
+  },
+  {
+    slug: "sample-four",
+    name: "Team Member Four",
+    role: "Matcha & Drinks",
+    photo: placeholderPortrait,
+    location: "Ballajura",
+    funFact: "Convinced the whole team that ube matcha is the best on the menu.",
+  },
+];
+
 export type Signature = {
   name: string;
   price: string;
