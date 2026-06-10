@@ -41,7 +41,7 @@ export function FounderFeature() {
                 alt={`${founder.name}, ${founder.role} of Nabil's Acai Station`}
                 fill
                 sizes="(max-width: 1024px) 100vw, 40vw"
-                className="object-cover"
+                className="object-cover object-top"
               />
             </div>
             <div className="mt-4 text-xs uppercase tracking-[0.28em] text-[var(--acai)]/60">
