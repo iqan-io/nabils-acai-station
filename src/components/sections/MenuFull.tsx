@@ -53,6 +53,31 @@ const featuredImage: Record<
   },
 };
 
+// Each menu section carries a category colour, shown as a thin accent edge on
+// the card. This pulls the otherwise-unused strawberry / pistachio / cedar into
+// the palette and gives the long menu a colour rhythm that aids scanning:
+// purple = açaí, warm honey = crêpes/waffles, strawberry = chocolate & sweets,
+// pistachio = fruit, cedar green = drinks. (Edge only — text stays high-contrast.)
+const sectionAccent: Record<string, string> = {
+  "Açaí — Build Your Own": "var(--acai)",
+  "Classic Crêpes": "var(--honey)",
+  "Signature Crêpes": "var(--honey)",
+  "Waffle Snack Pack": "var(--honey)",
+  "Strawberry Cups": "var(--strawberry)",
+  "Dubai Chocolate": "var(--strawberry)",
+  Brownies: "var(--strawberry)",
+  "Fruit Cocktails": "var(--pistachio)",
+  Mocktails: "var(--cedar)",
+  "Probiotic Splash": "var(--cedar)",
+  Matcha: "var(--cedar)",
+  "Iced Lattes": "var(--cedar)",
+  Milkshakes: "var(--cedar)",
+};
+
+function accentFor(title: string): string {
+  return sectionAccent[title] ?? "var(--acai)";
+}
+
 const mobileSectionOrder = [
   "Açaí — Build Your Own",
   "Dubai Chocolate",
@@ -108,7 +133,10 @@ function MenuSectionCard({ section }: { section: MenuSection }) {
       id={menuSlug(section.title)}
       className="break-inside-avoid scroll-mt-36"
     >
-      <div className="overflow-hidden rounded-[1.75rem] bg-white ring-1 ring-[var(--acai)]/12 shadow-[0_22px_55px_-38px_rgba(31,11,37,0.55)]">
+      <div
+        className="overflow-hidden rounded-[1.75rem] bg-white ring-1 ring-[var(--acai)]/12 shadow-[0_22px_55px_-38px_rgba(31,11,37,0.55)]"
+        style={{ borderTop: `3px solid ${accentFor(section.title)}` }}
+      >
         {media && (
           <div
             className={`relative ${
@@ -239,7 +267,10 @@ export function MenuFull() {
                 data-anchor={menuSlug(section.title)}
                 className="break-inside-avoid scroll-mt-36"
               >
-                <div className="overflow-hidden rounded-[1.75rem] bg-white ring-1 ring-[var(--acai)]/12 shadow-[0_22px_55px_-38px_rgba(31,11,37,0.55)]">
+                <div
+                  className="overflow-hidden rounded-[1.75rem] bg-white ring-1 ring-[var(--acai)]/12 shadow-[0_22px_55px_-38px_rgba(31,11,37,0.55)]"
+                  style={{ borderTop: `3px solid ${accentFor(section.title)}` }}
+                >
                   {media && (
                     <div
                       className={`relative ${

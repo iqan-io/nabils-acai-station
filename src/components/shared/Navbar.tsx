@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { Wordmark } from "./Wordmark";
 import { brand, menuGroups, menuSlug } from "@/lib/brand";
 import { scrollToMenuSection, slugFromHref } from "@/lib/menuScroll";
+import { getOpenStatus, type OpenStatus } from "@/lib/hours";
 
 type NavLink = { href: string; label: string };
 
@@ -31,7 +32,18 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobileMenuExpanded, setMobileMenuExpanded] = useState(false);
+  // Live open/closed pill. Stays null until mounted so server and first client
+  // render match (the status depends on the current time, which the server
+  // can't know for the visitor); then it refreshes every minute.
+  const [openStatus, setOpenStatus] = useState<OpenStatus | null>(null);
   const pathname = usePathname();
+
+  useEffect(() => {
+    const tick = () => setOpenStatus(getOpenStatus());
+    tick();
+    const id = window.setInterval(tick, 60_000);
+    return () => window.clearInterval(id);
+  }, []);
 
   // Close the desktop dropdown on Escape for keyboard users.
   useEffect(() => {
@@ -69,14 +81,34 @@ export function Navbar() {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-10 lg:py-5">
         <div className="flex items-center gap-5">
           <Wordmark size="md" />
-          {/* Live open indicator */}
-          <div className="hidden items-center gap-1.5 rounded-full bg-[var(--cream-warm)] px-2.5 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.2em] text-[var(--acai-deep)] md:inline-flex">
-            <span className="relative inline-flex">
-              <span className="absolute inline-flex h-2 w-2 animate-ping rounded-full bg-[var(--cedar)] opacity-70" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--cedar)]" />
-            </span>
-            Open · till 11
-          </div>
+          {/* Live open indicator — reflects Perth time against Mt Lawley hours */}
+          {openStatus && (
+            <div
+              className={`hidden items-center gap-1.5 rounded-full px-2.5 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.2em] md:inline-flex ${
+                openStatus.open
+                  ? "bg-[var(--cream-warm)] text-[var(--acai-deep)]"
+                  : "bg-[var(--acai)]/[0.06] text-[var(--acai)]"
+              }`}
+            >
+              <span className="relative inline-flex">
+                {openStatus.open && (
+                  <span className="absolute inline-flex h-2 w-2 animate-ping rounded-full bg-[var(--cedar)] opacity-70" />
+                )}
+                <span
+                  className={`relative inline-flex h-2 w-2 rounded-full ${
+                    openStatus.open
+                      ? "bg-[var(--cedar)]"
+                      : "bg-[var(--strawberry)]"
+                  }`}
+                />
+              </span>
+              {openStatus.open
+                ? `Open · till ${openStatus.closesAt}`
+                : `Closed · opens ${
+                    openStatus.opensDay ? `${openStatus.opensDay} ` : ""
+                  }${openStatus.opensAt}`}
+            </div>
+          )}
         </div>
 
         {/* Desktop nav */}

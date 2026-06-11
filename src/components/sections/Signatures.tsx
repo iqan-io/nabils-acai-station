@@ -60,9 +60,15 @@ export function Signatures() {
                   className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
                 />
                 {item.tag && (
-                  <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-[var(--saffron)] px-3 py-1 text-[0.6rem] font-bold uppercase tracking-[0.2em] text-[var(--acai-deep)]">
+                  <span
+                    className={`absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[0.6rem] font-bold uppercase tracking-[0.2em] ${
+                      item.tag === "viral"
+                        ? "bg-[var(--strawberry)] text-[var(--cream)]"
+                        : "bg-[var(--saffron)] text-[var(--acai-deep)]"
+                    }`}
+                  >
                     {item.tag === "viral" && (
-                      <Sparkle className="size-2.5 text-[var(--acai-deep)]" />
+                      <Sparkle className="size-2.5 text-[var(--cream)]" />
                     )}
                     {item.tag}
                   </span>

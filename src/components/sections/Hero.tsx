@@ -46,7 +46,7 @@ export function Hero() {
             </span>
             <span className="hidden sm:inline-flex items-center gap-1.5">
               <Sparkle className="size-2.5 text-[var(--saffron)]" />
-              5★ on Google
+              Loved on Google
             </span>
           </div>
 
@@ -102,7 +102,9 @@ export function Hero() {
                 <dt className="text-[0.58rem] uppercase tracking-[0.18em] text-[var(--cream)]/62 sm:text-[0.65rem] sm:tracking-[0.22em]">
                   Followers
                 </dt>
-                <dd className="mt-1.5 font-display text-2xl">5,289</dd>
+                <dd className="mt-1.5 font-display text-2xl">
+                  {brand.instagram.followersLabel}
+                </dd>
               </div>
               <div>
                 <dt className="text-[0.58rem] uppercase tracking-[0.18em] text-[var(--cream)]/62 sm:text-[0.65rem] sm:tracking-[0.22em]">

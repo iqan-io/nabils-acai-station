@@ -10,7 +10,12 @@ export const brand = {
   instagram: {
     handle: "@nabilsacaistation",
     url: "https://instagram.com/nabilsacaistation",
+    // Follower counts drift constantly and can't be reliably re-checked, so the
+    // UI shows `followersLabel` (an evergreen "5K+") rather than a precise
+    // number that silently goes stale. Bump the band only when it clearly
+    // crosses a threshold (e.g. "10K+"). `followers` is kept for reference.
     followers: 5289,
+    followersLabel: "5K+",
   },
   tiktok: {
     handle: "@nabilsacaistation",
@@ -24,8 +29,12 @@ export const locations = [
     name: "Mount Lawley",
     address: "664 Beaufort St, Mount Lawley WA 6050",
     note: "Dine-in · Takeout · Delivery",
-    rating: 5.0,
-    reviewCount: 5,
+    // Google snapshot, Jun 2026 (read off the live Google listing). Mt Lawley is
+    // the new shop (opened ~May 2026) so the review count is still small. This
+    // object is the single source for the Locations page display *and* the
+    // JSON-LD in seo.ts.
+    rating: 4.7,
+    reviewCount: 12,
     mapsUrl:
       "https://www.google.com/maps/search/?api=1&query=Nabil%27s%20Acai%20Station%20664%20Beaufort%20St%20Mount%20Lawley%20WA%206050",
     hours: [
@@ -44,8 +53,10 @@ export const locations = [
     address:
       "Inside Ballajura City Shopping Centre · N Illawarra Cres, Ballajura WA 6066",
     note: "Home of Nabil's Lebanese Sweets — where it all started.",
+    // Google snapshot, Jun 2026 (read off the live Google listing) — the
+    // established shop, with the bulk of the reviews.
     rating: 4.5,
-    reviewCount: null,
+    reviewCount: 148,
     phone: "+61 8 6285 5935",
     mapsUrl:
       "https://www.google.com/maps/search/?api=1&query=Nabil%27s%20Acai%20Station%20Ballajura%20City%20Shopping%20Centre%20WA%206066",
@@ -217,7 +228,7 @@ export const signatures: Signature[] = [
     blurb:
       "Nabil's viral Dubai chocolate with pistachio kataifi filling and a thick milk chocolate shell.",
     image: "/images/enhanced/viral-dubai-chocolate.png",
-    tag: null,
+    tag: "viral",
   },
 ];
 

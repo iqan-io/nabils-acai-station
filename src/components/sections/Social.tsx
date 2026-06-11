@@ -25,7 +25,7 @@ export function Social() {
             <h2 className="mt-4 font-display text-4xl leading-[1.05] tracking-tight text-[var(--acai-deep)] md:text-5xl lg:text-6xl">
               <span className="italic">{brand.instagram.handle}</span>
               <br />
-              5,289 already do.
+              {brand.instagram.followersLabel} already do.
             </h2>
             <p className="mt-5 max-w-lg text-base leading-relaxed text-[var(--acai-deep)]/75">
               We post the new flavours, the late-night specials and the

@@ -22,7 +22,7 @@ export function Reviews() {
           </div>
           <div className="flex items-center gap-3 text-sm text-[var(--acai-deep)]/75">
             <StarRating value={5} />
-            <span>5★ on Google · Perth</span>
+            <span>Loved on Google · Perth</span>
           </div>
         </div>
 

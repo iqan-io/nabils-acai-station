@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { AboutHero, FounderFeature } from "@/components/sections/AboutStory";
-import { TeamGrid } from "@/components/sections/TeamGrid";
+// TeamGrid is intentionally not rendered yet — it still holds placeholder
+// "Team Member One/Two…" cards. Re-add <TeamGrid /> below once real staff
+// names + headshots land in `team` (src/lib/brand.ts).
 import { FinalCta } from "@/components/sections/FinalCta";
 import { pageMetadata } from "@/lib/seo";
 
@@ -22,7 +24,6 @@ export default function Page() {
     <>
       <AboutHero />
       <FounderFeature />
-      <TeamGrid />
       <FinalCta />
     </>
   );
