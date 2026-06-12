@@ -188,6 +188,14 @@ export function Hero() {
                 preload="metadata"
                 aria-label="A cinematic acai bowl on the counter at Nabil's Acai Station"
               />
+              {/* Still fallback for reduced-motion users (the video is hidden
+                  for them, so its poster never paints). CSS handles the swap. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/enhanced/nabils-hero-acai-poster.webp"
+                alt="An acai bowl on the counter at Nabil's Acai Station"
+                className="hero-video-fallback absolute inset-0 h-full w-full object-cover"
+              />
               <span
                 aria-hidden
                 className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_50%,transparent_55%,rgba(31,11,37,0.55)_100%)]"

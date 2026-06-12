@@ -79,12 +79,13 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-[var(--acai)]/15 bg-[var(--cream)]/85 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-10 lg:py-5">
-        <div className="flex items-center gap-5">
+        <div className="flex flex-col items-start gap-1.5 md:flex-row md:items-center md:gap-5">
           <Wordmark size="md" />
-          {/* Live open indicator — reflects Perth time against Mt Lawley hours */}
+          {/* Live open indicator — reflects Perth time against Mt Lawley hours.
+              Stacks under the wordmark on mobile, sits inline on desktop. */}
           {openStatus && (
             <div
-              className={`hidden items-center gap-1.5 rounded-full px-2.5 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.2em] md:inline-flex ${
+              className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.2em] ${
                 openStatus.open
                   ? "bg-[var(--cream-warm)] text-[var(--acai-deep)]"
                   : "bg-[var(--acai)]/[0.06] text-[var(--acai)]"

@@ -185,9 +185,19 @@ h3 {
   will-change: transform;
 }
 
+/* The hero shows the looping video by default and the still poster as a
+   fallback. They swap under reduced-motion so those users still see the bowl
+   (a display:none video does not paint its poster). */
+.hero-video-fallback {
+  display: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero-video {
     display: none;
+  }
+  .hero-video-fallback {
+    display: block;
   }
 }
 
