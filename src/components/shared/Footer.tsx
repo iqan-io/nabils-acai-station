@@ -1,38 +1,79 @@
+import Image from "next/image";
 import Link from "next/link";
 import { BiLogoInstagram, BiLogoTiktok } from "react-icons/bi";
-import { Wordmark } from "./Wordmark";
 import { brand, locations } from "@/lib/brand";
 
 function shortAddress(full: string) {
-  return full
-    .replace(/\sWA\s?\d{4}.*$/i, "")
-    .replace(/^Inside\s/i, "Inside ");
+  return full.replace(/\sWA\s?\d{4}.*$/i, "");
 }
 
 export function Footer() {
   return (
-    <footer className="relative overflow-hidden bg-[var(--acai-deep)] text-[var(--cream)]">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-sunburst-acai opacity-60"
-      />
-      <div className="relative mx-auto max-w-7xl px-6 pb-10 pt-20 md:pb-12 md:pt-24 lg:px-10">
-        <div className="grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-10">
-          <div className="md:col-span-6">
-            <div className="text-[var(--cream)]">
-              <Wordmark size="lg" tone="light" asLink={false} />
-            </div>
-            <p className="mt-6 max-w-md text-sm leading-relaxed text-[var(--lavender)]">
-              A Lebanese sweets family in Perth, doing açaí, crêpes and Dubai
-              chocolate. Made for sweet moments.
+    <footer className="relative overflow-hidden border-t border-[var(--gold-highlight)]/20 bg-[var(--night-plum)] text-[var(--cream)]">
+      <div aria-hidden className="night-grain pointer-events-none absolute inset-0 opacity-[0.035]" />
+      <div className="relative mx-auto max-w-7xl px-6 pb-10 pt-16 md:pt-20 lg:px-10">
+        <div className="grid gap-12 md:grid-cols-12 md:gap-8">
+          <div className="md:col-span-5">
+            <a href="/" aria-label="Nabil's Açaí Station home" className="inline-flex items-center gap-4">
+              <Image
+                src="/images/logo-192.png"
+                alt="Nabil's Açaí Station"
+                width={76}
+                height={76}
+                unoptimized
+                className="size-[4.75rem] object-contain"
+              />
+              <span>
+                <span className="block font-display text-3xl italic leading-none">Nabil&apos;s</span>
+                <span className="mt-2 block text-[0.6rem] font-semibold uppercase tracking-[0.28em] text-[var(--gold-highlight)]">
+                  Açaí Station
+                </span>
+              </span>
+            </a>
+            <p className="mt-6 max-w-md text-base leading-7 text-[var(--cream)]/68">
+              Açaí, crêpes, Dubai chocolate and Lebanese sweets in Perth.
             </p>
-            <div className="mt-7 flex items-center gap-3">
+            <p className="mt-2 font-display text-xl italic text-[var(--gold-highlight)]">
+              {brand.tagline}
+            </p>
+          </div>
+
+          <div className="md:col-span-4">
+            <p className="night-label text-[var(--gold-highlight)]">Visit</p>
+            <ul className="mt-5 space-y-5">
+              {locations.map((location) => (
+                <li key={location.slug}>
+                  <Link
+                    href={`/locations#${location.slug}`}
+                    className="font-display text-xl text-[var(--cream)] hover:text-[var(--gold-highlight)]"
+                  >
+                    {location.name}
+                  </Link>
+                  <p className="mt-1 max-w-xs text-sm leading-6 text-[var(--cream)]/58">
+                    {shortAddress(location.address)}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="md:col-span-3">
+            <p className="night-label text-[var(--gold-highlight)]">Explore</p>
+            <nav aria-label="Footer" className="mt-5 flex flex-col items-start gap-3 text-sm">
+              <Link href="/menu" className="min-h-8 text-[var(--cream)]/72 hover:text-[var(--cream)]">Menu</Link>
+              <Link href="/locations" className="min-h-8 text-[var(--cream)]/72 hover:text-[var(--cream)]">Locations</Link>
+              <Link href="/about" className="min-h-8 text-[var(--cream)]/72 hover:text-[var(--cream)]">Our story</Link>
+              <a href={brand.phoneHref} className="min-h-8 text-[var(--cream)]/72 hover:text-[var(--cream)]">
+                {brand.phone}
+              </a>
+            </nav>
+            <div className="mt-5 flex gap-3">
               <a
                 href={brand.instagram.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
-                className="inline-flex size-10 items-center justify-center rounded-full border border-[var(--cream)]/20 transition-colors hover:bg-[var(--cream)]/10"
+                className="inline-flex size-11 items-center justify-center rounded-full border border-[var(--cream)]/20 transition-colors hover:border-[var(--gold-highlight)] hover:text-[var(--gold-highlight)]"
               >
                 <BiLogoInstagram className="size-5" />
               </a>
@@ -41,88 +82,17 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="TikTok"
-                className="inline-flex size-10 items-center justify-center rounded-full border border-[var(--cream)]/20 transition-colors hover:bg-[var(--cream)]/10"
+                className="inline-flex size-11 items-center justify-center rounded-full border border-[var(--cream)]/20 transition-colors hover:border-[var(--gold-highlight)] hover:text-[var(--gold-highlight)]"
               >
                 <BiLogoTiktok className="size-5" />
               </a>
-              <a
-                href={brand.phoneHref}
-                className="inline-flex items-center gap-2 rounded-full border border-[var(--cream)]/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] hover:bg-[var(--cream)]/10"
-              >
-                Call {brand.phone}
-              </a>
             </div>
-          </div>
-
-          <div className="md:col-span-4">
-            <div className="text-[0.7rem] uppercase tracking-[0.28em] text-[var(--saffron)]">
-              Visit
-            </div>
-            <ul className="mt-3 space-y-2.5 text-sm text-[var(--lavender)]">
-              {locations.map((loc) => (
-                <li key={loc.slug} className="flex flex-wrap items-baseline gap-x-2">
-                  <span className="font-semibold text-[var(--cream)]">{loc.name}</span>
-                  <span className="text-[var(--lavender)]/80">— {shortAddress(loc.address)}</span>
-                  <a
-                    href={loc.mapsUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[var(--honey)] hover:underline underline-offset-4"
-                  >
-                    Maps →
-                  </a>
-                </li>
-              ))}
-            </ul>
-            <Link
-              href="/locations"
-              className="mt-4 inline-block text-xs uppercase tracking-[0.22em] text-[var(--honey)]/90 hover:text-[var(--honey)] hover:underline underline-offset-4"
-            >
-              All hours & info →
-            </Link>
-          </div>
-
-          <div className="md:col-span-2">
-            <div className="text-[0.7rem] uppercase tracking-[0.28em] text-[var(--saffron)]">
-              Site
-            </div>
-            <ul className="mt-3 space-y-2 text-sm text-[var(--lavender)]">
-              <li>
-                <Link href="/menu" className="hover:text-[var(--cream)]">
-                  Menu
-                </Link>
-              </li>
-              <li>
-                <Link href="/specials" className="hover:text-[var(--cream)]">
-                  Specials
-                </Link>
-              </li>
-              <li>
-                <Link href="/locations" className="hover:text-[var(--cream)]">
-                  Locations
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="hover:text-[var(--cream)]">
-                  About
-                </Link>
-              </li>
-              <li>
-                <Link href="/order" className="hover:text-[var(--cream)]">
-                  Order
-                </Link>
-              </li>
-            </ul>
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col items-start justify-between gap-4 border-t border-[var(--cream)]/15 pt-6 text-xs text-[var(--lavender)]/70 md:flex-row md:items-center">
-          <p>
-            © {new Date().getFullYear()} {brand.name}. Made in Perth.
-          </p>
-          <p className="italic font-display text-sm text-[var(--honey)]">
-            Made for sweet moments.
-          </p>
+        <div className="mt-14 flex flex-col gap-3 border-t border-[var(--cream)]/12 pt-6 text-xs text-[var(--cream)]/45 sm:flex-row sm:items-center sm:justify-between">
+          <p>© {new Date().getFullYear()} {brand.name}.</p>
+          <p>Perth, Western Australia</p>
         </div>
       </div>
     </footer>

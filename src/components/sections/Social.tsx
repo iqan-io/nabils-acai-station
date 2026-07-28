@@ -4,7 +4,7 @@ import { Sparkle } from "@/components/shared/Ornaments";
 import { BiLogoInstagram, BiLogoTiktok } from "react-icons/bi";
 
 const tiles = [
-  { src: "/images/enhanced/signature-dubai-strawberry-cup-v2.jpg", alt: "Dubai chocolate strawberry cup promo" },
+  { src: "/images/enhanced/strawberry-cup-neon.jpg", alt: "Strawberry cup under the Made for Sweet Moments neon" },
   { src: "/images/enhanced/signature-build-your-own-acai-v2.jpg", alt: "Bueno açaí bowl on a blue backdrop" },
   { src: "/images/enhanced/story-mt-lawley-interior.jpg", alt: "Mt Lawley dessert counter and neon interior" },
   { src: "/images/enhanced/location-ballajura-stall-v2.jpg", alt: "Nabil's Lebanese Sweets counter in Ballajura" },

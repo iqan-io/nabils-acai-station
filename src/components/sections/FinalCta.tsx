@@ -67,7 +67,7 @@ export function FinalCta() {
               </div>
               <div className="absolute right-0 top-24 aspect-[4/5] w-[58%] overflow-hidden rounded-[1.5rem_6rem_1.5rem_1.5rem] ring-2 ring-[var(--cream)]/25 shadow-[0_24px_50px_-24px_rgba(0,0,0,0.7)]">
                 <Image
-                  src="/images/enhanced/signature-dubai-strawberry-cup-v2.jpg"
+                  src="/images/enhanced/strawberry-cup-neon.jpg"
                   alt="Dubai strawberry cup with pistachio and strawberries"
                   fill
                   sizes="(max-width: 1024px) 50vw, 300px"

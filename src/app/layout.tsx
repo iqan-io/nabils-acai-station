@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Analytics as VercelAnalytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Baloo_2, Fredoka } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/shared/Navbar";
 import { Footer } from "@/components/shared/Footer";
@@ -12,20 +11,6 @@ import {
   localBusinessJsonLd,
   siteUrl,
 } from "@/lib/seo";
-
-const baloo = Baloo_2({
-  subsets: ["latin"],
-  weight: ["600", "700", "800"],
-  display: "swap",
-  variable: "--font-display",
-});
-
-const fredoka = Fredoka({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-  variable: "--font-sans",
-});
 
 const googleSiteVerification =
   process.env.GOOGLE_SITE_VERIFICATION ||
@@ -90,10 +75,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${baloo.variable} ${fredoka.variable} h-full antialiased`}
-    >
+    <html lang="en" className="h-full antialiased">
+      <head>
+        <link
+          rel="preload"
+          href="/film/fonts/fredoka-latin-variable.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="/film/fonts/baloo-2-latin-variable.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body className="min-h-full flex flex-col bg-[var(--cream)] text-[var(--acai-deep)]">
         <Analytics />
         <VercelAnalytics />

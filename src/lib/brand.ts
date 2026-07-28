@@ -211,7 +211,7 @@ export const signatures: Signature[] = [
     price: "from $9",
     blurb:
       "Large · Regular · Small · Cone. Granola, banana and strawberries included — then drizzle and top your way.",
-    image: "/images/enhanced/viral-acai.png",
+    image: "/images/enhanced/signature-build-your-own-acai-v2.jpg",
     tag: "signature",
   },
   {
@@ -227,7 +227,7 @@ export const signatures: Signature[] = [
     price: "from $18",
     blurb:
       "Nabil's viral Dubai chocolate with pistachio kataifi filling and a thick milk chocolate shell.",
-    image: "/images/enhanced/viral-dubai-chocolate.png",
+    image: "/images/enhanced/menu-dubai-chocolate.png",
     tag: "viral",
   },
 ];

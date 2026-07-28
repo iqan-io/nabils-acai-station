@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { MenuHero, MenuFull } from "@/components/sections/MenuFull";
 import { CategoryNav } from "@/components/menu/CategoryNav";
-import { FinalCta } from "@/components/sections/FinalCta";
+import { NightCta } from "@/components/shared/NightCta";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
@@ -23,7 +23,7 @@ export default function Page() {
       <MenuHero />
       <CategoryNav />
       <MenuFull />
-      <FinalCta />
+      <NightCta secondaryHref="/locations" secondaryLabel="Find a store" />
     </>
   );
 }

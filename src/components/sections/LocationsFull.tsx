@@ -1,40 +1,44 @@
 import Image from "next/image";
-import { brand, locations } from "@/lib/brand";
-import { Sparkle, StarRating, CedarLeaf } from "@/components/shared/Ornaments";
+import { locations } from "@/lib/brand";
+import { StarRating } from "@/components/shared/Ornaments";
 
 const locationPhotos = [
   {
     src: "/images/locations/location-mount-lawley.png",
-    alt: "Nabil's Acai Station Mt Lawley dining room",
-    frameClass: "aspect-[4/5] rounded-[10rem_10rem_2rem_2rem]",
+    alt: "Inside Nabil's Açaí Station in Mount Lawley",
+    frameClass: "night-arch aspect-[4/5]",
   },
   {
     src: "/images/locations/location-ballajura.png",
-    alt: "Nabil's Lebanese Sweets Ballajura storefront",
-    frameClass: "aspect-[4/3] rounded-[2rem]",
+    alt: "Nabil's Lebanese Sweets counter in Ballajura",
+    frameClass: "rounded-[1.5rem] aspect-[4/3]",
   },
 ] as const;
 
 export function LocationsHero() {
   return (
-    <section className="relative overflow-hidden bg-[var(--cream-warm)]">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-grain opacity-50 mix-blend-multiply"
+    <section className="relative min-h-[68vh] overflow-hidden bg-[var(--night-plum)] text-[var(--cream)]">
+      <Image
+        src="/film/frames/f_0001.jpg"
+        alt="Nabil's Açaí Station glowing on Beaufort Street at night"
+        fill
+        priority
+        unoptimized
+        sizes="100vw"
+        className="object-cover object-[58%_center]"
       />
-      <div className="relative mx-auto max-w-5xl px-6 py-20 text-center md:py-28 lg:px-10">
-        <div className="text-[0.7rem] uppercase tracking-[0.32em] text-[var(--acai)]/70 flex items-center justify-center gap-2">
-          <Sparkle className="size-3 text-[var(--saffron)]" />
-          Visit us
+      <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-[var(--night-plum)] via-[var(--night-plum)]/72 to-[var(--night-plum)]/22" />
+      <div aria-hidden className="night-grain absolute inset-0 opacity-[0.045] mix-blend-screen" />
+      <div className="relative mx-auto flex min-h-[68vh] max-w-6xl items-end px-6 py-16 md:items-center md:py-24 lg:px-10">
+        <div className="max-w-3xl">
+          <p className="night-label text-[var(--gold-highlight)]">Visit Nabil&apos;s</p>
+          <h1 className="mt-6 font-display text-[clamp(3.7rem,8vw,6rem)] leading-[0.9] text-[var(--cream)]">
+            Two places. <span className="italic text-[var(--gold-highlight)]">One glow.</span>
+          </h1>
+          <p className="mt-7 max-w-[54ch] text-base leading-7 text-[var(--cream)]/72 md:text-lg md:leading-8">
+            Find us on Beaufort Street in Mount Lawley and inside Ballajura City Shopping Centre.
+          </p>
         </div>
-        <h1 className="mt-6 font-display text-5xl leading-[1.02] tracking-tight text-[var(--acai-deep)] md:text-7xl">
-          Two shops. <span className="italic">One family.</span>
-        </h1>
-        <p className="mt-6 mx-auto max-w-xl text-base leading-relaxed text-[var(--acai-deep)]/75 md:text-lg">
-          The Mt Lawley flagship on Beaufort Street, and the original
-          Lebanese sweets stall inside Ballajura City Shopping Centre. Both
-          family-run, both worth the trip.
-        </p>
       </div>
     </section>
   );
@@ -42,109 +46,107 @@ export function LocationsHero() {
 
 export function LocationsFull() {
   return (
-    <section className="relative bg-[var(--cream)]">
-      <div className="relative mx-auto max-w-6xl px-6 py-20 md:py-28 lg:px-10">
-        <div className="space-y-16 md:space-y-24">
-          {locations.map((loc, idx) => (
+    <section className="relative overflow-hidden bg-[var(--night-plum)] text-[var(--cream)]">
+      <div aria-hidden className="pointer-events-none absolute right-[-16rem] top-[18rem] size-[38rem] rounded-full bg-[var(--arch-mauve)]/18 blur-3xl" />
+      <div
+        className="relative mx-auto px-6 py-16 md:py-24 lg:px-10"
+        style={{ maxWidth: "72rem" }}
+      >
+        <div className="space-y-20 md:space-y-28">
+          {locations.map((location, index) => (
             <article
-              key={loc.slug}
-              id={loc.slug}
-              className="grid scroll-mt-28 grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14"
+              key={location.slug}
+              id={location.slug}
+              className="grid scroll-mt-28 items-start gap-10 lg:grid-cols-12 lg:gap-14"
             >
-              <div className={`lg:col-span-6 ${idx === 1 ? "lg:order-2" : ""}`}>
-                <div
-                  className={`relative overflow-hidden ring-1 ring-[var(--acai)]/15 shadow-[0_30px_60px_-30px_rgba(31,11,37,0.35)] ${locationPhotos[idx].frameClass}`}
-                >
-                  <Image
-                    src={locationPhotos[idx].src}
-                    alt={locationPhotos[idx].alt}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                    className="object-cover"
+              <div className={`lg:col-span-6 ${index === 1 ? "lg:order-2" : ""}`}>
+                <div className="relative">
+                  <div
+                    aria-hidden
+                    className={`absolute -inset-3 border border-[var(--gold-highlight)]/25 ${
+                      index === 0
+                        ? "rounded-t-[999px] rounded-b-[1.75rem]"
+                        : "rounded-[1.75rem]"
+                    }`}
                   />
+                  <div className={`relative overflow-hidden bg-[var(--deep-plum)] ${locationPhotos[index].frameClass}`}>
+                    <Image
+                      src={locationPhotos[index].src}
+                      alt={locationPhotos[index].alt}
+                      fill
+                      sizes="(max-width: 1023px) 100vw, 50vw"
+                      quality={90}
+                      className="object-cover"
+                    />
+                    <div aria-hidden className="absolute inset-0 ring-1 ring-inset ring-[var(--cream)]/10" />
+                  </div>
                 </div>
               </div>
 
-              <div className="lg:col-span-6 lg:pt-6">
-                <div className="text-[0.7rem] uppercase tracking-[0.32em] text-[var(--acai)]/70 flex items-center gap-2">
-                  {idx === 1 ? (
-                    <CedarLeaf className="size-4 text-[var(--cedar)]" />
-                  ) : (
-                    <Sparkle className="size-3 text-[var(--saffron)]" />
-                  )}
-                  Location {String(idx + 1).padStart(2, "0")}
-                </div>
-                <h2 className="mt-3 font-display text-5xl leading-none tracking-tight text-[var(--acai-deep)] md:text-6xl">
-                  {loc.name}
-                </h2>
-                <div className="mt-4 flex items-center gap-3">
-                  <StarRating value={loc.rating} />
-                  <span className="text-sm font-semibold text-[var(--acai-deep)]">
-                    {loc.rating}
-                    {loc.reviewCount && (
-                      <span className="ml-1 font-normal text-[var(--acai-deep)]/60">
-                        ({loc.reviewCount} reviews)
-                      </span>
-                    )}
+              <div className={`lg:col-span-6 lg:pt-8 ${index === 1 ? "lg:order-1" : ""}`}>
+                <div className="flex items-center gap-4">
+                  <span className="night-label text-[var(--gold-highlight)]">Location</span>
+                  <span aria-hidden className="h-px flex-1 bg-[var(--gold-highlight)]/28" />
+                  <span className="font-display text-lg italic text-[var(--cream)]/45">
+                    {String(index + 1).padStart(2, "0")}
                   </span>
                 </div>
-                <p className="mt-5 text-base leading-relaxed text-[var(--acai-deep)]/85">
-                  {loc.address}
+
+                <h2 className="mt-6 font-display text-5xl leading-none text-[var(--cream)] md:text-6xl">
+                  {location.name}
+                </h2>
+                <div className="mt-5 flex flex-wrap items-center gap-3">
+                  <StarRating value={location.rating} />
+                  <span className="text-sm font-semibold tabular-nums text-[var(--cream)]">
+                    {location.rating}
+                    <span className="ml-1 font-normal text-[var(--cream)]/52">
+                      ({location.reviewCount} reviews)
+                    </span>
+                  </span>
+                </div>
+
+                <p className="mt-7 max-w-[46ch] text-lg leading-8 text-[var(--cream)]/78">
+                  {location.address}
                 </p>
-                {loc.note && (
-                  <p className="mt-3 text-base italic text-[var(--cedar)]">
-                    {loc.note}
+                {location.note && (
+                  <p className="mt-3 max-w-[48ch] font-display text-xl italic leading-7 text-[var(--pistachio)]">
+                    {location.note}
                   </p>
                 )}
 
-                {loc.hours && (
-                  <div className="mt-7">
-                    <div className="text-[0.65rem] uppercase tracking-[0.28em] text-[var(--acai)]/60 mb-3">
-                      Hours
-                    </div>
-                    <dl className="grid grid-cols-1 gap-y-2 rounded-2xl bg-[var(--cream-warm)] p-5 text-sm sm:grid-cols-2 sm:gap-x-10">
-                      {loc.hours.map(([day, hrs]) => (
-                        <div key={day} className="flex justify-between gap-4">
-                          <dt className="font-semibold text-[var(--acai-deep)]">
-                            {day}
-                          </dt>
-                          <dd className="text-[var(--acai-deep)]/70">{hrs}</dd>
+                {location.hours ? (
+                  <div className="mt-8 rounded-[1.5rem] border border-[var(--cream)]/12 bg-[var(--deep-plum)] p-5 sm:p-6">
+                    <p className="night-label text-[var(--gold-highlight)]">Hours</p>
+                    <dl className="mt-5 grid gap-x-8 gap-y-2 text-sm sm:grid-cols-2">
+                      {location.hours.map(([day, hours]) => (
+                        <div key={day} className="flex justify-between gap-5 border-b border-[var(--cream)]/9 py-2">
+                          <dt className="font-semibold text-[var(--cream)]">{day}</dt>
+                          <dd className="text-right tabular-nums text-[var(--cream)]/62">{hours}</dd>
                         </div>
                       ))}
                     </dl>
                   </div>
-                )}
-
-                {!loc.hours && (
-                  <p className="mt-5 text-sm text-[var(--acai-deep)]/60">
-                    Hours follow the Ballajura City Shopping Centre. Call
-                    ahead for evenings.
+                ) : (
+                  <p className="mt-7 rounded-[1.25rem] border border-[var(--cream)]/12 bg-[var(--deep-plum)] px-5 py-4 text-sm leading-6 text-[var(--cream)]/62">
+                    Hours are not listed here. Call before visiting in the evening.
                   </p>
                 )}
 
-                <div className="mt-9 flex flex-wrap items-center gap-3">
+                <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                   <a
-                    href={loc.mapsUrl}
+                    href={location.mapsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-full bg-[var(--acai)] px-6 py-3 text-xs font-semibold uppercase tracking-[0.22em] text-[var(--cream)] hover:bg-[var(--acai-deep)] transition-colors"
+                    className="inline-flex min-h-12 items-center justify-center rounded-full bg-[var(--honey)] px-7 text-xs font-bold uppercase tracking-[0.18em] text-[var(--night-plum)] transition-colors hover:bg-[var(--gold-highlight)]"
                   >
                     Open in Maps →
                   </a>
-                  {"phone" in loc && loc.phone && (
+                  {"phone" in location && location.phone && (
                     <a
-                      href={`tel:${loc.phone.replace(/\s+/g, "")}`}
-                      className="inline-flex items-center gap-2 rounded-full border border-[var(--acai)]/30 px-6 py-3 text-xs font-semibold uppercase tracking-[0.22em] text-[var(--acai)] hover:bg-[var(--cream-warm)] transition-colors"
+                      href={`tel:${location.phone.replace(/\s+/g, "")}`}
+                      className="inline-flex min-h-12 items-center justify-center rounded-full border border-[var(--cream)]/25 px-7 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--cream)] transition-colors hover:border-[var(--gold-highlight)] hover:text-[var(--gold-highlight)]"
                     >
-                      Call {loc.phone}
-                    </a>
-                  )}
-                  {idx === 0 && (
-                    <a
-                      href={brand.phoneHref}
-                      className="inline-flex items-center gap-2 rounded-full border border-[var(--acai)]/30 px-6 py-3 text-xs font-semibold uppercase tracking-[0.22em] text-[var(--acai)] hover:bg-[var(--cream-warm)] transition-colors"
-                    >
-                      Call {brand.phone}
+                      Call {location.phone}
                     </a>
                   )}
                 </div>

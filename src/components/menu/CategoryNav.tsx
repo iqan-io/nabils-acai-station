@@ -96,9 +96,9 @@ export function CategoryNav() {
   return (
     <nav
       aria-label="Menu categories"
-      className="sticky top-[68px] z-30 border-b border-[var(--acai)]/12 bg-[var(--cream)]/90 backdrop-blur lg:top-[76px]"
+      className="sticky top-[72px] z-30 border-y border-[var(--gold-highlight)]/18 bg-[var(--deep-plum)]/95 text-[var(--cream)] backdrop-blur-md lg:top-[80px]"
     >
-      <div className="mx-auto max-w-5xl px-6 lg:px-10">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-10">
         <ul className="no-scrollbar flex gap-2 overflow-x-auto py-3">
           {categories.map((c) => {
             const isActive = active === c.label;
@@ -108,10 +108,10 @@ export function CategoryNav() {
                   href={`#${c.target}`}
                   onClick={(e) => onChipClick(e, c.label, c.target)}
                   aria-current={isActive ? "true" : undefined}
-                  className={`inline-block whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
+                  className={`inline-flex min-h-11 items-center whitespace-nowrap rounded-full border px-4 text-[0.68rem] font-semibold uppercase tracking-[0.14em] transition-colors ${
                     isActive
-                      ? "bg-[var(--acai)] text-[var(--cream)]"
-                      : "bg-[var(--cream-warm)] text-[var(--acai-deep)] hover:bg-[var(--acai)]/10"
+                      ? "border-[var(--honey)] bg-[var(--honey)] text-[var(--night-plum)]"
+                      : "border-[var(--cream)]/16 text-[var(--cream)]/72 hover:border-[var(--gold-highlight)]/55 hover:text-[var(--gold-highlight)]"
                   }`}
                 >
                   {c.label}

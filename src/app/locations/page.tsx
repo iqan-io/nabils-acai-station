@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { LocationsHero, LocationsFull } from "@/components/sections/LocationsFull";
-import { FinalCta } from "@/components/sections/FinalCta";
+import { NightCta } from "@/components/shared/NightCta";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
@@ -21,7 +21,7 @@ export default function Page() {
     <>
       <LocationsHero />
       <LocationsFull />
-      <FinalCta />
+      <NightCta secondaryHref="/menu" secondaryLabel="Browse the menu" />
     </>
   );
 }
