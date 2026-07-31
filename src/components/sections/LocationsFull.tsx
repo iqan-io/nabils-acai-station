@@ -3,42 +3,21 @@ import { locations } from "@/lib/brand";
 import { StarRating } from "@/components/shared/Ornaments";
 
 const locationPhotos = [
-  {
-    src: "/images/locations/location-mount-lawley.png",
-    alt: "Inside Nabil's Açaí Station in Mount Lawley",
-    frameClass: "night-arch aspect-[4/5]",
-  },
-  {
-    src: "/images/locations/location-ballajura.png",
-    alt: "Nabil's Lebanese Sweets counter in Ballajura",
-    frameClass: "rounded-[1.5rem] aspect-[4/3]",
-  },
+  { src: "/images/locations/location-mount-lawley.png", alt: "Inside Nabil's Açaí Station in Mount Lawley" },
+  { src: "/images/locations/location-ballajura.png", alt: "Nabil's Lebanese Sweets counter in Ballajura" },
 ] as const;
 
 export function LocationsHero() {
   return (
-    <section className="relative min-h-[68vh] overflow-hidden bg-[var(--night-plum)] text-[var(--cream)]">
-      <Image
-        src="/film/frames/f_0001.jpg"
-        alt="Nabil's Açaí Station glowing on Beaufort Street at night"
-        fill
-        priority
-        unoptimized
-        sizes="100vw"
-        className="object-cover object-[58%_center]"
-      />
-      <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-[var(--night-plum)] via-[var(--night-plum)]/72 to-[var(--night-plum)]/22" />
-      <div aria-hidden className="night-grain absolute inset-0 opacity-[0.045] mix-blend-screen" />
-      <div className="relative mx-auto flex min-h-[68vh] max-w-6xl items-end px-6 py-16 md:items-center md:py-24 lg:px-10">
-        <div className="max-w-3xl">
-          <p className="night-label text-[var(--gold-highlight)]">Visit Nabil&apos;s</p>
-          <h1 className="mt-6 font-display text-[clamp(3.7rem,8vw,6rem)] leading-[0.9] text-[var(--cream)]">
-            Two places. <span className="italic text-[var(--gold-highlight)]">One glow.</span>
-          </h1>
-          <p className="mt-7 max-w-[54ch] text-base leading-7 text-[var(--cream)]/72 md:text-lg md:leading-8">
-            Find us on Beaufort Street in Mount Lawley and inside Ballajura City Shopping Centre.
-          </p>
-        </div>
+    <section className="grid min-h-[35rem] border-b-2 border-[#47206e] bg-[#c4dc67] lg:grid-cols-[0.92fr_1.08fr]">
+      <div className="flex flex-col justify-center px-6 py-16 sm:px-10 lg:px-[max(2.5rem,calc((100vw-80rem)/2))]">
+        <p className="font-home-body text-sm font-bold uppercase tracking-[0.12em] text-[#ef2b37]">Mount Lawley + Ballajura</p>
+        <h1 className="mt-5 max-w-xl font-home-display text-[clamp(5.2rem,11vw,9rem)] leading-[0.78] text-[#47206e]">Find your station.</h1>
+        <p className="mt-7 max-w-[52ch] font-home-body text-lg leading-8 text-[#32104f]">Two Perth counters for açaí, crêpes, Dubai chocolate and the group order that keeps growing.</p>
+      </div>
+      <div className="relative min-h-[27rem] border-t-2 border-[#47206e] lg:border-l-2 lg:border-t-0">
+        <Image src="/images/storefront-mt-lawley.jpg" alt="Nabil's Açaí Station on Beaufort Street in Mount Lawley" fill priority quality={90} sizes="(max-width: 1023px) 100vw, 55vw" className="object-cover" />
+        <span className="absolute bottom-5 left-5 bg-[#f3c52f] px-5 py-3 font-home-display text-3xl text-[#47206e]">Two shops. Same big sweet energy.</span>
       </div>
     </section>
   );
@@ -46,109 +25,35 @@ export function LocationsHero() {
 
 export function LocationsFull() {
   return (
-    <section className="relative overflow-hidden bg-[var(--night-plum)] text-[var(--cream)]">
-      <div aria-hidden className="pointer-events-none absolute right-[-16rem] top-[18rem] size-[38rem] rounded-full bg-[var(--arch-mauve)]/18 blur-3xl" />
-      <div
-        className="relative mx-auto px-6 py-16 md:py-24 lg:px-10"
-        style={{ maxWidth: "72rem" }}
-      >
-        <div className="space-y-20 md:space-y-28">
+    <section className="bg-white text-[#32104f]">
+      <div className="mx-auto max-w-6xl px-6 py-16 md:py-24 lg:px-10">
+        <div className="space-y-16 md:space-y-24">
           {locations.map((location, index) => (
-            <article
-              key={location.slug}
-              id={location.slug}
-              className="grid scroll-mt-28 items-start gap-10 lg:grid-cols-12 lg:gap-14"
-            >
-              <div className={`lg:col-span-6 ${index === 1 ? "lg:order-2" : ""}`}>
-                <div className="relative">
-                  <div
-                    aria-hidden
-                    className={`absolute -inset-3 border border-[var(--gold-highlight)]/25 ${
-                      index === 0
-                        ? "rounded-t-[999px] rounded-b-[1.75rem]"
-                        : "rounded-[1.75rem]"
-                    }`}
-                  />
-                  <div className={`relative overflow-hidden bg-[var(--deep-plum)] ${locationPhotos[index].frameClass}`}>
-                    <Image
-                      src={locationPhotos[index].src}
-                      alt={locationPhotos[index].alt}
-                      fill
-                      sizes="(max-width: 1023px) 100vw, 50vw"
-                      quality={90}
-                      className="object-cover"
-                    />
-                    <div aria-hidden className="absolute inset-0 ring-1 ring-inset ring-[var(--cream)]/10" />
-                  </div>
-                </div>
+            <article key={location.slug} id={location.slug} className="grid scroll-mt-28 border-2 border-[#47206e] lg:grid-cols-2">
+              <div className={`relative min-h-[28rem] ${index === 1 ? "lg:order-2" : ""}`}>
+                <Image src={locationPhotos[index].src} alt={locationPhotos[index].alt} fill quality={90} sizes="(max-width: 1023px) 100vw, 50vw" className="object-cover" />
+                <span className="absolute left-0 top-0 bg-[#47206e] px-5 py-3 font-home-display text-3xl text-white">0{index + 1}</span>
               </div>
-
-              <div className={`lg:col-span-6 lg:pt-8 ${index === 1 ? "lg:order-1" : ""}`}>
-                <div className="flex items-center gap-4">
-                  <span className="night-label text-[var(--gold-highlight)]">Location</span>
-                  <span aria-hidden className="h-px flex-1 bg-[var(--gold-highlight)]/28" />
-                  <span className="font-display text-lg italic text-[var(--cream)]/45">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                </div>
-
-                <h2 className="mt-6 font-display text-5xl leading-none text-[var(--cream)] md:text-6xl">
-                  {location.name}
-                </h2>
+              <div className={`flex flex-col justify-center border-t-2 border-[#47206e] p-7 sm:p-10 lg:border-t-0 ${index === 1 ? "bg-[#f3c52f] lg:order-1 lg:border-r-2" : "bg-[#ef2b37] text-white lg:border-l-2"}`}>
+                <p className={`font-home-body text-xs font-bold uppercase tracking-[0.14em] ${index === 1 ? "text-[#ef2b37]" : "text-[#f3c52f]"}`}>Nabil&apos;s location</p>
+                <h2 className={`mt-4 font-home-display text-6xl leading-[0.85] md:text-7xl ${index === 1 ? "text-[#47206e]" : "text-white"}`}>{location.name}</h2>
                 <div className="mt-5 flex flex-wrap items-center gap-3">
                   <StarRating value={location.rating} />
-                  <span className="text-sm font-semibold tabular-nums text-[var(--cream)]">
-                    {location.rating}
-                    <span className="ml-1 font-normal text-[var(--cream)]/52">
-                      ({location.reviewCount} reviews)
-                    </span>
-                  </span>
+                  <span className="font-home-body text-sm font-bold tabular-nums">{location.rating} <span className="font-normal opacity-70">({location.reviewCount} reviews)</span></span>
                 </div>
-
-                <p className="mt-7 max-w-[46ch] text-lg leading-8 text-[var(--cream)]/78">
-                  {location.address}
-                </p>
-                {location.note && (
-                  <p className="mt-3 max-w-[48ch] font-display text-xl italic leading-7 text-[var(--pistachio)]">
-                    {location.note}
-                  </p>
-                )}
-
+                <p className="mt-6 max-w-[46ch] font-home-body text-lg leading-8">{location.address}</p>
+                {location.note && <p className="mt-3 max-w-[46ch] font-home-body font-bold">{location.note}</p>}
                 {location.hours ? (
-                  <div className="mt-8 rounded-[1.5rem] border border-[var(--cream)]/12 bg-[var(--deep-plum)] p-5 sm:p-6">
-                    <p className="night-label text-[var(--gold-highlight)]">Hours</p>
-                    <dl className="mt-5 grid gap-x-8 gap-y-2 text-sm sm:grid-cols-2">
-                      {location.hours.map(([day, hours]) => (
-                        <div key={day} className="flex justify-between gap-5 border-b border-[var(--cream)]/9 py-2">
-                          <dt className="font-semibold text-[var(--cream)]">{day}</dt>
-                          <dd className="text-right tabular-nums text-[var(--cream)]/62">{hours}</dd>
-                        </div>
-                      ))}
+                  <div className={`mt-7 border p-5 ${index === 1 ? "border-[#47206e] bg-white" : "border-white/50 bg-white text-[#32104f]"}`}>
+                    <p className="font-home-body text-xs font-bold uppercase tracking-[0.14em] text-[#ef2b37]">Hours</p>
+                    <dl className="mt-3 grid gap-x-7 text-sm sm:grid-cols-2">
+                      {location.hours.map(([day, hours]) => <div key={day} className="flex justify-between gap-4 border-b border-[#47206e]/20 py-2 font-home-body"><dt className="font-bold">{day}</dt><dd className="text-right tabular-nums">{hours}</dd></div>)}
                     </dl>
                   </div>
-                ) : (
-                  <p className="mt-7 rounded-[1.25rem] border border-[var(--cream)]/12 bg-[var(--deep-plum)] px-5 py-4 text-sm leading-6 text-[var(--cream)]/62">
-                    Hours are not listed here. Call before visiting in the evening.
-                  </p>
-                )}
-
-                <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                  <a
-                    href={location.mapsUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex min-h-12 items-center justify-center rounded-full bg-[var(--honey)] px-7 text-xs font-bold uppercase tracking-[0.18em] text-[var(--night-plum)] transition-colors hover:bg-[var(--gold-highlight)]"
-                  >
-                    Open in Maps →
-                  </a>
-                  {"phone" in location && location.phone && (
-                    <a
-                      href={`tel:${location.phone.replace(/\s+/g, "")}`}
-                      className="inline-flex min-h-12 items-center justify-center rounded-full border border-[var(--cream)]/25 px-7 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--cream)] transition-colors hover:border-[var(--gold-highlight)] hover:text-[var(--gold-highlight)]"
-                    >
-                      Call {location.phone}
-                    </a>
-                  )}
+                ) : <p className={`mt-7 border p-4 font-home-body text-sm ${index === 1 ? "border-[#47206e]" : "border-white/50"}`}>Hours are not listed here. Call before visiting in the evening.</p>}
+                <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                  <a href={location.mapsUrl} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center justify-center bg-[#47206e] px-7 font-home-body text-xs font-bold uppercase tracking-[0.14em] text-white hover:bg-[#32104f]">Open in Maps →</a>
+                  {"phone" in location && location.phone && <a href={`tel:${location.phone.replace(/\s+/g, "")}`} className={`inline-flex min-h-12 items-center justify-center border px-7 font-home-body text-xs font-bold uppercase tracking-[0.14em] ${index === 1 ? "border-[#47206e] text-[#47206e]" : "border-white text-white"}`}>Call {location.phone}</a>}
                 </div>
               </div>
             </article>

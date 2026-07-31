@@ -2,48 +2,18 @@ import Image from "next/image";
 import Link from "next/link";
 import { brand } from "@/lib/brand";
 
-export function NightCta({
-  secondaryHref,
-  secondaryLabel,
-}: {
-  secondaryHref: string;
-  secondaryLabel: string;
-}) {
+export function NightCta({ secondaryHref, secondaryLabel }: { secondaryHref: string; secondaryLabel: string }) {
   return (
-    <section className="relative overflow-hidden bg-[var(--deep-plum)] text-[var(--cream)]">
-      <div aria-hidden className="night-grain pointer-events-none absolute inset-0 opacity-[0.04]" />
-      <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-6 py-16 md:grid-cols-[0.8fr_1.2fr] md:py-20 lg:px-10">
-        <div className="relative mx-auto aspect-square w-full max-w-[18rem] overflow-hidden rounded-full border border-[var(--gold-highlight)]/35 bg-[var(--night-plum)]">
-          <Image
-            src="/images/enhanced/strawberry-cup-neon.jpg"
-            alt="Nabil's Viral Dubai Strawberry Cup"
-            fill
-            sizes="288px"
-            quality={90}
-            className="object-cover"
-          />
-        </div>
-        <div className="text-center md:text-left">
-          <p className="night-label text-[var(--gold-highlight)]">Made for sweet moments</p>
-          <h2 className="mt-5 font-display text-5xl leading-[0.98] text-[var(--cream)] md:text-6xl">
-            Your next favourite is <span className="italic text-[var(--gold-highlight)]">waiting.</span>
-          </h2>
-          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row md:justify-start">
-            <a
-              href={brand.orderUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex min-h-12 items-center justify-center rounded-full bg-[var(--honey)] px-7 text-xs font-bold uppercase tracking-[0.18em] text-[var(--night-plum)] transition-colors hover:bg-[var(--gold-highlight)]"
-            >
-              Order on Uber Eats
-            </a>
-            <Link
-              href={secondaryHref}
-              className="inline-flex min-h-12 items-center justify-center rounded-full border border-[var(--cream)]/28 px-7 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--cream)] transition-colors hover:border-[var(--gold-highlight)] hover:text-[var(--gold-highlight)]"
-            >
-              {secondaryLabel}
-            </Link>
-          </div>
+    <section className="grid border-y-2 border-[#47206e] bg-[#47206e] text-white md:grid-cols-[0.72fr_1.28fr]">
+      <div className="relative min-h-[22rem] border-b-2 border-white/40 md:border-b-0 md:border-r-2">
+        <Image src="/images/enhanced/strawberry-cup-neon.jpg" alt="Nabil's Viral Dubai Strawberry Cup" fill quality={90} sizes="(max-width: 767px) 100vw, 42vw" className="object-cover" />
+      </div>
+      <div className="flex flex-col justify-center p-8 sm:p-12 lg:p-16">
+        <p className="font-home-body text-xs font-bold uppercase tracking-[0.14em] text-[#c4dc67]">Made for sweet moments</p>
+        <h2 className="mt-4 max-w-2xl font-home-display text-6xl leading-[0.84] md:text-8xl">Your next favourite is waiting.</h2>
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <a href={brand.orderUrl} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center justify-center bg-[#f3c52f] px-7 font-home-body text-xs font-bold uppercase tracking-[0.14em] text-[#32104f] hover:bg-[#c4dc67]">Order on Uber Eats</a>
+          <Link href={secondaryHref} className="inline-flex min-h-12 items-center justify-center border border-white px-7 font-home-body text-xs font-bold uppercase tracking-[0.14em] text-white hover:bg-white hover:text-[#47206e]">{secondaryLabel}</Link>
         </div>
       </div>
     </section>

@@ -96,7 +96,7 @@ export function CategoryNav() {
   return (
     <nav
       aria-label="Menu categories"
-      className="sticky top-[72px] z-30 border-y border-[var(--gold-highlight)]/18 bg-[var(--deep-plum)]/95 text-[var(--cream)] backdrop-blur-md lg:top-[80px]"
+      className="sticky top-[72px] z-30 border-b-2 border-[#47206e] bg-[#47206e] font-home-body text-white lg:top-[80px]"
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-10">
         <ul className="no-scrollbar flex gap-2 overflow-x-auto py-3">
@@ -108,10 +108,10 @@ export function CategoryNav() {
                   href={`#${c.target}`}
                   onClick={(e) => onChipClick(e, c.label, c.target)}
                   aria-current={isActive ? "true" : undefined}
-                  className={`inline-flex min-h-11 items-center whitespace-nowrap rounded-full border px-4 text-[0.68rem] font-semibold uppercase tracking-[0.14em] transition-colors ${
+                  className={`inline-flex min-h-11 items-center whitespace-nowrap border px-4 text-[0.68rem] font-bold uppercase tracking-[0.14em] transition-colors ${
                     isActive
-                      ? "border-[var(--honey)] bg-[var(--honey)] text-[var(--night-plum)]"
-                      : "border-[var(--cream)]/16 text-[var(--cream)]/72 hover:border-[var(--gold-highlight)]/55 hover:text-[var(--gold-highlight)]"
+                      ? "border-[#f3c52f] bg-[#f3c52f] text-[#32104f]"
+                      : "border-white/35 text-white hover:border-[#c4dc67] hover:text-[#c4dc67]"
                   }`}
                 >
                   {c.label}

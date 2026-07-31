@@ -18,6 +18,22 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "League Gothic";
+  src: url("/fonts/league-gothic-latin.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Atkinson Hyperlegible Next";
+  src: url("/fonts/atkinson-hyperlegible-next-latin.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+}
+
 :root {
   --night-plum: #160b18;
   --deep-plum: #3b1440;
@@ -36,8 +52,10 @@
   --lavender: #d9c9d6;
   --saffron: var(--gold-highlight);
   --cedar: #667849;
-  --font-display: "Baloo 2", ui-rounded, "Arial Rounded MT Bold";
-  --font-sans: "Fredoka", ui-rounded;
+  --font-display: "League Gothic", Impact, "Arial Narrow", sans-serif;
+  --font-sans: "Atkinson Hyperlegible Next", "Segoe UI", sans-serif;
+  --font-home-display: "League Gothic", Impact, "Arial Narrow", sans-serif;
+  --font-home-body: "Atkinson Hyperlegible Next", "Segoe UI", sans-serif;
 }
 
 /* Baloo 2 / Fredoka ship no italic faces — swap emphasis to weight instead of a synthesized oblique. */
@@ -64,17 +82,34 @@ body {
 }
 
 .font-display {
-  font-family: var(--font-display), Georgia, serif;
-  font-weight: 500;
-  letter-spacing: -0.025em;
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+}
+
+html {
+  scroll-padding-top: 6rem;
+}
+
+.font-home-display {
+  font-family: var(--font-home-display);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+}
+
+.font-home-body {
+  font-family: var(--font-home-body);
 }
 
 h1,
 h2,
 h3 {
-  font-family: var(--font-display), Georgia, serif;
-  font-weight: 500;
-  letter-spacing: -0.025em;
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
   text-wrap: balance;
 }
 

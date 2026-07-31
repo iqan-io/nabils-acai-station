@@ -9,8 +9,8 @@ function shortAddress(full: string) {
 
 export function Footer() {
   return (
-    <footer className="relative overflow-hidden border-t border-[var(--gold-highlight)]/20 bg-[var(--night-plum)] text-[var(--cream)]">
-      <div aria-hidden className="night-grain pointer-events-none absolute inset-0 opacity-[0.035]" />
+    <footer className="relative overflow-hidden border-t border-[#f3c52f] bg-[#47206e] font-home-body text-white">
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-2 bg-[#f3c52f]" />
       <div className="relative mx-auto max-w-7xl px-6 pb-10 pt-16 md:pt-20 lg:px-10">
         <div className="grid gap-12 md:grid-cols-12 md:gap-8">
           <div className="md:col-span-5">
@@ -24,32 +24,32 @@ export function Footer() {
                 className="size-[4.75rem] object-contain"
               />
               <span>
-                <span className="block font-display text-3xl italic leading-none">Nabil&apos;s</span>
-                <span className="mt-2 block text-[0.6rem] font-semibold uppercase tracking-[0.28em] text-[var(--gold-highlight)]">
-                  Açaí Station
+                <span className="font-home-display block text-4xl leading-none">Nabil&apos;s</span>
+                <span className="mt-1 block text-xs font-semibold uppercase tracking-[0.16em] text-[#c4dc67]">
+                  Açaí Station · Perth
                 </span>
               </span>
             </a>
-            <p className="mt-6 max-w-md text-base leading-7 text-[var(--cream)]/68">
+            <p className="mt-6 max-w-md text-base leading-7 text-white/78">
               Açaí, crêpes, Dubai chocolate and Lebanese sweets in Perth.
             </p>
-            <p className="mt-2 font-display text-xl italic text-[var(--gold-highlight)]">
+            <p className="mt-2 text-xl font-bold text-[#f3c52f]">
               {brand.tagline}
             </p>
           </div>
 
           <div className="md:col-span-4">
-            <p className="night-label text-[var(--gold-highlight)]">Visit</p>
+            <p className="text-sm font-bold uppercase tracking-[0.1em] text-[#c4dc67]">Visit</p>
             <ul className="mt-5 space-y-5">
               {locations.map((location) => (
                 <li key={location.slug}>
                   <Link
                     href={`/locations#${location.slug}`}
-                    className="font-display text-xl text-[var(--cream)] hover:text-[var(--gold-highlight)]"
+                    className="font-home-display text-3xl text-white hover:text-[#f3c52f]"
                   >
                     {location.name}
                   </Link>
-                  <p className="mt-1 max-w-xs text-sm leading-6 text-[var(--cream)]/58">
+                  <p className="mt-1 max-w-xs text-sm leading-6 text-white/68">
                     {shortAddress(location.address)}
                   </p>
                 </li>
@@ -58,12 +58,14 @@ export function Footer() {
           </div>
 
           <div className="md:col-span-3">
-            <p className="night-label text-[var(--gold-highlight)]">Explore</p>
+            <p className="text-sm font-bold uppercase tracking-[0.1em] text-[#c4dc67]">Explore</p>
             <nav aria-label="Footer" className="mt-5 flex flex-col items-start gap-3 text-sm">
-              <Link href="/menu" className="min-h-8 text-[var(--cream)]/72 hover:text-[var(--cream)]">Menu</Link>
-              <Link href="/locations" className="min-h-8 text-[var(--cream)]/72 hover:text-[var(--cream)]">Locations</Link>
-              <Link href="/about" className="min-h-8 text-[var(--cream)]/72 hover:text-[var(--cream)]">Our story</Link>
-              <a href={brand.phoneHref} className="min-h-8 text-[var(--cream)]/72 hover:text-[var(--cream)]">
+              <Link href="/menu" className="min-h-8 text-white/78 hover:text-[#f3c52f]">Menu</Link>
+              <Link href="/locations" className="min-h-8 text-white/78 hover:text-[#f3c52f]">Locations</Link>
+              <Link href="/about" className="min-h-8 text-white/78 hover:text-[#f3c52f]">Our story</Link>
+              <Link href="/order" className="min-h-8 text-white/78 hover:text-[#f3c52f]">Order</Link>
+              <Link href="/specials" className="min-h-8 text-white/78 hover:text-[#f3c52f]">Specials</Link>
+              <a href={brand.phoneHref} className="min-h-8 text-white/78 hover:text-[#f3c52f]">
                 {brand.phone}
               </a>
             </nav>
@@ -73,7 +75,7 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
-                className="inline-flex size-11 items-center justify-center rounded-full border border-[var(--cream)]/20 transition-colors hover:border-[var(--gold-highlight)] hover:text-[var(--gold-highlight)]"
+                className="inline-flex size-11 items-center justify-center border border-white/40 transition-colors hover:border-[#f3c52f] hover:bg-[#f3c52f] hover:text-[#32104f]"
               >
                 <BiLogoInstagram className="size-5" />
               </a>
@@ -82,7 +84,7 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="TikTok"
-                className="inline-flex size-11 items-center justify-center rounded-full border border-[var(--cream)]/20 transition-colors hover:border-[var(--gold-highlight)] hover:text-[var(--gold-highlight)]"
+                className="inline-flex size-11 items-center justify-center border border-white/40 transition-colors hover:border-[#f3c52f] hover:bg-[#f3c52f] hover:text-[#32104f]"
               >
                 <BiLogoTiktok className="size-5" />
               </a>
@@ -90,7 +92,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-14 flex flex-col gap-3 border-t border-[var(--cream)]/12 pt-6 text-xs text-[var(--cream)]/45 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-14 flex flex-col gap-3 border-t border-white/25 pt-6 text-xs text-white/62 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} {brand.name}.</p>
           <p>Perth, Western Australia</p>
         </div>

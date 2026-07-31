@@ -79,14 +79,14 @@ export default function RootLayout({
       <head>
         <link
           rel="preload"
-          href="/film/fonts/fredoka-latin-variable.woff2"
+          href="/fonts/atkinson-hyperlegible-next-latin.woff2"
           as="font"
           type="font/woff2"
           crossOrigin="anonymous"
         />
         <link
           rel="preload"
-          href="/film/fonts/baloo-2-latin-variable.woff2"
+          href="/fonts/league-gothic-latin.woff2"
           as="font"
           type="font/woff2"
           crossOrigin="anonymous"
