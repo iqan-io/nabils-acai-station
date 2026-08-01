@@ -16,7 +16,7 @@ export function LocationsHero() {
         <p className="mt-7 max-w-[52ch] font-home-body text-lg leading-8 text-[#32104f]">Two Perth counters for açaí, crêpes, Dubai chocolate and the group order that keeps growing.</p>
       </div>
       <div className="relative min-h-[27rem] border-t-2 border-[#47206e] lg:border-l-2 lg:border-t-0">
-        <Image src="/images/storefront-mt-lawley.jpg" alt="Nabil's Açaí Station on Beaufort Street in Mount Lawley" fill priority quality={90} sizes="(max-width: 1023px) 100vw, 55vw" className="object-cover" />
+        <Image src="/images/enhanced/location-mt-lawley-storefront-v2.jpg" alt="Nabil's Açaí Station on Beaufort Street in Mount Lawley" fill priority quality={90} sizes="(max-width: 1023px) 100vw, 55vw" className="object-cover" />
         <span className="absolute bottom-5 left-5 bg-[#f3c52f] px-5 py-3 font-home-display text-3xl text-[#47206e]">Two shops. Same big sweet energy.</span>
       </div>
     </section>

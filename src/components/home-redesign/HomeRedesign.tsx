@@ -207,7 +207,7 @@ export function HomeRedesign() {
       <section className={styles.story} aria-labelledby="story-title">
         <div className={styles.storyImage}>
           <Image
-            src="/images/interior-neon.jpg"
+            src="/images/enhanced/story-mt-lawley-interior.jpg"
             alt="A loaded açaí bowl on the counter inside Nabil's Mount Lawley shop"
             fill
             quality={90}
@@ -295,4 +295,3 @@ export function HomeRedesign() {
     </div>
   );
 }
-

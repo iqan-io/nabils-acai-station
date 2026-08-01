@@ -10,7 +10,7 @@ export function AboutHero() {
         <p className="mt-7 max-w-[54ch] font-home-body text-lg leading-8 text-white/90">From a Lebanese sweets stall in Ballajura to Perth&apos;s viral açaí and Dubai chocolate—same family, same kitchen, made for sweet moments.</p>
       </div>
       <div className="relative min-h-[28rem] border-t-2 border-[#47206e] lg:border-l-2 lg:border-t-0">
-        <Image src="/images/interior-neon.jpg" alt="Inside Nabil's Açaí Station in Mount Lawley" fill priority quality={90} sizes="(max-width: 1023px) 100vw, 50vw" className="object-cover" />
+        <Image src="/images/enhanced/story-mt-lawley-interior.jpg" alt="Inside Nabil's Açaí Station in Mount Lawley" fill priority quality={90} sizes="(max-width: 1023px) 100vw, 50vw" className="object-cover" />
         <span className="absolute bottom-5 right-5 bg-[#c4dc67] px-5 py-3 font-home-display text-3xl text-[#47206e]">Made for sweet moments.</span>
       </div>
     </section>
