@@ -1,5 +1,5 @@
-import { HomeRedesign } from "@/components/home-redesign/HomeRedesign";
+import { HomeCounter } from "@/components/home-counter/HomeCounter";
 
 export default function Page() {
-  return <HomeRedesign />;
+  return <HomeCounter />;
 }

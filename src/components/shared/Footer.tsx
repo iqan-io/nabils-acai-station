@@ -2,80 +2,117 @@ import Image from "next/image";
 import Link from "next/link";
 import { BiLogoInstagram, BiLogoTiktok } from "react-icons/bi";
 import { brand, locations } from "@/lib/brand";
+import { brandAssets } from "@/lib/brandAssets";
 
 function shortAddress(full: string) {
   return full.replace(/\sWA\s?\d{4}.*$/i, "");
 }
 
+/**
+ * Footer in "The Counter" system: a quiet ink close under a light page, with
+ * grape reserved for links. Replaces the purple-and-lime block that belonged to
+ * the previous slab system.
+ */
 export function Footer() {
+  const linkClass =
+    "min-h-9 text-[0.92rem] text-white/70 transition-colors hover:text-white";
+
   return (
-    <footer className="relative overflow-hidden border-t border-[#f3c52f] bg-[#47206e] font-home-body text-white">
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-2 bg-[#f3c52f]" />
-      <div className="relative mx-auto max-w-7xl px-6 pb-10 pt-16 md:pt-20 lg:px-10">
-        <div className="grid gap-12 md:grid-cols-12 md:gap-8">
+    <footer
+      className="border-t border-white/10 bg-[#141118] text-white"
+      style={{ fontFamily: "var(--font-counter-body)" }}
+    >
+      <div className="mx-auto max-w-7xl px-5 pb-10 pt-14 lg:px-8 lg:pt-16">
+        <div className="grid gap-10 md:grid-cols-12 md:gap-8">
           <div className="md:col-span-5">
-            <a href="/" aria-label="Nabil's Açaí Station home" className="inline-flex items-center gap-4">
+            <Link
+              href="/"
+              aria-label="Nabil's Açaí Station home"
+              className="inline-flex items-center gap-3.5"
+            >
               <Image
-                src="/images/logo-192.png"
-                alt="Nabil's Açaí Station"
-                width={76}
-                height={76}
-                unoptimized
-                className="size-[4.75rem] object-contain"
+                src={brandAssets.darkBackgroundLogo}
+                alt=""
+                width={97}
+                height={144}
+                className="h-36 w-auto object-contain"
               />
               <span>
-                <span className="font-home-display block text-4xl leading-none">Nabil&apos;s</span>
-                <span className="mt-1 block text-xs font-semibold uppercase tracking-[0.16em] text-[#c4dc67]">
-                  Açaí Station · Perth
+                <span className="sr-only">
+                  Nabil&apos;s Açaí Station
+                </span>
+                <span className="mt-0.5 block text-[0.78rem] text-white/55">
+                  Mount Lawley &amp; Ballajura · Perth
                 </span>
               </span>
-            </a>
-            <p className="mt-6 max-w-md text-base leading-7 text-white/78">
-              Açaí, crêpes, Dubai chocolate and Lebanese sweets in Perth.
+            </Link>
+            <p className="mt-5 max-w-sm text-[0.95rem] leading-relaxed text-white/70">
+              Açaí, crêpes, Dubai chocolate and Lebanese sweets. Built to order,
+              open till late.
             </p>
-            <p className="mt-2 text-xl font-bold text-[#f3c52f]">
+            <p className="mt-3 text-[1.05rem] font-bold text-[#e9a73c]">
               {brand.tagline}
             </p>
           </div>
 
           <div className="md:col-span-4">
-            <p className="text-sm font-bold uppercase tracking-[0.1em] text-[#c4dc67]">Visit</p>
-            <ul className="mt-5 space-y-5">
+            <p className="text-[0.72rem] font-semibold uppercase tracking-[0.09em] text-white/45">
+              Visit
+            </p>
+            <ul className="mt-4 space-y-4">
               {locations.map((location) => (
                 <li key={location.slug}>
                   <Link
                     href={`/locations#${location.slug}`}
-                    className="font-home-display text-3xl text-white hover:text-[#f3c52f]"
+                    className="text-[1.1rem] font-bold transition-colors hover:text-[#c2a0e8]"
                   >
                     {location.name}
                   </Link>
-                  <p className="mt-1 max-w-xs text-sm leading-6 text-white/68">
+                  <p className="mt-0.5 max-w-xs text-[0.88rem] leading-relaxed text-white/60">
                     {shortAddress(location.address)}
                   </p>
                 </li>
               ))}
             </ul>
+            <a
+              href={brand.phoneHref}
+              className="mt-4 inline-block text-[0.92rem] text-white/70 transition-colors hover:text-white"
+            >
+              {brand.phone}
+            </a>
           </div>
 
           <div className="md:col-span-3">
-            <p className="text-sm font-bold uppercase tracking-[0.1em] text-[#c4dc67]">Explore</p>
-            <nav aria-label="Footer" className="mt-5 flex flex-col items-start gap-3 text-sm">
-              <Link href="/menu" className="min-h-8 text-white/78 hover:text-[#f3c52f]">Menu</Link>
-              <Link href="/locations" className="min-h-8 text-white/78 hover:text-[#f3c52f]">Locations</Link>
-              <Link href="/about" className="min-h-8 text-white/78 hover:text-[#f3c52f]">Our story</Link>
-              <Link href="/order" className="min-h-8 text-white/78 hover:text-[#f3c52f]">Order</Link>
-              <Link href="/specials" className="min-h-8 text-white/78 hover:text-[#f3c52f]">Specials</Link>
-              <a href={brand.phoneHref} className="min-h-8 text-white/78 hover:text-[#f3c52f]">
-                {brand.phone}
-              </a>
+            <p className="text-[0.72rem] font-semibold uppercase tracking-[0.09em] text-white/45">
+              Explore
+            </p>
+            <nav
+              aria-label="Footer"
+              className="mt-4 flex flex-col items-start gap-2"
+            >
+              <Link href="/menu" className={linkClass}>
+                Menu
+              </Link>
+              <Link href="/locations" className={linkClass}>
+                Locations
+              </Link>
+              <Link href="/about" className={linkClass}>
+                Our story
+              </Link>
+              <Link href="/order" className={linkClass}>
+                Order
+              </Link>
+              <Link href="/specials" className={linkClass}>
+                Specials
+              </Link>
             </nav>
-            <div className="mt-5 flex gap-3">
+            <div className="mt-5 flex gap-2.5">
               <a
                 href={brand.instagram.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
-                className="inline-flex size-11 items-center justify-center border border-white/40 transition-colors hover:border-[#f3c52f] hover:bg-[#f3c52f] hover:text-[#32104f]"
+                className="inline-flex size-11 items-center justify-center rounded-lg border border-white/20 transition-colors hover:border-[#c2a0e8] hover:text-[#c2a0e8]"
               >
                 <BiLogoInstagram className="size-5" />
               </a>
@@ -84,7 +121,7 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="TikTok"
-                className="inline-flex size-11 items-center justify-center border border-white/40 transition-colors hover:border-[#f3c52f] hover:bg-[#f3c52f] hover:text-[#32104f]"
+                className="inline-flex size-11 items-center justify-center rounded-lg border border-white/20 transition-colors hover:border-[#c2a0e8] hover:text-[#c2a0e8]"
               >
                 <BiLogoTiktok className="size-5" />
               </a>
@@ -92,8 +129,10 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-14 flex flex-col gap-3 border-t border-white/25 pt-6 text-xs text-white/62 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} {brand.name}.</p>
+        <div className="mt-12 flex flex-col gap-2 border-t border-white/12 pt-6 text-[0.8rem] text-white/50 sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            © {new Date().getFullYear()} {brand.name}.
+          </p>
           <p>Perth, Western Australia</p>
         </div>
       </div>

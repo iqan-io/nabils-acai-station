@@ -1,3 +1,5 @@
+import { brandAssets } from "@/lib/brandAssets";
+
 export const brand = {
   name: "Nabil's Açaí Station",
   tagline: "Made for sweet moments.",
@@ -125,7 +127,7 @@ export const reviews = [
 // count). See AGENTS notes / the plan for the voting backend.
 // ---------------------------------------------------------------------------
 
-const placeholderPortrait = "/images/enhanced/brand-mascot-medallion.jpg";
+const placeholderPortrait = brandAssets.mascotMark;
 
 export type Founder = {
   name: string;
@@ -231,6 +233,55 @@ export const signatures: Signature[] = [
     tag: "viral",
   },
 ];
+
+// ---------------------------------------------------------------------------
+// Build-your-own açaí — structured source for the homepage bowl builder.
+//
+// These are the SAME prices as the "Açaí — Build Your Own" section of `menu`
+// below; that section renders the printed menu, this one drives the interactive
+// builder. Prices are in whole dollars so the running total stays exact integer
+// maths (no floating-point cents). If a price changes, change it in BOTH places
+// — `menu` is what customers read, `acaiBuilder` is what they add up.
+// ---------------------------------------------------------------------------
+
+export type BuilderOption = { name: string; price: number };
+
+export const acaiBuilder = {
+  /** Every cup includes these three at no extra cost. */
+  included: ["Granola", "Banana", "Strawberries"],
+  sizes: [
+    { name: "Cone", price: 9 },
+    { name: "Small", price: 10 },
+    { name: "Regular", price: 12 },
+    { name: "Large", price: 15 },
+  ] as BuilderOption[],
+  drizzles: [
+    { name: "Honey", price: 1 },
+    { name: "Condensed milk", price: 1 },
+    { name: "Passion fruit", price: 1 },
+    { name: "Nutella", price: 2 },
+    { name: "Pistachio", price: 2 },
+    { name: "Biscoff", price: 2 },
+    { name: "Bueno", price: 2 },
+    { name: "Peanut butter", price: 2 },
+    { name: "Milk chocolate", price: 2 },
+  ] as BuilderOption[],
+  toppings: [
+    { name: "Banana", price: 1 },
+    { name: "Granola", price: 1 },
+    { name: "M&M's", price: 1 },
+    { name: "Strawberries", price: 2 },
+    { name: "Blueberries", price: 2 },
+    { name: "Crushed pistachios", price: 2 },
+    { name: "Crushed almonds", price: 2 },
+    { name: "Peanut treat (paçoca)", price: 2 },
+    { name: "Oreo crumbs", price: 2 },
+    { name: "Biscoff crumbs", price: 2 },
+    { name: "Coconut", price: 2 },
+    { name: "Choc chips", price: 2 },
+    { name: "Crunchy Dubai filling", price: 3 },
+  ] as BuilderOption[],
+};
 
 export type MenuItem = { name: string; price?: string; note?: string };
 export type MenuSection = {

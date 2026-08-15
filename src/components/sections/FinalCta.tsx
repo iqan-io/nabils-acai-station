@@ -1,21 +1,50 @@
 import Image from "next/image";
 import Link from "next/link";
+import { brand } from "@/lib/brand";
+import { brandAssets } from "@/lib/brandAssets";
 
+/**
+ * Closing band for the about and order routes. Mirrors the homepage's final
+ * band so every route lands on the same note.
+ */
 export function FinalCta() {
   return (
-    <section className="grid border-y-2 border-[#47206e] bg-[#c4dc67] text-[#32104f] lg:grid-cols-[1.1fr_0.9fr]">
-      <div className="flex flex-col justify-center p-8 sm:p-12 lg:p-16 xl:pl-[max(4rem,calc((100vw-80rem)/2))]">
-        <p className="font-home-body text-xs font-bold uppercase tracking-[0.14em] text-[#ef2b37]">Come say hi</p>
-        <h2 className="mt-4 max-w-3xl font-home-display text-7xl leading-[0.8] text-[#47206e] md:text-9xl">The menu is calling.</h2>
-        <p className="mt-6 max-w-xl font-home-body text-lg leading-8 text-[#32104f]/80">Walk in, order delivery or pick the sweet you&apos;re thinking about before someone else adds three toppings.</p>
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          <Link href="/menu" className="inline-flex min-h-12 items-center justify-center bg-[#47206e] px-7 font-home-body text-xs font-bold uppercase tracking-[0.14em] text-white hover:bg-[#ef2b37]">View the menu →</Link>
-          <Link href="/locations" className="inline-flex min-h-12 items-center justify-center border-2 border-[#47206e] px-7 font-home-body text-xs font-bold uppercase tracking-[0.14em] text-[#47206e] hover:bg-white">Find a store</Link>
+    <section
+      className="bg-[var(--c-paper)] px-5 pb-14 pt-2 lg:px-8"
+      style={{ fontFamily: "var(--font-counter-body)" }}
+    >
+      <div className="mx-auto flex max-w-7xl flex-col items-start gap-6 rounded-2xl bg-[var(--c-grape)] p-7 text-white sm:p-9 lg:flex-row lg:items-center lg:gap-8">
+        <Image
+          src={brandAssets.darkBackgroundLogo}
+          alt=""
+          width={81}
+          height={120}
+          className="h-28 w-auto shrink-0 object-contain"
+        />
+        <div className="min-w-0 flex-1">
+          <p className="text-[0.75rem] font-semibold uppercase tracking-[0.09em] text-white/65">
+            {brand.tagline}
+          </p>
+          <h2 className="mt-1.5 text-[clamp(1.5rem,2.6vw,2.1rem)] leading-[1.08] text-white [text-transform:none]">
+            Still deciding? Start with the menu.
+          </h2>
         </div>
-      </div>
-      <div className="relative min-h-[28rem] border-t-2 border-[#47206e] lg:border-l-2 lg:border-t-0">
-        <Image src="/images/enhanced/fruit-cocktail-client-enhanced.jpg" alt="Nabil's fruit cocktail layered with fruit, ashta, cashew and pistachio" fill quality={90} sizes="(max-width: 1023px) 100vw, 45vw" className="object-cover" />
-        <Image src="/images/logo-192.png" alt="" width={112} height={112} unoptimized className="absolute bottom-5 right-5 size-28 object-contain" />
+        <div className="flex w-full shrink-0 gap-2.5 lg:w-auto">
+          <Link
+            href="/menu"
+            className="inline-flex min-h-12 flex-1 items-center justify-center rounded-lg bg-white px-6 text-[0.9rem] font-bold text-[var(--c-grape)] lg:flex-none"
+          >
+            View the menu
+          </Link>
+          <a
+            href={brand.orderUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-12 flex-1 items-center justify-center rounded-lg border border-white/70 px-6 text-[0.9rem] font-bold text-white transition-colors hover:bg-white/15 lg:flex-none"
+          >
+            Order delivery
+          </a>
+        </div>
       </div>
     </section>
   );

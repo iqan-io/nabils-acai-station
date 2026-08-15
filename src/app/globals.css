@@ -2,38 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-  font-family: "Baloo 2";
-  src: url("/film/fonts/baloo-2-latin-variable.woff2") format("woff2");
-  font-style: normal;
-  font-weight: 400 800;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Fredoka";
-  src: url("/film/fonts/fredoka-latin-variable.woff2") format("woff2");
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "League Gothic";
-  src: url("/fonts/league-gothic-latin.woff2") format("woff2");
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Atkinson Hyperlegible Next";
-  src: url("/fonts/atkinson-hyperlegible-next-latin.woff2") format("woff2");
-  font-style: normal;
-  font-weight: 400 700;
-  font-display: swap;
-}
-
 :root {
   --night-plum: #160b18;
   --deep-plum: #3b1440;
@@ -52,23 +20,45 @@
   --lavender: #d9c9d6;
   --saffron: var(--gold-highlight);
   --cedar: #667849;
-  --font-display: "League Gothic", Impact, "Arial Narrow", sans-serif;
-  --font-sans: "Atkinson Hyperlegible Next", "Segoe UI", sans-serif;
-  --font-home-display: "League Gothic", Impact, "Arial Narrow", sans-serif;
-  --font-home-body: "Atkinson Hyperlegible Next", "Segoe UI", sans-serif;
-}
+  /* Titan One extends the logo's rounded display character; Nunito carries
+     navigation, body copy, controls, prices, and menu data. */
+  --font-brand-display: var(--font-titan-one), "Arial Rounded MT Bold", sans-serif;
+  --font-brand-body: var(--font-nunito), "Segoe UI", system-ui, sans-serif;
 
-/* Baloo 2 / Fredoka ship no italic faces — swap emphasis to weight instead of a synthesized oblique. */
-.italic {
-  font-style: normal;
-  font-weight: 600;
+  /* Compatibility aliases keep current and retained components on the same
+     two-family brand system. */
+  --font-display: var(--font-brand-display);
+  --font-sans: var(--font-brand-body);
+  --font-home-display: var(--font-brand-display);
+  --font-home-body: var(--font-brand-body);
+  --font-counter-body: var(--font-brand-body);
+  --font-counter-data: var(--font-brand-body);
+
+  /* ---------------------------------------------------------------------
+     "The Counter" palette — the single source for every route.
+     Grape has exactly one job: interactive / selected / current. It is never
+     used as decoration, which is what keeps the pages quiet enough for the
+     food photography to carry them.
+     --------------------------------------------------------------------- */
+  --c-paper: #fbfaf6;
+  --c-card: #ffffff;
+  --c-ink: #141118;
+  --c-ink-2: rgba(20, 17, 24, 0.62);
+  --c-ink-3: rgba(20, 17, 24, 0.42);
+  --c-line: rgba(20, 17, 24, 0.14);
+  --c-line-2: rgba(20, 17, 24, 0.24);
+  --c-grape: #5a2a86;
+  --c-grape-soft: #f1e9f8;
+  --c-berry: #d33b4c;
+  --c-pistachio: #7fa254;
+  --c-honey: #e9a73c;
 }
 
 html,
 body {
-  background: var(--cream);
-  color: var(--acai-deep);
-  font-family: var(--font-sans), "Segoe UI", sans-serif;
+  background: var(--c-paper);
+  color: var(--c-ink);
+  font-family: var(--font-counter-body);
   font-weight: 400;
   font-kerning: normal;
   font-optical-sizing: auto;
@@ -84,8 +74,8 @@ body {
 .font-display {
   font-family: var(--font-display);
   font-weight: 400;
-  letter-spacing: -0.015em;
-  text-transform: uppercase;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 html {
@@ -95,21 +85,23 @@ html {
 .font-home-display {
   font-family: var(--font-home-display);
   font-weight: 400;
-  letter-spacing: -0.015em;
-  text-transform: uppercase;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .font-home-body {
   font-family: var(--font-home-body);
 }
 
+/* Titan One is reserved for branded display moments; paragraphs, controls,
+   labels, prices, and navigation inherit Nunito from the document. */
 h1,
 h2,
 h3 {
-  font-family: var(--font-display);
+  font-family: var(--font-brand-display);
   font-weight: 400;
-  letter-spacing: -0.015em;
-  text-transform: uppercase;
+  letter-spacing: 0;
+  text-transform: none;
   text-wrap: balance;
 }
 

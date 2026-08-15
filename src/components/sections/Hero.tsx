@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Sparkle } from "@/components/shared/Ornaments";
 import { brand } from "@/lib/brand";
+import { brandAssets } from "@/lib/brandAssets";
 
 const specials = [
   "Dubai Strawberry Cup",
@@ -52,7 +53,7 @@ export function Hero() {
       <div className="relative mx-auto flex min-h-[calc(100svh-5rem)] max-w-4xl flex-col items-center justify-end px-6 pb-16 pt-24 text-center md:min-h-[46rem] md:pb-20">
         <div className="rise-in rise-in-delay-1">
           <Image
-            src="/images/logo-400.png"
+            src={brandAssets.darkBackgroundLogo}
             alt={brand.name}
             width={220}
             height={220}

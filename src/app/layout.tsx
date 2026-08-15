@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Nunito, Titan_One } from "next/font/google";
 import { Analytics as VercelAnalytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
@@ -11,6 +12,20 @@ import {
   localBusinessJsonLd,
   siteUrl,
 } from "@/lib/seo";
+import { brandAssets } from "@/lib/brandAssets";
+
+const titanOne = Titan_One({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-titan-one",
+  display: "swap",
+});
+
+const nunito = Nunito({
+  subsets: ["latin"],
+  variable: "--font-nunito",
+  display: "swap",
+});
 
 const googleSiteVerification =
   process.env.GOOGLE_SITE_VERIFICATION ||
@@ -28,13 +43,15 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
   },
+  manifest: "/manifest.webmanifest",
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "64x64" },
-      { url: "/icon.png", type: "image/png", sizes: "1024x1024" },
+      { url: brandAssets.faviconIco, type: "image/x-icon" },
+      { url: brandAssets.faviconPng, type: "image/png", sizes: "512x512" },
+      { url: brandAssets.faviconWebp, type: "image/webp", sizes: "512x512" },
     ],
-    shortcut: "/favicon.ico",
-    apple: "/icon.png",
+    shortcut: brandAssets.faviconIco,
+    apple: [{ url: brandAssets.faviconPng, sizes: "512x512" }],
   },
   openGraph: {
     title: "Nabil's Acai Station",
@@ -75,23 +92,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full antialiased">
-      <head>
-        <link
-          rel="preload"
-          href="/fonts/atkinson-hyperlegible-next-latin.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
-        <link
-          rel="preload"
-          href="/fonts/league-gothic-latin.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
-      </head>
+    <html
+      lang="en"
+      className={`${titanOne.variable} ${nunito.variable} h-full antialiased`}
+    >
       <body className="min-h-full flex flex-col bg-[var(--cream)] text-[var(--acai-deep)]">
         <Analytics />
         <VercelAnalytics />
