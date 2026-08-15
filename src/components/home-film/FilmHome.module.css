@@ -1,0 +1,691 @@
+/* ---------------------------------------------------------------------------
+   Cinematic film homepage — "The Station Film".
+
+   The page opens on one continuous scroll-scrubbed shot: a berry on the palm,
+   the drizzle at the counter, the first spoon. Everything below it is flat,
+   quiet and factual so the film does the selling and the data does the proving.
+
+   Every colour, size and step is a token. Two grounds (night, paper), one ink,
+   one accent (honey), one muted. Nothing else.
+   --------------------------------------------------------------------------- */
+
+.root {
+  /* Grounds */
+  --f-night: #160b18;
+  --f-night-soft: #241128;
+  --f-paper: #f5ecdf;
+  /* Ink */
+  --f-ink: #160b18;
+  --f-ink-invert: #f5ecdf;
+  /* One accent, used on roughly five things across the whole page. */
+  --f-honey: #d9a441;
+  /* One muted, for supporting/utility text only. */
+  --f-muted: #8d7f93;
+
+  --f-step-1: 0.5rem;
+  --f-step-2: 1rem;
+  --f-step-3: 1.5rem;
+  --f-step-4: 2.5rem;
+  --f-step-5: 4rem;
+  --f-step-6: 6rem;
+
+  --f-display: var(--font-display);
+  --f-body: var(--font-sans);
+
+  --f-shell: 78rem;
+
+  background: var(--f-night);
+  color: var(--f-ink-invert);
+}
+
+/* ---------------------------------------------------------------- the film */
+
+.film {
+  position: relative;
+  /* Hero beat plus three chapter beats. Drives the scrub distance. */
+  height: 420vh;
+  background: var(--f-night);
+}
+
+.stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.video,
+.poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* The film is graded warm and slightly dark so display type stays readable. */
+  filter: saturate(1.05) contrast(1.04) brightness(0.82);
+}
+
+.poster {
+  z-index: 0;
+}
+
+.video {
+  z-index: 1;
+}
+
+/*
+   Readability scrim. The three shots differ wildly in brightness — the berry
+   field and the açaí surface are dark, but the drizzle shot is on pale lavender,
+   where honey-on-lavender fails contrast outright. The radial pass guarantees a
+   dark ground behind the centred type no matter which shot is on screen; the
+   linear pass anchors the top and bottom edges.
+*/
+.scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background:
+    radial-gradient(ellipse 72% 52% at 50% 47%, rgb(22 11 24 / 0.58) 0%, rgb(22 11 24 / 0) 100%),
+    linear-gradient(to bottom, rgb(22 11 24 / 0.75) 0%, rgb(22 11 24 / 0.3) 30%, rgb(22 11 24 / 0.34) 62%, rgb(22 11 24 / 0.88) 100%);
+  pointer-events: none;
+}
+
+.chapters {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  padding: calc(var(--f-step-6) + 2rem) var(--f-step-3) var(--f-step-6);
+}
+
+.chapter {
+  grid-area: 1 / 1;
+  width: 100%;
+  max-width: var(--f-shell);
+  text-align: center;
+  /* GSAP owns opacity/transform from here; this is the pre-paint state. */
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+/*
+   The opening beat must be readable before hydration and if the JS never runs,
+   so it starts visible in CSS and is only ever faded out by the timeline.
+*/
+.chapter[data-chapter="hero"] {
+  opacity: 1;
+}
+
+.eyebrow {
+  display: block;
+  margin-bottom: var(--f-step-3);
+  font-family: var(--f-body);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--f-honey);
+  font-variant-numeric: tabular-nums;
+}
+
+/* On film the accent has to survive a moving background, so the eyebrow uses the
+   lighter end of the gold. Flat sections keep the deeper honey. */
+.chapters .eyebrow {
+  color: #f2c879;
+}
+
+.chapterTitle {
+  margin: 0;
+  font-family: var(--f-display);
+  font-size: clamp(3rem, 11vw, 9rem);
+  line-height: 0.88;
+  letter-spacing: 0.005em;
+  color: var(--f-ink-invert);
+  text-wrap: balance;
+}
+
+.chapterBody {
+  margin: var(--f-step-3) auto 0;
+  max-width: 34rem;
+  font-family: var(--f-body);
+  font-size: clamp(1rem, 1.6vw, 1.15rem);
+  line-height: 1.55;
+  color: rgb(245 236 223 / 0.86);
+  text-wrap: pretty;
+}
+
+/* Hero beat gets the wordmark treatment and the tagline. */
+.heroTitle {
+  margin: 0;
+  font-family: var(--f-display);
+  font-size: clamp(3.25rem, 13vw, 10.5rem);
+  line-height: 0.85;
+  color: var(--f-ink-invert);
+  text-wrap: balance;
+}
+
+.heroTagline {
+  margin: var(--f-step-3) 0 0;
+  font-family: var(--f-body);
+  font-size: clamp(1rem, 2vw, 1.35rem);
+  color: rgb(245 236 223 / 0.9);
+}
+
+.heroActions {
+  margin-top: var(--f-step-4);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--f-step-2);
+  justify-content: center;
+}
+
+.cue {
+  position: absolute;
+  bottom: var(--f-step-3);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  font-family: var(--f-body);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgb(245 236 223 / 0.62);
+}
+
+/* ------------------------------------------------------------- primitives */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0 var(--f-step-4);
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-family: var(--f-body);
+  font-size: 1rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btnPrimary {
+  background: var(--f-honey);
+  color: var(--f-night);
+}
+
+.btnGhost {
+  border-color: rgb(245 236 223 / 0.42);
+  color: var(--f-ink-invert);
+}
+
+.btnGhost:hover {
+  background: rgb(245 236 223 / 0.1);
+}
+
+.btnInk {
+  background: var(--f-night);
+  color: var(--f-ink-invert);
+}
+
+/* Visible focus on every interactive element, on both grounds. */
+.root a:focus-visible,
+.root button:focus-visible {
+  outline: 3px solid var(--f-honey);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* --------------------------------------------------------------- sections */
+
+.section {
+  padding: var(--f-step-6) var(--f-step-3);
+}
+
+.night {
+  background: var(--f-night);
+  color: var(--f-ink-invert);
+}
+
+.paper {
+  background: var(--f-paper);
+  color: var(--f-ink);
+}
+
+.shell {
+  margin: 0 auto;
+  max-width: var(--f-shell);
+}
+
+.sectionHead {
+  margin-bottom: var(--f-step-5);
+}
+
+.sectionTitle {
+  margin: 0;
+  font-family: var(--f-display);
+  font-size: clamp(2.5rem, 7vw, 5.5rem);
+  line-height: 0.92;
+  text-wrap: balance;
+}
+
+.sectionLede {
+  margin: var(--f-step-2) 0 0;
+  max-width: 38rem;
+  font-family: var(--f-body);
+  font-size: 1.05rem;
+  line-height: 1.55;
+}
+
+.paper .sectionLede {
+  color: #4a3f50;
+}
+
+.night .sectionLede {
+  color: rgb(245 236 223 / 0.82);
+}
+
+.paper .eyebrow {
+  color: #8a5f12;
+}
+
+/* ---------------------------------------------------------------- lineup */
+
+.lineup {
+  display: grid;
+  gap: var(--f-step-4);
+  grid-template-columns: 1fr;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+}
+
+.cardMedia {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: #e3d6c4;
+}
+
+.cardMedia img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cardTag {
+  position: absolute;
+  top: var(--f-step-2);
+  left: var(--f-step-2);
+  padding: 0.3rem 0.7rem;
+  background: var(--f-honey);
+  color: var(--f-night);
+  font-family: var(--f-body);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.cardHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--f-step-2);
+  margin-top: var(--f-step-3);
+}
+
+.cardName {
+  margin: 0;
+  font-family: var(--f-display);
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  line-height: 1;
+}
+
+.cardPrice {
+  font-family: var(--f-body);
+  font-size: 1rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: #8a5f12;
+}
+
+.cardBlurb {
+  margin: var(--f-step-2) 0 0;
+  font-family: var(--f-body);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: #4a3f50;
+}
+
+/* ------------------------------------------------------ the counter (data) */
+
+.counterGrid {
+  display: grid;
+  gap: var(--f-step-5);
+  grid-template-columns: 1fr;
+}
+
+.priceRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--f-step-2);
+  padding: var(--f-step-2) 0;
+  border-bottom: 1px solid rgb(245 236 223 / 0.16);
+  font-family: var(--f-body);
+}
+
+.priceRow dt {
+  font-size: 1.05rem;
+}
+
+.priceRow dd {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--f-honey);
+}
+
+.tokenList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--f-step-1);
+  margin: var(--f-step-3) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.token {
+  padding: 0.35rem 0.75rem;
+  border: 1px solid rgb(245 236 223 / 0.24);
+  font-family: var(--f-body);
+  font-size: 0.85rem;
+  color: rgb(245 236 223 / 0.88);
+}
+
+.subhead {
+  margin: 0;
+  font-family: var(--f-body);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--f-honey);
+}
+
+/* Second subhead inside the same column needs air above it. */
+.subheadSpaced {
+  margin-top: var(--f-step-4);
+}
+
+.note {
+  margin: var(--f-step-3) 0 0;
+  font-family: var(--f-body);
+  font-size: 0.9rem;
+  color: rgb(245 236 223 / 0.6);
+}
+
+/* ----------------------------------------------------------------- proof */
+
+.pressGrid {
+  display: grid;
+  gap: var(--f-step-4);
+  grid-template-columns: 1fr;
+}
+
+.press {
+  display: flex;
+  flex-direction: column;
+  padding: var(--f-step-4);
+  background: #ede2d2;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s ease;
+}
+
+.press:hover {
+  transform: translateY(-3px);
+}
+
+.pressOutlet {
+  font-family: var(--f-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #8a5f12;
+}
+
+.pressQuote {
+  margin: var(--f-step-3) 0 0;
+  font-family: var(--f-display);
+  font-size: clamp(1.4rem, 2.4vw, 2rem);
+  line-height: 1.12;
+}
+
+.pressMeta {
+  margin: var(--f-step-3) 0 0;
+  font-family: var(--f-body);
+  font-size: 0.85rem;
+  color: #5c5061;
+}
+
+.reviewGrid {
+  display: grid;
+  gap: var(--f-step-4);
+  grid-template-columns: 1fr;
+  margin-top: var(--f-step-5);
+}
+
+.review blockquote {
+  margin: 0;
+  font-family: var(--f-body);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #3d3343;
+}
+
+.reviewAuthor {
+  margin: var(--f-step-2) 0 0;
+  font-family: var(--f-body);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #5c5061;
+}
+
+.ratingRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--f-step-4);
+  margin-top: var(--f-step-5);
+  padding-top: var(--f-step-4);
+  border-top: 1px solid rgb(22 11 24 / 0.14);
+  font-family: var(--f-body);
+}
+
+.rating {
+  font-size: 0.95rem;
+  color: #4a3f50;
+}
+
+.ratingValue {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--f-ink);
+}
+
+/* --------------------------------------------------------------- find us */
+
+.findGrid {
+  display: grid;
+  gap: var(--f-step-5);
+  grid-template-columns: 1fr;
+}
+
+.place {
+  display: flex;
+  flex-direction: column;
+}
+
+.placeName {
+  margin: 0;
+  font-family: var(--f-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1;
+}
+
+.placeAddress {
+  margin: var(--f-step-2) 0 0;
+  font-family: var(--f-body);
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: rgb(245 236 223 / 0.82);
+}
+
+.hours {
+  margin: var(--f-step-3) 0 0;
+  font-family: var(--f-body);
+  font-variant-numeric: tabular-nums;
+}
+
+.hourRow {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--f-step-2);
+  padding: 0.35rem 0;
+  border-bottom: 1px solid rgb(245 236 223 / 0.12);
+  font-size: 0.92rem;
+}
+
+.hourRow dt {
+  color: rgb(245 236 223 / 0.7);
+}
+
+.hourRow dd {
+  margin: 0;
+  color: var(--f-ink-invert);
+}
+
+.placeActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--f-step-2);
+  margin-top: var(--f-step-4);
+}
+
+.unknown {
+  margin: var(--f-step-3) 0 0;
+  font-family: var(--f-body);
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: rgb(245 236 223 / 0.66);
+}
+
+.orderBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--f-step-2);
+  margin-top: var(--f-step-6);
+  padding-top: var(--f-step-4);
+  border-top: 1px solid rgb(245 236 223 / 0.16);
+}
+
+.orderLabel {
+  font-family: var(--f-body);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--f-honey);
+  margin-right: var(--f-step-2);
+}
+
+/* ------------------------------------------------------------- responsive */
+
+@media (min-width: 48rem) {
+  .section {
+    padding: var(--f-step-6) var(--f-step-4);
+  }
+
+  .lineup {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .pressGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .reviewGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .findGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .counterGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* --------------------------------------------------------- reduced motion */
+
+/*
+   Under reduced motion the film does not scrub and the video never plays. The
+   stage stops being sticky, the chapters unstack into normal flow over a still
+   poster frame, and every beat is readable without moving the scroll wheel.
+*/
+.root[data-reduced="true"] .film {
+  height: auto;
+}
+
+.root[data-reduced="true"] .stage {
+  position: static;
+  height: auto;
+  min-height: 100svh;
+}
+
+.root[data-reduced="true"] .chapters {
+  position: static;
+  display: block;
+  padding-block: var(--f-step-6);
+}
+
+.root[data-reduced="true"] .chapter {
+  opacity: 1;
+  transform: none;
+  margin-bottom: var(--f-step-6);
+}
+
+.root[data-reduced="true"] .chapter:last-child {
+  margin-bottom: 0;
+}
+
+.root[data-reduced="true"] .cue {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .press {
+    transition: none;
+  }
+
+  .btn:hover,
+  .press:hover {
+    transform: none;
+  }
+}

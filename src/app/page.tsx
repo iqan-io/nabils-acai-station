@@ -1,5 +1,5 @@
-import { HomeRedesign } from "@/components/home-redesign/HomeRedesign";
+import { FilmHome } from "@/components/home-film/FilmHome";
 
 export default function Page() {
-  return <HomeRedesign />;
+  return <FilmHome />;
 }
