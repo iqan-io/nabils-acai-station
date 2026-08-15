@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { brand, locations } from "@/lib/brand";
-import { brandAssets } from "@/lib/brandAssets";
 
 const fallbackSiteUrl = "https://nabilsacaistation.com.au";
 
@@ -102,7 +101,7 @@ export function localBusinessJsonLd() {
         "@id": absoluteUrl("/#organization"),
         name: brand.name,
         url: siteUrl,
-        logo: absoluteUrl(brandAssets.primaryLogoPng),
+        logo: absoluteUrl("/images/mascot-decal.jpg"),
         sameAs: [
           brand.instagram.url,
           brand.tiktok.url,

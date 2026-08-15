@@ -9,7 +9,6 @@ import {
   reviews,
   signatures,
 } from "@/lib/brand";
-import { brandAssets } from "@/lib/brandAssets";
 import styles from "./HomeRedesign.module.css";
 
 const heroProducts = [
@@ -115,7 +114,7 @@ export function HomeRedesign() {
 
         <div className={styles.heroSeal} aria-hidden>
           <Image
-            src={brandAssets.mascotMark}
+            src="/images/logo-192.png"
             alt=""
             width={120}
             height={120}
@@ -278,7 +277,7 @@ export function HomeRedesign() {
 
       <section className={styles.finalCta} aria-labelledby="final-title">
         <Image
-          src={brandAssets.primaryLogo}
+          src="/images/logo-400.png"
           alt=""
           width={180}
           height={180}
