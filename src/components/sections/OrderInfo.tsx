@@ -2,6 +2,7 @@ import Image from "next/image";
 import { brand, locations } from "@/lib/brand";
 import { SiDoordash, SiUbereats } from "react-icons/si";
 import styles from "@/components/shared/Page.module.css";
+import { TrackedLink } from "@/components/shared/TrackedLink";
 
 /*
   The platform brand colours (Uber Eats green, DoorDash red) are the one place
@@ -11,6 +12,7 @@ import styles from "@/components/shared/Page.module.css";
 const delivery = [
   {
     name: "Uber Eats",
+    platform: "ubereats",
     url: brand.orderUrl,
     note: "Choose your available Nabil's location in Uber Eats.",
     logo: SiUbereats,
@@ -18,6 +20,7 @@ const delivery = [
   },
   {
     name: "DoorDash",
+    platform: "doordash",
     url: brand.doordashUrl,
     note: "Ballajura delivery through DoorDash.",
     logo: SiDoordash,
@@ -73,8 +76,10 @@ export function OrderInfo() {
                 {delivery.map((item) => {
                   const Logo = item.logo;
                   return (
-                    <a
+                    <TrackedLink
                       key={item.name}
+                      event="order_click"
+                      eventParams={{ platform: item.platform, placement: "order_page" }}
                       href={item.url}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -94,7 +99,7 @@ export function OrderInfo() {
                       <span aria-hidden className={styles.linkRowArrow}>
                         →
                       </span>
-                    </a>
+                    </TrackedLink>
                   );
                 })}
               </div>
@@ -110,8 +115,14 @@ export function OrderInfo() {
                 {locations.map((location) => {
                   const phone = "phone" in location ? location.phone : undefined;
                   return (
-                    <a
+                    <TrackedLink
                       key={location.slug}
+                      event="directions_click"
+                      eventParams={{
+                        platform: "google_maps",
+                        location: location.slug,
+                        placement: "order_page",
+                      }}
                       href={location.mapsUrl}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -129,7 +140,7 @@ export function OrderInfo() {
                       <span aria-hidden className={styles.linkRowArrow}>
                         →
                       </span>
-                    </a>
+                    </TrackedLink>
                   );
                 })}
               </div>

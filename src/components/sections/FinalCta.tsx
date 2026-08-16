@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { brand } from "@/lib/brand";
 import styles from "@/components/shared/Page.module.css";
+import { TrackedLink } from "@/components/shared/TrackedLink";
 
 /*
   Closing band for Our Story and Order. Was a lime-green panel beside a boxed
@@ -38,14 +39,16 @@ export function FinalCta() {
             <Link href="/menu" className={`${styles.btn} ${styles.btnPrimary}`}>
               View the menu
             </Link>
-            <a
+            <TrackedLink
+              event="order_click"
+              eventParams={{ platform: "ubereats", placement: "final_cta" }}
               href={brand.orderUrl}
               target="_blank"
               rel="noopener noreferrer"
               className={`${styles.btn} ${styles.btnGhost}`}
             >
               Order delivery
-            </a>
+            </TrackedLink>
           </div>
         </div>
       </div>

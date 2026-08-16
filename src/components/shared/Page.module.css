@@ -207,9 +207,21 @@
   border-top: 1px solid rgb(245 236 223 / 0.12);
 }
 
+/*
+  The media box takes the SOURCE image's own aspect ratio, passed in as
+  --media-ratio by whoever renders the row.
+
+  It was hardcoded to 4/3. Nine of the ten menu photographs are portrait
+  (0.67–0.80), as are the Mount Lawley storefront and the founder portrait — so
+  a 4/3 box with object-fit: cover was slicing roughly the top and bottom
+  third off almost every image on the site. On the açaí bowl that removed about
+  half the picture and the product stopped being legible.
+
+  4/3 remains the fallback for any caller that does not pass a ratio.
+*/
 .rowMedia {
   position: relative;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: var(--media-ratio, 4 / 3);
   overflow: hidden;
   background: var(--ds-paper-warm);
 }

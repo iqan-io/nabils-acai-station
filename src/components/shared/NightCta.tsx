@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { brand } from "@/lib/brand";
 import styles from "@/components/shared/Page.module.css";
+import { TrackedLink } from "@/components/shared/TrackedLink";
 
 export function NightCta({
   secondaryHref,
@@ -32,14 +33,16 @@ export function NightCta({
             className={styles.closingActions}
             style={{ justifyContent: "center", marginTop: "var(--ds-step-4)" }}
           >
-            <a
+            <TrackedLink
+              event="order_click"
+              eventParams={{ platform: "ubereats", placement: "night_cta" }}
               href={brand.orderUrl}
               target="_blank"
               rel="noopener noreferrer"
               className={`${styles.btn} ${styles.btnPrimary}`}
             >
               Order on Uber Eats
-            </a>
+            </TrackedLink>
             <Link href={secondaryHref} className={`${styles.btn} ${styles.btnGhost}`}>
               {secondaryLabel}
             </Link>

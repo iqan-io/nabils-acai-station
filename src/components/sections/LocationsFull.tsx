@@ -1,15 +1,23 @@
 import Image from "next/image";
 import { locations } from "@/lib/brand";
 import styles from "@/components/shared/Page.module.css";
+import { TrackedLink } from "@/components/shared/TrackedLink";
 
+// `w`/`h` are the files' real dimensions and set the media box's aspect ratio.
+// Mount Lawley is portrait and Ballajura landscape, so a single fixed ratio
+// cropped one or the other badly.
 const locationPhotos = [
   {
     src: "/images/locations/location-mount-lawley.png",
     alt: "Inside Nabil's Açaí Station in Mount Lawley",
+    w: 1086,
+    h: 1449,
   },
   {
     src: "/images/locations/location-ballajura.png",
     alt: "Nabil's Lebanese Sweets counter in Ballajura",
+    w: 1448,
+    h: 1086,
   },
 ] as const;
 
@@ -69,7 +77,14 @@ export function LocationsFull() {
               {/* Same editorial row as the menu: one large photograph, the
                   facts beside it, sides alternating down the page. */}
               <article className={`${styles.row} ${isNight ? styles.rowFlip : ""}`}>
-                <div className={styles.rowMedia}>
+                <div
+                  className={styles.rowMedia}
+                  style={
+                    photo
+                      ? ({ "--media-ratio": `${photo.w} / ${photo.h}` } as React.CSSProperties)
+                      : undefined
+                  }
+                >
                   {photo && (
                     <Image
                       src={photo.src}
@@ -110,21 +125,32 @@ export function LocationsFull() {
                   )}
 
                   <div className={styles.actions}>
-                    <a
+                    <TrackedLink
+                      event="directions_click"
+                      eventParams={{
+                        platform: "google_maps",
+                        location: location.slug,
+                        placement: "locations_page",
+                      }}
                       href={location.mapsUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className={`${styles.btn} ${isNight ? styles.btnPrimary : styles.btnInk}`}
                     >
                       Open in Maps
-                    </a>
+                    </TrackedLink>
                     {phone && (
-                      <a
+                      <TrackedLink
+                        event="call_click"
+                        eventParams={{
+                          location: location.slug,
+                          placement: "locations_page",
+                        }}
                         href={`tel:${phone.replace(/\s+/g, "")}`}
                         className={`${styles.btn} ${isNight ? styles.btnGhost : styles.btnOutline}`}
                       >
                         Call {phone}
-                      </a>
+                      </TrackedLink>
                     )}
                   </div>
                 </div>

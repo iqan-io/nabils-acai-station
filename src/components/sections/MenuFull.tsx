@@ -9,46 +9,72 @@ import styles from "@/components/shared/Page.module.css";
   without one (Matcha, Iced Lattes, Milkshakes) run as a compact list at the foot
   of their band; giving them an empty image column would only advertise the gap.
 */
-const featuredImage: Record<string, { src: string; alt: string }> = {
+const featuredImage: Record<
+  string,
+  { src: string; alt: string; w: number; h: number }
+> = {
+  // `w`/`h` are the real pixel dimensions of each file. They drive the media
+  // box's aspect ratio, so nothing is cropped. Nine of these ten are portrait;
+  // the waffle pack is the only landscape shot.
   "Açaí — Build Your Own": {
     src: "/images/enhanced/menu-acai.png",
     alt: "A Nabil's açaí bowl topped with strawberries, banana and chocolate drizzle",
+    w: 1024,
+    h: 1536,
   },
   "Classic Crêpes": {
     src: "/images/enhanced/menu-classic-crepe.png",
     alt: "A classic Nabil's crêpe with strawberries, banana and sauce",
+    w: 1122,
+    h: 1402,
   },
   "Signature Crêpes": {
     src: "/images/enhanced/menu-signature-crepe.png",
     alt: "A signature Nabil's crêpe with pistachio, chocolate and crushed nuts",
+    w: 1122,
+    h: 1402,
   },
   "Strawberry Cups": {
     src: "/images/enhanced/menu-strawberry-cup.png",
     alt: "A Nabil's strawberry cup with milk chocolate and pistachio",
+    w: 1024,
+    h: 1536,
   },
   "Dubai Chocolate": {
     src: "/images/enhanced/menu-dubai-chocolate.png",
     alt: "Nabil's pistachio-filled Dubai chocolate",
+    w: 1122,
+    h: 1402,
   },
   Brownies: {
     src: "/images/enhanced/menu-brownie.png",
     alt: "A Nabil's brownie dessert with milk chocolate and pistachio",
+    w: 1122,
+    h: 1402,
   },
   "Waffle Snack Pack": {
     src: "/images/enhanced/menu-waffle-snack-pack.png",
     alt: "A waffle snack pack with strawberries, banana and drizzle",
+    w: 1448,
+    h: 1086,
   },
   "Fruit Cocktails": {
     src: "/images/enhanced/fruit-cocktail-client-enhanced.jpg",
     alt: "A Nabil's fruit cocktail layered with fruit, ashta, cashew and honey",
+    w: 1122,
+    h: 1402,
   },
   Mocktails: {
     src: "/images/enhanced/menu-mocktails.png",
     alt: "A bright Nabil's mocktail over ice",
+    w: 1086,
+    h: 1448,
   },
   "Probiotic Splash": {
     src: "/images/enhanced/menu-probiotic-splash.png",
     alt: "Two sparkling probiotic splash drinks with citrus and ice",
+    w: 1122,
+    h: 1402,
   },
 };
 
@@ -86,7 +112,10 @@ function EditorialRow({
       id={menuSlug(section.title)}
       className={`${styles.row} ${flip ? styles.rowFlip : ""}`}
     >
-      <div className={styles.rowMedia}>
+      <div
+        className={styles.rowMedia}
+        style={{ "--media-ratio": `${media.w} / ${media.h}` } as React.CSSProperties}
+      >
         <Image
           src={media.src}
           alt={media.alt}

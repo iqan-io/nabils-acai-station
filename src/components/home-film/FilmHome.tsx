@@ -14,6 +14,7 @@ import {
   signatures,
 } from "@/lib/brand";
 import styles from "./FilmHome.module.css";
+import { track } from "@/lib/analytics";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -217,6 +218,9 @@ export function FilmHome() {
                   className={`${styles.btn} ${styles.btnGhost}`}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() =>
+                    track("order_click", { platform: "ubereats", placement: "home_hero" })
+                  }
                 >
                   Order delivery
                 </a>
@@ -387,6 +391,9 @@ export function FilmHome() {
               className={`${styles.btn} ${styles.btnGhost}`}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() =>
+                track("order_click", { platform: "ubereats", placement: "home_close" })
+              }
             >
               Uber Eats
             </a>
@@ -395,6 +402,9 @@ export function FilmHome() {
               className={`${styles.btn} ${styles.btnGhost}`}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() =>
+                track("order_click", { platform: "doordash", placement: "home_close" })
+              }
             >
               DoorDash
             </a>
@@ -483,6 +493,13 @@ export function FilmHome() {
                   className={`${styles.btn} ${styles.btnGhost}`}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() =>
+                    track("directions_click", {
+                      platform: "google_maps",
+                      location: mtLawley.slug,
+                      placement: "home_locations",
+                    })
+                  }
                 >
                   Directions
                 </a>
@@ -504,6 +521,12 @@ export function FilmHome() {
                 <a
                   href={brand.phoneHref}
                   className={`${styles.btn} ${styles.btnGhost}`}
+                  onClick={() =>
+                    track("call_click", {
+                      location: ballajura.slug,
+                      placement: "home_locations",
+                    })
+                  }
                 >
                   {brand.phone}
                 </a>
@@ -512,6 +535,13 @@ export function FilmHome() {
                   className={`${styles.btn} ${styles.btnGhost}`}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() =>
+                    track("directions_click", {
+                      platform: "google_maps",
+                      location: ballajura.slug,
+                      placement: "home_locations",
+                    })
+                  }
                 >
                   Directions
                 </a>

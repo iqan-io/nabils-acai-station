@@ -44,7 +44,12 @@ export function FounderFeature() {
           </header>
 
           <article className={styles.row}>
-            <div className={styles.rowMedia}>
+            {/* The founder portrait is 1023x1537; the old fixed 4/3 box cut his
+                head and the bakery racks out of frame. */}
+            <div
+              className={styles.rowMedia}
+              style={{ "--media-ratio": "1023 / 1537" } as React.CSSProperties}
+            >
               <Image
                 src={founder.photo}
                 alt={`${founder.name}, ${founder.role} of Nabil's Açaí Station`}
