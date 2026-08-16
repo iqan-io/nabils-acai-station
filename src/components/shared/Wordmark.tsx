@@ -47,11 +47,11 @@ export function Wordmark({
           } ${sizes.mark}`}
         >
           <Image
-            src="/images/enhanced/brand-mascot-medallion.jpg"
+            src="/brand/logo-round.png"
             alt=""
             aria-hidden
-            width={sizes.markPx}
-            height={sizes.markPx}
+            width={1024}
+            height={1024}
             className="h-full w-full object-cover"
           />
         </span>

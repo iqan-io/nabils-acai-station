@@ -52,12 +52,12 @@ export function Hero() {
       <div className="relative mx-auto flex min-h-[calc(100svh-5rem)] max-w-4xl flex-col items-center justify-end px-6 pb-16 pt-24 text-center md:min-h-[46rem] md:pb-20">
         <div className="rise-in rise-in-delay-1">
           <Image
-            src="/images/logo-400.png"
+            src="/brand/logo-round.png"
             alt={brand.name}
-            width={220}
-            height={220}
+            width={1024}
+            height={1024}
             priority
-            className="h-24 w-24 drop-shadow-[0_20px_55px_rgba(0,0,0,0.65)] sm:h-32 sm:w-32"
+            className="size-32 drop-shadow-[0_20px_55px_rgba(0,0,0,0.65)] sm:size-44"
           />
         </div>
 

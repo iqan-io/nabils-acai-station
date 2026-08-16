@@ -101,7 +101,7 @@ export function localBusinessJsonLd() {
         "@id": absoluteUrl("/#organization"),
         name: brand.name,
         url: siteUrl,
-        logo: absoluteUrl("/images/mascot-decal.jpg"),
+        logo: absoluteUrl("/brand/logo-round.png"),
         sameAs: [
           brand.instagram.url,
           brand.tiktok.url,

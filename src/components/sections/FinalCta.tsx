@@ -15,7 +15,7 @@ export function FinalCta() {
       </div>
       <div className="relative min-h-[28rem] border-t-2 border-[#47206e] lg:border-l-2 lg:border-t-0">
         <Image src="/images/enhanced/fruit-cocktail-client-enhanced.jpg" alt="Nabil's fruit cocktail layered with fruit, ashta, cashew and pistachio" fill quality={90} sizes="(max-width: 1023px) 100vw, 45vw" className="object-cover" />
-        <Image src="/images/logo-192.png" alt="" width={112} height={112} unoptimized className="absolute bottom-5 right-5 size-28 object-contain" />
+        <Image src="/brand/logo-round.png" alt="" width={1024} height={1024} className="absolute bottom-5 right-5 size-32 object-contain drop-shadow-[0_10px_24px_rgba(0,0,0,0.45)] md:size-40" />
       </div>
     </section>
   );

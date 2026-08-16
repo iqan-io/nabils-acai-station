@@ -53,13 +53,15 @@ export function Navbar() {
     >
       <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-4 sm:px-6 lg:h-[80px] lg:px-10">
         <a href="/" aria-label="Nabil's Açaí Station home" className="group inline-flex min-h-11 items-center gap-3">
+          {/* One round badge serves every logo slot on the site. It is square
+              and self-contained, so it needs no cropping and its circle reads
+              as the brand even at bar height, where interior detail cannot. */}
           <Image
-            src="/images/logo-192.png"
+            src="/brand/logo-round.png"
             alt="Nabil's Açaí Station"
-            width={56}
-            height={56}
+            width={1024}
+            height={1024}
             priority
-            unoptimized
             className="size-14 object-contain transition-transform duration-300 ease-out group-hover:scale-[1.03] lg:size-16"
           />
           <span

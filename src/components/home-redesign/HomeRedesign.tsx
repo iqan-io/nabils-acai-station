@@ -114,12 +114,11 @@ export function HomeRedesign() {
 
         <div className={styles.heroSeal} aria-hidden>
           <Image
-            src="/images/logo-192.png"
+            src="/brand/logo-round.png"
             alt=""
-            width={120}
-            height={120}
+            width={1024}
+            height={1024}
             priority
-            unoptimized
           />
         </div>
       </section>
@@ -277,11 +276,10 @@ export function HomeRedesign() {
 
       <section className={styles.finalCta} aria-labelledby="final-title">
         <Image
-          src="/images/logo-400.png"
+          src="/brand/logo-round.png"
           alt=""
-          width={180}
-          height={180}
-          unoptimized
+          width={1024}
+          height={1024}
           className={styles.finalSeal}
         />
         <div>

@@ -16,12 +16,11 @@ export function Footer() {
           <div className="md:col-span-5">
             <a href="/" aria-label="Nabil's Açaí Station home" className="inline-flex items-center gap-4">
               <Image
-                src="/images/logo-192.png"
+                src="/brand/logo-round.png"
                 alt="Nabil's Açaí Station"
-                width={76}
-                height={76}
-                unoptimized
-                className="size-[4.75rem] object-contain"
+                width={1024}
+                height={1024}
+                className="size-24 object-contain"
               />
               <span>
                 <span className="font-home-display block text-4xl leading-none">Nabil&apos;s</span>
