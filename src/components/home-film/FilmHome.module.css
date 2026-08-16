@@ -105,8 +105,12 @@
   width: 100%;
   max-width: var(--f-shell);
   text-align: center;
-  /* GSAP owns opacity/transform from here; this is the pre-paint state. */
+  /* GSAP owns opacity/visibility from here; this is the pre-paint state.
+     All four beats share one grid cell, so a faded-out beat still sits on top of
+     the hero's buttons. `opacity: 0` alone keeps hit-testing them and swallows
+     the clicks, so visibility is toggled with it (GSAP `autoAlpha`). */
   opacity: 0;
+  visibility: hidden;
   will-change: opacity, transform;
 }
 
@@ -116,6 +120,7 @@
 */
 .chapter[data-chapter="hero"] {
   opacity: 1;
+  visibility: visible;
 }
 
 .eyebrow {
@@ -666,6 +671,7 @@
 
 .root[data-reduced="true"] .chapter {
   opacity: 1;
+  visibility: visible;
   transform: none;
   margin-bottom: var(--f-step-6);
 }

@@ -120,17 +120,20 @@ export function FilmHome() {
         if (!el) return;
         const span = chapter.out - chapter.in;
         const fade = Math.min(0.06, span / 3);
+        // autoAlpha, not opacity: it drives `visibility` alongside opacity so a
+        // faded-out beat stops hit-testing. All four share one grid cell, and an
+        // opacity-0 overlay still eats clicks meant for the hero's buttons.
         if (!chapter.holds) {
           tl.fromTo(
             el,
-            { opacity: 0, y: 40 },
-            { opacity: 1, y: 0, duration: fade, ease: "power3.out" },
+            { autoAlpha: 0, y: 40 },
+            { autoAlpha: 1, y: 0, duration: fade, ease: "power3.out" },
             chapter.in,
           );
         }
         tl.to(
           el,
-          { opacity: 0, y: -30, duration: fade, ease: "power2.in" },
+          { autoAlpha: 0, y: -30, duration: fade, ease: "power2.in" },
           chapter.out - fade,
         );
       });

@@ -112,6 +112,33 @@ const settle = (ms) => new Promise((r) => setTimeout(r, ms));
   );
   check("four chapter beats present", chapters === 4, `got ${chapters}`);
 
+  // The four beats share one grid cell. A faded-out beat that still hit-tests
+  // sits on top of the hero and swallows its clicks — which is exactly what
+  // shipped once. Hit-test the real coordinates, don't trust that the link
+  // exists in the DOM.
+  const cta = await page.evaluate(() => {
+    const out = [];
+    for (const label of ["See the menu", "Order delivery"]) {
+      const el = [...document.querySelectorAll("a")].find(
+        (a) => a.textContent.trim() === label,
+      );
+      if (!el) { out.push({ label, ok: false, why: "not found" }); continue; }
+      const r = el.getBoundingClientRect();
+      let n = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+      const top = n;
+      while (n && n !== el) n = n.parentElement;
+      let why = "";
+      if (!n && top) {
+        let b = top;
+        while (b && !b.hasAttribute?.("data-chapter")) b = b.parentElement;
+        why = b ? `blocked by [data-chapter="${b.getAttribute("data-chapter")}"]` : "blocked";
+      }
+      out.push({ label, ok: Boolean(n), why });
+    }
+    return out;
+  });
+  for (const c of cta) check(`hero CTA clickable: ${c.label}`, c.ok, c.why);
+
   // Scrubbing: scrolling into the film must advance currentTime.
   const startTime = await page.evaluate(() => document.querySelector("video").currentTime);
   await page.evaluate(() => {
