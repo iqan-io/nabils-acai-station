@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { MenuHero, MenuFull } from "@/components/sections/MenuFull";
 import { CategoryNav } from "@/components/menu/CategoryNav";
-import { NightCta } from "@/components/shared/NightCta";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
@@ -22,8 +21,9 @@ export default function Page() {
     <>
       <MenuHero />
       <CategoryNav />
+      {/* NightCta removed here: MenuFull now closes on its own night band with
+          the same two actions, so the old purple/lime CTA was a duplicate. */}
       <MenuFull />
-      <NightCta secondaryHref="/locations" secondaryLabel="Find a store" />
     </>
   );
 }

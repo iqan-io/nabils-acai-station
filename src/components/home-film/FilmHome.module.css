@@ -10,29 +10,30 @@
    --------------------------------------------------------------------------- */
 
 .root {
-  /* Grounds */
-  --f-night: #160b18;
-  --f-night-soft: #241128;
-  --f-paper: #f5ecdf;
-  /* Ink */
-  --f-ink: #160b18;
-  --f-ink-invert: #f5ecdf;
-  /* One accent, used on roughly five things across the whole page. */
-  --f-honey: #d9a441;
-  /* One muted, for supporting/utility text only. */
-  --f-muted: #8d7f93;
+  /*
+    These were the film's own tokens. They are now the site's, defined in
+    globals.css as --ds-*, and aliased here so the film keeps its local names
+    without holding a second copy of the values. Change a colour there, not here.
+  */
+  --f-night: var(--ds-night);
+  --f-night-soft: var(--ds-night-soft);
+  --f-paper: var(--ds-paper);
+  --f-ink: var(--ds-ink);
+  --f-ink-invert: var(--ds-ink-invert);
+  --f-honey: var(--ds-honey);
+  --f-muted: var(--ds-muted);
 
-  --f-step-1: 0.5rem;
-  --f-step-2: 1rem;
-  --f-step-3: 1.5rem;
-  --f-step-4: 2.5rem;
-  --f-step-5: 4rem;
-  --f-step-6: 6rem;
+  --f-step-1: var(--ds-step-1);
+  --f-step-2: var(--ds-step-2);
+  --f-step-3: var(--ds-step-3);
+  --f-step-4: var(--ds-step-4);
+  --f-step-5: var(--ds-step-5);
+  --f-step-6: var(--ds-step-6);
 
   --f-display: var(--font-display);
   --f-body: var(--font-sans);
 
-  --f-shell: 78rem;
+  --f-shell: var(--ds-shell);
 
   background: var(--f-night);
   color: var(--f-ink-invert);

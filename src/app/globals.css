@@ -64,7 +64,71 @@
   font-display: swap;
 }
 
+/* ---------------------------------------------------------------------------
+   THE SITE DESIGN SYSTEM.
+
+   These tokens were the homepage film's private vocabulary (`--f-*` inside
+   FilmHome.module.css). The film is the only surface that reads premium, and it
+   does so by subtraction: two grounds, one ink, ONE accent used about five times
+   a page, a single spacing scale, and a lot of empty space.
+
+   Everything else on the site was inherited from the older Counter redesign and
+   used twelve hardcoded hexes across four competing saturated accents — flat
+   yellow, lime and red blocks inside 2px outlines. That is the visual grammar of
+   a fast-food menu board, and it is why the inner pages read as childish next to
+   the homepage.
+
+   So the film's vocabulary is promoted here and becomes the whole site's. Rules:
+     - Two grounds only: --ds-night and --ds-paper. Alternate them for rhythm.
+     - ONE accent: --ds-honey. If a page needs a second accent, it needs less.
+     - No hard borders. Hairlines at low opacity, or nothing.
+     - Space comes from --ds-step-*; never ad-hoc padding.
+   --------------------------------------------------------------------------- */
 :root {
+  /* Grounds */
+  --ds-night: #160b18;
+  --ds-night-soft: #241128;
+  --ds-paper: #f5ecdf;
+  --ds-paper-warm: #ede2d2;
+  /* Ink */
+  --ds-ink: #160b18;
+  --ds-ink-invert: #f5ecdf;
+  --ds-ink-soft: #4a3f50;
+  /* The one accent. Deeper honey on paper, lighter gold on night, because the
+     same gold cannot hold contrast against both grounds. */
+  --ds-honey: #d9a441;
+  --ds-honey-light: #f2c879;
+  --ds-honey-deep: #8a5f12;
+  /* Supporting/utility text only. */
+  --ds-muted: #8d7f93;
+
+  /*
+    Bare RGB triplets of the two grounds/inks above.
+
+    Tailwind cannot apply an opacity modifier to a var-based colour: `bg-[var(--ds-paper)]/95`
+    silently emits nothing, so the element ends up fully transparent rather than
+    slightly transparent. That is how the navbar and the sticky menu bar shipped
+    with no background at all — invisible dark-on-dark the moment either one
+    scrolled over a night band.
+
+    Use `rgb(var(--ds-paper-rgb)/0.95)` in Tailwind arbitrary values instead. The
+    spaces live inside the variable, so the utility stays space-free and parses.
+  */
+  --ds-night-rgb: 22 11 24;
+  --ds-paper-rgb: 245 236 223;
+  --ds-ink-rgb: 22 11 24;
+  --ds-ink-invert-rgb: 245 236 223;
+
+  /* One spacing scale for every section, gap and inset. */
+  --ds-step-1: 0.5rem;
+  --ds-step-2: 1rem;
+  --ds-step-3: 1.5rem;
+  --ds-step-4: 2.5rem;
+  --ds-step-5: 4rem;
+  --ds-step-6: 6rem;
+
+  --ds-shell: 78rem;
+
   --night-plum: #160b18;
   --deep-plum: #3b1440;
   --arch-mauve: #63305f;

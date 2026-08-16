@@ -94,12 +94,16 @@ export function CategoryNav() {
   };
 
   return (
+    // Night ground with a hairline underneath, matching the film's bands. The
+    // active chip is the one accent; the rest are quiet text. Previously this
+    // was a solid purple bar of outlined chips with a yellow active state and a
+    // lime hover — three accents competing inside one 52px strip.
     <nav
       aria-label="Menu categories"
-      className="sticky top-[72px] z-30 border-b-2 border-[#47206e] bg-[#47206e] font-home-body text-white lg:top-[80px]"
+      className="sticky top-[72px] z-30 border-b border-[rgb(var(--ds-ink-invert-rgb)/0.12)] bg-[rgb(var(--ds-night-rgb)/0.95)] font-home-body backdrop-blur lg:top-[80px]"
     >
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-10">
-        <ul className="no-scrollbar flex gap-2 overflow-x-auto py-3">
+      <div className="mx-auto max-w-[78rem] px-4 sm:px-6 lg:px-10">
+        <ul className="no-scrollbar flex gap-1 overflow-x-auto py-2.5">
           {categories.map((c) => {
             const isActive = active === c.label;
             return (
@@ -108,10 +112,10 @@ export function CategoryNav() {
                   href={`#${c.target}`}
                   onClick={(e) => onChipClick(e, c.label, c.target)}
                   aria-current={isActive ? "true" : undefined}
-                  className={`inline-flex min-h-11 items-center whitespace-nowrap border px-4 text-[0.68rem] font-bold uppercase tracking-[0.14em] transition-colors ${
+                  className={`inline-flex min-h-11 items-center whitespace-nowrap rounded-full px-4 text-[0.68rem] font-bold uppercase tracking-[0.16em] transition-colors ${
                     isActive
-                      ? "border-[#f3c52f] bg-[#f3c52f] text-[#32104f]"
-                      : "border-white/35 text-white hover:border-[#c4dc67] hover:text-[#c4dc67]"
+                      ? "bg-[var(--ds-honey)] text-[var(--ds-night)]"
+                      : "text-[rgb(var(--ds-ink-invert-rgb)/0.62)] hover:text-[var(--ds-honey-light)]"
                   }`}
                 >
                   {c.label}

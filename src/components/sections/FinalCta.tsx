@@ -1,21 +1,53 @@
 import Image from "next/image";
 import Link from "next/link";
+import { brand } from "@/lib/brand";
+import styles from "@/components/shared/Page.module.css";
 
+/*
+  Closing band for Our Story and Order. Was a lime-green panel beside a boxed
+  photo with a 2px purple frame; now the same night band the menu and the
+  homepage film close on, with the photograph full-bleed behind it.
+*/
 export function FinalCta() {
   return (
-    <section className="grid border-y-2 border-[#47206e] bg-[#c4dc67] text-[#32104f] lg:grid-cols-[1.1fr_0.9fr]">
-      <div className="flex flex-col justify-center p-8 sm:p-12 lg:p-16 xl:pl-[max(4rem,calc((100vw-80rem)/2))]">
-        <p className="font-home-body text-xs font-bold uppercase tracking-[0.14em] text-[#ef2b37]">Come say hi</p>
-        <h2 className="mt-4 max-w-3xl font-home-display text-4xl leading-[1.05] text-[#47206e] md:text-6xl">The menu is calling.</h2>
-        <p className="mt-6 max-w-xl font-home-body text-lg leading-8 text-[#32104f]/80">Walk in, order delivery or pick the sweet you&apos;re thinking about before someone else adds three toppings.</p>
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          <Link href="/menu" className="inline-flex min-h-12 items-center justify-center bg-[#47206e] px-7 font-home-body text-xs font-bold uppercase tracking-[0.14em] text-white hover:bg-[#ef2b37]">View the menu →</Link>
-          <Link href="/locations" className="inline-flex min-h-12 items-center justify-center border-2 border-[#47206e] px-7 font-home-body text-xs font-bold uppercase tracking-[0.14em] text-[#47206e] hover:bg-white">Find a store</Link>
+    <section className={styles.root} aria-labelledby="final-cta-title">
+      <div className={styles.opening} style={{ minHeight: "44vh" }}>
+        <Image
+          className={styles.openingMedia}
+          src="/images/enhanced/fruit-cocktail-client-enhanced.jpg"
+          alt=""
+          aria-hidden="true"
+          fill
+          quality={90}
+          sizes="100vw"
+        />
+        <div className={styles.openingScrim} />
+        <div className={styles.openingInner}>
+          <span className={styles.eyebrow}>Come say hi</span>
+          <h2 id="final-cta-title" className={styles.openingTitle}>
+            The menu is calling
+          </h2>
+          <p className={styles.openingLede}>
+            Walk in, order delivery, or pick the sweet you&apos;re thinking about
+            before someone else adds three toppings.
+          </p>
+          <div
+            className={styles.closingActions}
+            style={{ justifyContent: "center", marginTop: "var(--ds-step-4)" }}
+          >
+            <Link href="/menu" className={`${styles.btn} ${styles.btnPrimary}`}>
+              View the menu
+            </Link>
+            <a
+              href={brand.orderUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`${styles.btn} ${styles.btnGhost}`}
+            >
+              Order delivery
+            </a>
+          </div>
         </div>
-      </div>
-      <div className="relative min-h-[28rem] border-t-2 border-[#47206e] lg:border-l-2 lg:border-t-0">
-        <Image src="/images/enhanced/fruit-cocktail-client-enhanced.jpg" alt="Nabil's fruit cocktail layered with fruit, ashta, cashew and pistachio" fill quality={90} sizes="(max-width: 1023px) 100vw, 45vw" className="object-cover" />
-        <Image src="/brand/logo-round.png" alt="" width={1024} height={1024} className="absolute bottom-5 right-5 size-32 object-contain drop-shadow-[0_10px_24px_rgba(0,0,0,0.45)] md:size-40" />
       </div>
     </section>
   );

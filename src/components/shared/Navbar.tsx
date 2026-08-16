@@ -47,8 +47,8 @@ export function Navbar() {
         isHome ? "fixed inset-x-0 top-0" : "sticky top-0"
       } ${
         overFilm
-          ? "border-b border-transparent bg-transparent text-[#f5ecdf]"
-          : "border-b border-[#47206e] bg-white text-[#32104f]"
+          ? "border-b border-transparent bg-transparent text-[var(--ds-ink-invert)]"
+          : "border-b border-[rgb(var(--ds-ink-rgb)/0.1)] bg-[rgb(var(--ds-paper-rgb)/0.95)] text-[var(--ds-ink)] backdrop-blur"
       }`}
     >
       <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-4 sm:px-6 lg:h-[80px] lg:px-10">
@@ -66,7 +66,7 @@ export function Navbar() {
           />
           <span
             className={`font-home-display hidden text-[1.7rem] leading-none sm:block ${
-              overFilm ? "text-[#f5ecdf]" : "text-[#47206e]"
+              overFilm ? "text-[var(--ds-ink-invert)]" : "text-[var(--ds-ink)]"
             }`}
           >
             Nabil&apos;s Açaí Station
@@ -83,14 +83,16 @@ export function Navbar() {
                 aria-current={active ? "page" : undefined}
                 className={`relative inline-flex min-h-11 items-center px-4 text-[0.72rem] font-semibold uppercase tracking-[0.18em] transition-colors ${
                   active
-                    ? "text-[#e12e3b]"
+                    ? overFilm
+                      ? "text-[var(--ds-honey-light)]"
+                      : "text-[var(--ds-honey-deep)]"
                     : overFilm
-                      ? "text-[#f5ecdf] hover:text-[#d9a441]"
-                      : "text-[#32104f] hover:text-[#e12e3b]"
+                      ? "text-[rgb(var(--ds-ink-invert-rgb)/0.72)] hover:text-[var(--ds-honey-light)]"
+                      : "text-[rgb(var(--ds-ink-rgb)/0.62)] hover:text-[var(--ds-honey-deep)]"
                 }`}
               >
                 {link.label}
-                {active && <span className="absolute inset-x-4 bottom-1 h-px bg-[#e12e3b]" />}
+                {active && <span className={`absolute inset-x-4 bottom-1 h-px ${overFilm ? "bg-[var(--ds-honey-light)]" : "bg-[var(--ds-honey-deep)]"}`} />}
               </Link>
             );
           })}
@@ -99,10 +101,10 @@ export function Navbar() {
         <div className="flex items-center gap-2">
           <Link
             href="/order"
-            className={`hidden min-h-11 items-center px-5 text-[0.68rem] font-bold uppercase tracking-[0.16em] transition-colors sm:inline-flex ${
+            className={`hidden min-h-11 items-center rounded-full px-6 text-[0.68rem] font-bold uppercase tracking-[0.16em] transition-colors sm:inline-flex ${
               overFilm
-                ? "border border-[#d9a441] bg-[#d9a441] text-[#160b18] hover:border-[#f5ecdf] hover:bg-[#f5ecdf]"
-                : "border border-[#47206e] bg-[#47206e] text-white hover:border-[#e12e3b] hover:bg-[#e12e3b]"
+                ? "bg-[var(--ds-honey)] text-[var(--ds-night)] hover:bg-[var(--ds-honey-light)]"
+                : "bg-[var(--ds-night)] text-[var(--ds-ink-invert)] hover:bg-[var(--ds-honey)] hover:text-[var(--ds-night)]"
             }`}
           >
             Order
@@ -112,10 +114,10 @@ export function Navbar() {
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
             onClick={() => setOpen((value) => !value)}
-            className={`relative inline-flex size-11 items-center justify-center border md:hidden ${
+            className={`relative inline-flex size-11 items-center justify-center rounded-full border md:hidden ${
               overFilm
-                ? "border-[#f5ecdf]/60 text-[#f5ecdf]"
-                : "border-[#47206e] text-[#47206e]"
+                ? "border-[rgb(var(--ds-ink-invert-rgb)/0.45)] text-[var(--ds-ink-invert)]"
+                : "border-[rgb(var(--ds-ink-rgb)/0.25)] text-[var(--ds-ink)]"
             }`}
           >
             <span className="sr-only">{open ? "Close menu" : "Open menu"}</span>
@@ -127,7 +129,7 @@ export function Navbar() {
       </div>
 
       {open && (
-        <nav aria-label="Mobile primary" className="border-t border-[#47206e] bg-white px-4 pb-5 pt-3 md:hidden">
+        <nav aria-label="Mobile primary" className="border-t border-[rgb(var(--ds-ink-rgb)/0.1)] bg-[var(--ds-paper)] px-4 pb-5 pt-3 md:hidden">
           <div className="mx-auto flex max-w-7xl flex-col">
             {links.map((link) => {
               const active = pathname.startsWith(link.href);
@@ -136,16 +138,16 @@ export function Navbar() {
                   key={link.href}
                   href={link.href}
                   aria-current={active ? "page" : undefined}
-                  className={`flex min-h-12 items-center justify-between border-b border-[#47206e]/20 px-2 font-home-display text-2xl ${active ? "text-[#e12e3b]" : "text-[#47206e]"}`}
+                  className={`flex min-h-12 items-center justify-between border-b border-[rgb(var(--ds-ink-rgb)/0.1)] px-2 font-home-display text-2xl ${active ? "text-[var(--ds-honey-deep)]" : "text-[var(--ds-ink)]"}`}
                 >
                   {link.label}
-                  <span aria-hidden className="font-home-body text-sm text-[#e12e3b]">→</span>
+                  <span aria-hidden className="font-home-body text-sm text-[var(--ds-honey-deep)]">→</span>
                 </Link>
               );
             })}
             <Link
               href="/order"
-              className="mt-5 inline-flex min-h-12 items-center justify-center bg-[#47206e] px-6 text-xs font-bold uppercase tracking-[0.18em] text-white"
+              className="mt-5 inline-flex min-h-12 items-center justify-center rounded-full bg-[var(--ds-night)] px-6 text-xs font-bold uppercase tracking-[0.18em] text-[var(--ds-ink-invert)]"
             >
               Order options
             </Link>

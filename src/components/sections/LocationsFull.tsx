@@ -1,23 +1,41 @@
 import Image from "next/image";
 import { locations } from "@/lib/brand";
-import { StarRating } from "@/components/shared/Ornaments";
+import styles from "@/components/shared/Page.module.css";
 
 const locationPhotos = [
-  { src: "/images/locations/location-mount-lawley.png", alt: "Inside Nabil's Açaí Station in Mount Lawley" },
-  { src: "/images/locations/location-ballajura.png", alt: "Nabil's Lebanese Sweets counter in Ballajura" },
+  {
+    src: "/images/locations/location-mount-lawley.png",
+    alt: "Inside Nabil's Açaí Station in Mount Lawley",
+  },
+  {
+    src: "/images/locations/location-ballajura.png",
+    alt: "Nabil's Lebanese Sweets counter in Ballajura",
+  },
 ] as const;
 
 export function LocationsHero() {
   return (
-    <section className="grid min-h-[35rem] border-b-2 border-[#47206e] bg-[#c4dc67] lg:grid-cols-[0.92fr_1.08fr]">
-      <div className="flex flex-col justify-center px-6 py-16 sm:px-10 lg:px-[max(2.5rem,calc((100vw-80rem)/2))]">
-        <p className="font-home-body text-sm font-bold uppercase tracking-[0.12em] text-[#ef2b37]">Mount Lawley + Ballajura</p>
-        <h1 className="mt-5 max-w-xl font-home-display text-[clamp(2.6rem,6vw,4.5rem)] leading-[1.02] text-[#47206e]">Find your station.</h1>
-        <p className="mt-7 max-w-[52ch] font-home-body text-lg leading-8 text-[#32104f]">Two Perth counters for açaí, crêpes, Dubai chocolate and the group order that keeps growing.</p>
-      </div>
-      <div className="relative min-h-[27rem] border-t-2 border-[#47206e] lg:border-l-2 lg:border-t-0">
-        <Image src="/images/enhanced/location-mt-lawley-storefront-v2.jpg" alt="Nabil's Açaí Station on Beaufort Street in Mount Lawley" fill priority quality={90} sizes="(max-width: 1023px) 100vw, 55vw" className="object-cover" />
-        <span className="absolute bottom-5 left-5 bg-[#f3c52f] px-5 py-3 font-home-display text-xl text-[#47206e]">Two shops. Same big sweet energy.</span>
+    <section className={styles.opening} aria-labelledby="locations-title">
+      <Image
+        className={styles.openingMedia}
+        src="/images/enhanced/location-mt-lawley-storefront-v2.jpg"
+        alt=""
+        aria-hidden="true"
+        fill
+        priority
+        quality={90}
+        sizes="100vw"
+      />
+      <div className={styles.openingScrim} />
+      <div className={styles.openingInner}>
+        <span className={styles.eyebrow}>Mount Lawley + Ballajura</span>
+        <h1 id="locations-title" className={styles.openingTitle}>
+          Find your station
+        </h1>
+        <p className={styles.openingLede}>
+          Two Perth counters for açaí, crêpes, Dubai chocolate and the group
+          order that keeps growing.
+        </p>
       </div>
     </section>
   );
@@ -25,41 +43,96 @@ export function LocationsHero() {
 
 export function LocationsFull() {
   return (
-    <section className="bg-white text-[#32104f]">
-      <div className="mx-auto max-w-6xl px-6 py-16 md:py-24 lg:px-10">
-        <div className="space-y-16 md:space-y-24">
-          {locations.map((location, index) => (
-            <article key={location.slug} id={location.slug} className="grid scroll-mt-28 border-2 border-[#47206e] lg:grid-cols-2">
-              <div className={`relative min-h-[28rem] ${index === 1 ? "lg:order-2" : ""}`}>
-                <Image src={locationPhotos[index].src} alt={locationPhotos[index].alt} fill quality={90} sizes="(max-width: 1023px) 100vw, 50vw" className="object-cover" />
-                <span className="absolute left-0 top-0 bg-[#47206e] px-5 py-3 font-home-display text-xl text-white">0{index + 1}</span>
-              </div>
-              <div className={`flex flex-col justify-center border-t-2 border-[#47206e] p-7 sm:p-10 lg:border-t-0 ${index === 1 ? "bg-[#f3c52f] lg:order-1 lg:border-r-2" : "bg-[#ef2b37] text-white lg:border-l-2"}`}>
-                <p className={`font-home-body text-xs font-bold uppercase tracking-[0.14em] ${index === 1 ? "text-[#ef2b37]" : "text-[#f3c52f]"}`}>Nabil&apos;s location</p>
-                <h2 className={`mt-4 font-home-display text-3xl leading-[1.05] md:text-4xl ${index === 1 ? "text-[#47206e]" : "text-white"}`}>{location.name}</h2>
-                <div className="mt-5 flex flex-wrap items-center gap-3">
-                  <StarRating value={location.rating} />
-                  <span className="font-home-body text-sm font-bold tabular-nums">{location.rating} <span className="font-normal opacity-70">({location.reviewCount} reviews)</span></span>
+    <div className={styles.root}>
+      {locations.map((location, index) => {
+        const isNight = index % 2 === 1;
+        const photo = locationPhotos[index];
+        const phone = "phone" in location ? location.phone : undefined;
+
+        return (
+          <section
+            key={location.slug}
+            id={location.slug}
+            className={`${styles.band} ${isNight ? styles.night : styles.paper}`}
+            aria-labelledby={`loc-${location.slug}`}
+          >
+            <div className={styles.shell}>
+              <header className={styles.bandHead}>
+                <span className={styles.bandIndex}>
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <h2 id={`loc-${location.slug}`} className={styles.bandTitle}>
+                  {location.name}
+                </h2>
+              </header>
+
+              {/* Same editorial row as the menu: one large photograph, the
+                  facts beside it, sides alternating down the page. */}
+              <article className={`${styles.row} ${isNight ? styles.rowFlip : ""}`}>
+                <div className={styles.rowMedia}>
+                  {photo && (
+                    <Image
+                      src={photo.src}
+                      alt={photo.alt}
+                      fill
+                      quality={90}
+                      sizes="(min-width: 64rem) 40vw, (min-width: 48rem) 46vw, 100vw"
+                    />
+                  )}
                 </div>
-                <p className="mt-6 max-w-[46ch] font-home-body text-lg leading-8">{location.address}</p>
-                {location.note && <p className="mt-3 max-w-[46ch] font-home-body font-bold">{location.note}</p>}
-                {location.hours ? (
-                  <div className={`mt-7 border p-5 ${index === 1 ? "border-[#47206e] bg-white" : "border-white/50 bg-white text-[#32104f]"}`}>
-                    <p className="font-home-body text-xs font-bold uppercase tracking-[0.14em] text-[#ef2b37]">Hours</p>
-                    <dl className="mt-3 grid gap-x-7 text-sm sm:grid-cols-2">
-                      {location.hours.map(([day, hours]) => <div key={day} className="flex justify-between gap-4 border-b border-[#47206e]/20 py-2 font-home-body"><dt className="font-bold">{day}</dt><dd className="text-right tabular-nums">{hours}</dd></div>)}
+                <div className={styles.rowBody}>
+                  <span className={styles.kicker}>Nabil&apos;s location</span>
+                  <p className={styles.ratingLine}>
+                    <span>
+                      {location.rating}★ · {location.reviewCount} Google reviews
+                    </span>
+                  </p>
+                  <p className={styles.sectionLede}>{location.address}</p>
+                  {location.note && <p className={styles.note}>{location.note}</p>}
+
+                  {location.hours ? (
+                    <dl className={styles.dataList}>
+                      {location.hours.map(([day, hours]) => (
+                        <div key={day} className={styles.dataRow}>
+                          <dt>{day}</dt>
+                          <dd>{hours}</dd>
+                        </div>
+                      ))}
                     </dl>
+                  ) : (
+                    /* Ballajura's trading hours are still unconfirmed. Saying so
+                       is better than publishing a closing time we would be
+                       guessing at. */
+                    <p className={styles.note}>
+                      Trading hours for {location.name} aren&apos;t confirmed yet
+                      — call the shop before heading over.
+                    </p>
+                  )}
+
+                  <div className={styles.actions}>
+                    <a
+                      href={location.mapsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`${styles.btn} ${isNight ? styles.btnPrimary : styles.btnInk}`}
+                    >
+                      Open in Maps
+                    </a>
+                    {phone && (
+                      <a
+                        href={`tel:${phone.replace(/\s+/g, "")}`}
+                        className={`${styles.btn} ${isNight ? styles.btnGhost : styles.btnOutline}`}
+                      >
+                        Call {phone}
+                      </a>
+                    )}
                   </div>
-                ) : <p className={`mt-7 border p-4 font-home-body text-sm ${index === 1 ? "border-[#47206e]" : "border-white/50"}`}>Hours are not listed here. Call before visiting in the evening.</p>}
-                <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                  <a href={location.mapsUrl} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center justify-center bg-[#47206e] px-7 font-home-body text-xs font-bold uppercase tracking-[0.14em] text-white hover:bg-[#32104f]">Open in Maps →</a>
-                  {"phone" in location && location.phone && <a href={`tel:${location.phone.replace(/\s+/g, "")}`} className={`inline-flex min-h-12 items-center justify-center border px-7 font-home-body text-xs font-bold uppercase tracking-[0.14em] ${index === 1 ? "border-[#47206e] text-[#47206e]" : "border-white text-white"}`}>Call {location.phone}</a>}
                 </div>
-              </div>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
+              </article>
+            </div>
+          </section>
+        );
+      })}
+    </div>
   );
 }

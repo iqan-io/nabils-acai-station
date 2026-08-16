@@ -1,0 +1,711 @@
+/* ---------------------------------------------------------------------------
+   The menu, rebuilt on the homepage film's system.
+
+   What it replaced: a flat yellow hero block, then thirteen white cards in a
+   masonry column, each in a 2px purple outline with a coloured "Nabil's pick"
+   tab, dotted price leaders and a lime-green closing panel.
+
+   What it is now: one cinematic opening band, then the menu grouped into five
+   chapters that alternate paper and night exactly as the film's lower half
+   does. Inside a chapter, each section is an editorial row — one large image,
+   one column of prices — and the rows alternate side so the eye zigzags down
+   the page instead of scanning a grid of boxes.
+
+   Rules inherited from the film, and the reason this reads more expensive:
+   two grounds, one accent, hairlines instead of borders, and far more empty
+   space than feels comfortable while writing it.
+   --------------------------------------------------------------------------- */
+
+.root {
+  --m-shell: var(--ds-shell);
+  background: var(--ds-paper);
+  color: var(--ds-ink);
+}
+
+/* ------------------------------------------------------------------ opening */
+
+/*
+  The old hero was a colour block beside a boxed photo. This is the film's
+  opening grammar instead: full-bleed photograph, graded down, type centred over
+  it. It is the first thing after the homepage for most visitors, so it has to
+  feel like the same website.
+*/
+.opening {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 68vh;
+  min-height: 68svh;
+  padding: calc(var(--ds-step-6) + 3rem) var(--ds-step-3) var(--ds-step-6);
+  background: var(--ds-night);
+  overflow: hidden;
+}
+
+.openingMedia {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* The source is portrait and the subject sits high in the frame, so a landscape
+     crop is biased upward to keep the tower rather than centring on the cup. */
+  object-position: 50% 34%;
+  /* Same grade as the film so the two surfaces match. */
+  filter: saturate(1.05) contrast(1.04) brightness(0.72);
+}
+
+/*
+  Readability scrim. The radial pass guarantees a dark ground behind the centred
+  type wherever the photograph happens to be bright; the linear pass anchors the
+  top edge under the transparent navbar and the bottom edge into the next band.
+*/
+.openingScrim {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 76% 56% at 50% 50%, rgb(22 11 24 / 0.62) 0%, rgb(22 11 24 / 0) 100%),
+    linear-gradient(to bottom, rgb(22 11 24 / 0.8) 0%, rgb(22 11 24 / 0.28) 34%, rgb(22 11 24 / 0.34) 62%, rgb(22 11 24 / 0.9) 100%);
+  pointer-events: none;
+}
+
+.openingInner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 46rem;
+  text-align: center;
+}
+
+.eyebrow {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ds-honey-light);
+  font-variant-numeric: tabular-nums;
+}
+
+.openingTitle {
+  margin: var(--ds-step-3) 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 6.5vw, 5rem);
+  line-height: 1.02;
+  color: var(--ds-ink-invert);
+  text-wrap: balance;
+}
+
+.openingLede {
+  margin: var(--ds-step-3) auto 0;
+  max-width: 34rem;
+  font-family: var(--font-sans);
+  font-size: clamp(1rem, 1.6vw, 1.15rem);
+  line-height: 1.6;
+  color: rgb(245 236 223 / 0.86);
+  text-wrap: pretty;
+}
+
+.openingMeta {
+  margin: var(--ds-step-4) 0 0;
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgb(245 236 223 / 0.52);
+}
+
+/* -------------------------------------------------------------- chapter band */
+
+.band {
+  padding: var(--ds-step-6) var(--ds-step-3);
+}
+
+.paper {
+  background: var(--ds-paper);
+  color: var(--ds-ink);
+}
+
+.night {
+  background: var(--ds-night);
+  color: var(--ds-ink-invert);
+}
+
+.shell {
+  margin: 0 auto;
+  max-width: var(--m-shell);
+}
+
+.bandHead {
+  display: flex;
+  align-items: baseline;
+  gap: var(--ds-step-3);
+  margin-bottom: var(--ds-step-4);
+  padding-bottom: var(--ds-step-3);
+}
+
+/* Hairline, not a 2px outline. The whole page uses this one rule weight. */
+.paper .bandHead {
+  border-bottom: 1px solid rgb(22 11 24 / 0.14);
+}
+
+.night .bandHead {
+  border-bottom: 1px solid rgb(245 236 223 / 0.16);
+}
+
+.bandIndex {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ds-honey-deep);
+}
+
+.night .bandIndex {
+  color: var(--ds-honey-light);
+}
+
+.bandTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3.4vw, 2.6rem);
+  line-height: 1.04;
+  text-wrap: balance;
+}
+
+/* ------------------------------------------------------------- editorial row */
+
+.row {
+  display: grid;
+  gap: var(--ds-step-4);
+  grid-template-columns: 1fr;
+  padding: var(--ds-step-5) 0;
+  scroll-margin-top: 9rem;
+}
+
+/*
+  The band already pads 6rem top and bottom and the header adds its own margin.
+  Left alone, the first row's 4rem top padding stacks on top of that for ~10rem
+  of empty band before any content, and the same again at the foot. Collapse the
+  outer edges and let the band own the rhythm.
+*/
+.row:first-of-type {
+  padding-top: 0;
+}
+
+.row:last-of-type {
+  padding-bottom: 0;
+}
+
+.row + .row {
+  border-top: 1px solid rgb(22 11 24 / 0.1);
+}
+
+.night .row + .row {
+  border-top: 1px solid rgb(245 236 223 / 0.12);
+}
+
+.rowMedia {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--ds-paper-warm);
+}
+
+.night .rowMedia {
+  background: var(--ds-night-soft);
+}
+
+.rowMedia img {
+  object-fit: cover;
+  transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.row:hover .rowMedia img {
+  transform: scale(1.03);
+}
+
+.rowBody {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 2.2vw, 1.8rem);
+  line-height: 1.08;
+}
+
+.sectionLede {
+  margin: var(--ds-step-2) 0 0;
+  max-width: 46ch;
+  font-family: var(--font-sans);
+  font-size: 0.98rem;
+  line-height: 1.6;
+  color: var(--ds-ink-soft);
+}
+
+.night .sectionLede {
+  color: rgb(245 236 223 / 0.78);
+}
+
+/* ---------------------------------------------------------------- price list */
+
+.priceList {
+  margin: var(--ds-step-3) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/*
+  No dotted leaders. They are a diner-menu convention and they drag the eye
+  horizontally across empty space. A hairline row rule and a tabular figure do
+  the same job and look like a price list in a restaurant that charges more.
+*/
+/*
+  The rule belongs to the whole item, not to its name-and-price line. With the
+  border on .priceRow the description fell *below* the rule and read as an
+  intro to the next dish — "Bueno Crêpe / $14 / ——— / Hazelnut cream with Bueno
+  pieces." grouped the wrong way round. Putting it on the <li> keeps name, price
+  and note inside one band.
+*/
+.priceItem {
+  padding: 0.7rem 0;
+  border-bottom: 1px solid rgb(22 11 24 / 0.09);
+}
+
+.night .priceItem {
+  border-bottom: 1px solid rgb(245 236 223 / 0.1);
+}
+
+.priceRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--ds-step-3);
+}
+
+.itemName {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.itemPrice {
+  flex-shrink: 0;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--ds-honey-deep);
+}
+
+.night .itemPrice {
+  color: var(--ds-honey-light);
+}
+
+.itemNote {
+  margin: 0.2rem 0 0;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--ds-muted);
+}
+
+.night .itemNote {
+  color: rgb(245 236 223 / 0.58);
+}
+
+.footnote {
+  margin: var(--ds-step-3) 0 0;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--ds-muted);
+}
+
+.night .footnote {
+  color: rgb(245 236 223 / 0.58);
+}
+
+/* ------------------------------------------------- compact (imageless) rows */
+
+/*
+  Five of the thirteen sections have no photograph — the drinks, mostly. Giving
+  them an empty image column would advertise the gap, so they run as a compact
+  multi-column list inside the same band instead.
+*/
+.compactGrid {
+  display: grid;
+  gap: var(--ds-step-5);
+  grid-template-columns: 1fr;
+  padding-top: var(--ds-step-5);
+}
+
+/* When a band has photographed sections above, the compact list needs a rule to
+   separate it from them; when it is the only content, it must not float. */
+.row + .compactGrid {
+  margin-top: var(--ds-step-5);
+  border-top: 1px solid rgb(22 11 24 / 0.1);
+}
+
+.night .row + .compactGrid {
+  border-top: 1px solid rgb(245 236 223 / 0.12);
+}
+
+.compact {
+  scroll-margin-top: 9rem;
+}
+
+/* ------------------------------------------------------------------ closing */
+
+.closing {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ds-step-4);
+}
+
+.closingActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-step-2);
+}
+
+.closingText {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2.4rem);
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0 var(--ds-step-4);
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btnPrimary {
+  background: var(--ds-honey);
+  color: var(--ds-night);
+}
+
+.btnGhost {
+  border-color: rgb(245 236 223 / 0.42);
+  color: var(--ds-ink-invert);
+}
+
+.btnGhost:hover {
+  background: rgb(245 236 223 / 0.1);
+}
+
+.root a:focus-visible {
+  outline: 3px solid var(--ds-honey);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* --------------------------------------------------------------- responsive */
+
+@media (min-width: 48rem) {
+  .band {
+    padding: var(--ds-step-6) var(--ds-step-4);
+  }
+
+  .row {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--ds-step-5);
+    align-items: center;
+  }
+
+  /* Alternate the image side so the page zigzags rather than forming a column
+     of identical left-image rows. */
+  .rowFlip .rowMedia {
+    order: 2;
+  }
+
+  .compactGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 64rem) {
+  .row {
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: var(--ds-step-6);
+  }
+
+  .compactGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rowMedia img,
+  .btn {
+    transition: none;
+  }
+
+  .row:hover .rowMedia img {
+    transform: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Shared beyond the menu: locations, our story, order, specials.
+
+   These pages were each carrying their own colour scheme — lime for locations,
+   red for the story, purple-and-yellow for order — with 2px outlines around
+   every panel. They now use the same two grounds and the same one accent as the
+   menu and the homepage film, so the whole site reads as one property.
+   --------------------------------------------------------------------------- */
+
+/* A caption sitting on a photograph. Replaces the solid yellow/lime/red tabs
+   that used to be pinned to the corner of every image. */
+.mediaCaption {
+  position: absolute;
+  left: var(--ds-step-3);
+  bottom: var(--ds-step-3);
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  background: rgb(22 11 24 / 0.72);
+  backdrop-filter: blur(6px);
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ds-ink-invert);
+}
+
+/* Running text. Deliberately narrow — the old story page ran 90+ characters. */
+.prose {
+  margin: var(--ds-step-3) 0 0;
+  max-width: 60ch;
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: var(--ds-ink-soft);
+}
+
+.prose p + p {
+  margin-top: var(--ds-step-2);
+}
+
+.night .prose {
+  color: rgb(245 236 223 / 0.8);
+}
+
+/* Pull quote: a rule and the accent, not a filled lime box. */
+.quote {
+  margin: var(--ds-step-4) 0 0;
+  padding: 0 0 0 var(--ds-step-3);
+  border-left: 2px solid var(--ds-honey);
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 2vw, 1.5rem);
+  line-height: 1.35;
+  text-wrap: balance;
+}
+
+/* Key/value rows — trading hours, and anything else tabular. */
+.dataList {
+  margin: var(--ds-step-3) 0 0;
+  font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums;
+}
+
+.dataRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--ds-step-3);
+  padding: 0.45rem 0;
+  border-bottom: 1px solid rgb(22 11 24 / 0.09);
+  font-size: 0.92rem;
+}
+
+.night .dataRow {
+  border-bottom: 1px solid rgb(245 236 223 / 0.1);
+}
+
+.dataRow dt {
+  color: var(--ds-muted);
+}
+
+.night .dataRow dt {
+  color: rgb(245 236 223 / 0.6);
+}
+
+.dataRow dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+/* A row of buttons/links under a block. */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-step-2);
+  margin-top: var(--ds-step-4);
+}
+
+.btnInk {
+  background: var(--ds-night);
+  color: var(--ds-ink-invert);
+}
+
+.btnInk:hover {
+  background: var(--ds-honey);
+  color: var(--ds-night);
+}
+
+/* Outline variant for paper grounds — the ghost button is light-on-dark only. */
+.btnOutline {
+  border-color: rgb(22 11 24 / 0.28);
+  color: var(--ds-ink);
+}
+
+.btnOutline:hover {
+  background: rgb(22 11 24 / 0.06);
+}
+
+/* Tap-through rows: delivery platforms, pickup counters. */
+.linkRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ds-step-3);
+  padding: var(--ds-step-3) 0;
+  border-bottom: 1px solid rgb(22 11 24 / 0.1);
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 0.2s ease;
+}
+
+.night .linkRow {
+  border-bottom: 1px solid rgb(245 236 223 / 0.12);
+}
+
+.linkRow:hover {
+  opacity: 0.7;
+}
+
+.linkRowMain {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--ds-step-3);
+}
+
+.linkRowTitle {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  line-height: 1.15;
+}
+
+.linkRowNote {
+  display: block;
+  margin-top: 0.3rem;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--ds-muted);
+}
+
+.night .linkRowNote {
+  color: rgb(245 236 223 / 0.58);
+}
+
+.linkRowArrow {
+  flex-shrink: 0;
+  font-size: 1.15rem;
+  color: var(--ds-honey-deep);
+  transition: transform 0.2s ease;
+}
+
+.night .linkRowArrow {
+  color: var(--ds-honey-light);
+}
+
+.linkRow:hover .linkRowArrow {
+  transform: translateX(3px);
+}
+
+/* Two columns of blocks (order page). */
+.splitGrid {
+  display: grid;
+  gap: var(--ds-step-5);
+  grid-template-columns: 1fr;
+}
+
+/* Small uppercase caption above a heading, on either ground. */
+.kicker {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ds-honey-deep);
+}
+
+.night .kicker {
+  color: var(--ds-honey-light);
+}
+
+.ratingLine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ds-step-2);
+  margin-top: var(--ds-step-2);
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ds-muted);
+}
+
+.night .ratingLine {
+  color: rgb(245 236 223 / 0.68);
+}
+
+.note {
+  margin: var(--ds-step-3) 0 0;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--ds-muted);
+}
+
+.night .note {
+  color: rgb(245 236 223 / 0.58);
+}
+
+@media (min-width: 48rem) {
+  .splitGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--ds-step-6);
+  }
+}
