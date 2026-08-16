@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import ReactDOM from "react-dom";
 import { Analytics as VercelAnalytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
@@ -74,24 +75,26 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Both brand faces are above the fold on every route — Titan One in the first
+  // heading, Nunito in the nav — so both are preloaded. The Nunito italic and
+  // the Baloo 2 / Fredoka display fallbacks deliberately are not.
+  //
+  // This is ReactDOM.preload rather than a <link> in the tree: React hoists a
+  // rendered `link rel="preload"` into the head *and* keeps the element where
+  // it was declared, so the JSX form emitted every preload twice.
+  ReactDOM.preload("/fonts/titan-one-latin.woff2", {
+    as: "font",
+    type: "font/woff2",
+    crossOrigin: "anonymous",
+  });
+  ReactDOM.preload("/fonts/nunito-latin-variable.woff2", {
+    as: "font",
+    type: "font/woff2",
+    crossOrigin: "anonymous",
+  });
+
   return (
     <html lang="en" className="h-full antialiased">
-      <head>
-        <link
-          rel="preload"
-          href="/fonts/atkinson-hyperlegible-next-latin.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
-        <link
-          rel="preload"
-          href="/fonts/league-gothic-latin.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
-      </head>
       <body className="min-h-full flex flex-col bg-[var(--cream)] text-[var(--acai-deep)]">
         <Analytics />
         <VercelAnalytics />

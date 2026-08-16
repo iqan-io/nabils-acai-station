@@ -2,6 +2,52 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ---------------------------------------------------------------------------
+   Brand typography — Titan One + Nunito.
+
+   Titan One is the closest available match to the hand-lettered logo: very fat,
+   rounded, single-storey lowercase. It is the brand-extension face, used for
+   hero and section headings only. It is deliberately NOT used to re-set the
+   words "Nabil's Açaí Station" anywhere — that lockup ships as artwork from
+   /public/brand, because the gradient, the white inner stroke and the
+   compressed proportions are what make it the logo.
+
+   Nunito carries everything Titan One should not: navigation, body copy, menu
+   descriptions, prices, labels, forms. Its rounded terminals keep the warmth.
+
+   Both are self-hosted latin subsets (Google Fonts v32/v17) so the site makes
+   no third-party font request. Titan One ships a single 400 weight; Nunito is
+   variable 400–900 with a true italic, so nothing here is synthesised.
+   --------------------------------------------------------------------------- */
+
+@font-face {
+  font-family: "Titan One";
+  src: url("/fonts/titan-one-latin.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Nunito";
+  src: url("/fonts/nunito-latin-variable.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Nunito";
+  src: url("/fonts/nunito-latin-variable-italic.woff2") format("woff2");
+  font-style: italic;
+  font-weight: 400 900;
+  font-display: swap;
+}
+
+/* Declared, never requested. These sit behind Titan One in the display stack so
+   a failed Titan One request degrades to the two closest rounded display faces
+   rather than to Arial. A browser only fetches a @font-face it actually needs,
+   so neither costs a byte while Titan One is loading. */
 @font-face {
   font-family: "Baloo 2";
   src: url("/film/fonts/baloo-2-latin-variable.woff2") format("woff2");
@@ -15,22 +61,6 @@
   src: url("/film/fonts/fredoka-latin-variable.woff2") format("woff2");
   font-style: normal;
   font-weight: 300 700;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "League Gothic";
-  src: url("/fonts/league-gothic-latin.woff2") format("woff2");
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Atkinson Hyperlegible Next";
-  src: url("/fonts/atkinson-hyperlegible-next-latin.woff2") format("woff2");
-  font-style: normal;
-  font-weight: 400 700;
   font-display: swap;
 }
 
@@ -52,16 +82,23 @@
   --lavender: #d9c9d6;
   --saffron: var(--gold-highlight);
   --cedar: #667849;
-  --font-display: "League Gothic", Impact, "Arial Narrow", sans-serif;
-  --font-sans: "Atkinson Hyperlegible Next", "Segoe UI", sans-serif;
-  --font-home-display: "League Gothic", Impact, "Arial Narrow", sans-serif;
-  --font-home-body: "Atkinson Hyperlegible Next", "Segoe UI", sans-serif;
+  --font-display: "Titan One", "Baloo 2", "Fredoka", system-ui, sans-serif;
+  --font-sans: "Nunito", "Segoe UI", system-ui, sans-serif;
+  --font-home-display: var(--font-display);
+  --font-home-body: var(--font-sans);
 }
 
-/* Baloo 2 / Fredoka ship no italic faces — swap emphasis to weight instead of a synthesized oblique. */
-.italic {
-  font-style: normal;
-  font-weight: 600;
+/* Titan One is a single upright 400. Anything that lands `italic` or a bold
+   weight on a display element would be synthesised — a smeared oblique or a
+   faked bold on an already-fat face. Turn synthesis off there and let the
+   display face stay exactly as drawn; emphasis on those elements comes from
+   size and colour instead. Nunito keeps real italics and real weights. */
+.font-display,
+.font-home-display,
+h1,
+h2,
+h3 {
+  font-synthesis: none;
 }
 
 html,
@@ -81,11 +118,18 @@ body {
   color: var(--cream);
 }
 
+/* The previous display face was League Gothic — an ultra-condensed all-caps
+   face, so every heading was uppercased and tracked in by -0.015em to keep it
+   from falling apart. Titan One is the opposite shape: wide, fat and drawn for
+   mixed case, and its single-storey lowercase is the part that actually echoes
+   the logo. Uppercasing it throws that character away and roughly doubles the
+   measure. So headings run in sentence case at neutral tracking, and only the
+   small Nunito eyebrows and labels stay uppercase. */
 .font-display {
   font-family: var(--font-display);
   font-weight: 400;
-  letter-spacing: -0.015em;
-  text-transform: uppercase;
+  letter-spacing: 0;
+  line-height: 1.02;
 }
 
 html {
@@ -95,8 +139,8 @@ html {
 .font-home-display {
   font-family: var(--font-home-display);
   font-weight: 400;
-  letter-spacing: -0.015em;
-  text-transform: uppercase;
+  letter-spacing: 0;
+  line-height: 1.02;
 }
 
 .font-home-body {
@@ -108,8 +152,8 @@ h2,
 h3 {
   font-family: var(--font-display);
   font-weight: 400;
-  letter-spacing: -0.015em;
-  text-transform: uppercase;
+  letter-spacing: 0;
+  line-height: 1.05;
   text-wrap: balance;
 }
 
@@ -117,10 +161,17 @@ h3 {
   letter-spacing: 0;
 }
 
+/* Display type at heading sizes needs a hair of negative tracking back; at
+   small sizes Titan One needs the room. Kept off the base rule so it only
+   applies where the type is actually large. */
+h1 {
+  letter-spacing: -0.01em;
+}
+
 .brand-bubble-text {
-  font-family: var(--font-display), Georgia, serif;
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 400;
+  letter-spacing: 0;
   text-shadow:
     0 2px 0 rgba(244, 184, 96, 0.7),
     0 5px 16px rgba(61, 23, 71, 0.22);
@@ -128,7 +179,7 @@ h3 {
 
 .brand-mini-text {
   font-family: var(--font-sans), "Segoe UI", sans-serif;
-  font-weight: 650;
+  font-weight: 800;
   letter-spacing: 0.16em;
 }
 

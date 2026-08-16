@@ -6,7 +6,7 @@ export function FinalCta() {
     <section className="grid border-y-2 border-[#47206e] bg-[#c4dc67] text-[#32104f] lg:grid-cols-[1.1fr_0.9fr]">
       <div className="flex flex-col justify-center p-8 sm:p-12 lg:p-16 xl:pl-[max(4rem,calc((100vw-80rem)/2))]">
         <p className="font-home-body text-xs font-bold uppercase tracking-[0.14em] text-[#ef2b37]">Come say hi</p>
-        <h2 className="mt-4 max-w-3xl font-home-display text-7xl leading-[0.8] text-[#47206e] md:text-9xl">The menu is calling.</h2>
+        <h2 className="mt-4 max-w-3xl font-home-display text-4xl leading-[1.05] text-[#47206e] md:text-6xl">The menu is calling.</h2>
         <p className="mt-6 max-w-xl font-home-body text-lg leading-8 text-[#32104f]/80">Walk in, order delivery or pick the sweet you&apos;re thinking about before someone else adds three toppings.</p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           <Link href="/menu" className="inline-flex min-h-12 items-center justify-center bg-[#47206e] px-7 font-home-body text-xs font-bold uppercase tracking-[0.14em] text-white hover:bg-[#ef2b37]">View the menu →</Link>

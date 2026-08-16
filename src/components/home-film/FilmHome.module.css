@@ -141,12 +141,19 @@
   color: #f2c879;
 }
 
+/*
+   Every display size on this page was drawn for League Gothic, an
+   ultra-condensed all-caps face. Titan One sets roughly twice as wide at the
+   same size and carries far more ink, so each clamp below is scaled back and
+   each line-height opened up. The sizes are not arbitrary: they are the old
+   ones re-fit so the measure lands in the same place on screen.
+*/
 .chapterTitle {
   margin: 0;
   font-family: var(--f-display);
-  font-size: clamp(3rem, 11vw, 9rem);
-  line-height: 0.88;
-  letter-spacing: 0.005em;
+  font-size: clamp(2rem, 6vw, 4.75rem);
+  line-height: 1.02;
+  letter-spacing: -0.005em;
   color: var(--f-ink-invert);
   text-wrap: balance;
 }
@@ -165,8 +172,8 @@
 .heroTitle {
   margin: 0;
   font-family: var(--f-display);
-  font-size: clamp(3.25rem, 13vw, 10.5rem);
-  line-height: 0.85;
+  font-size: clamp(2.15rem, 6.5vw, 5.25rem);
+  line-height: 1.02;
   color: var(--f-ink-invert);
   text-wrap: balance;
 }
@@ -276,8 +283,8 @@
 .sectionTitle {
   margin: 0;
   font-family: var(--f-display);
-  font-size: clamp(2.5rem, 7vw, 5.5rem);
-  line-height: 0.92;
+  font-size: clamp(1.85rem, 4.4vw, 3.4rem);
+  line-height: 1.04;
   text-wrap: balance;
 }
 
@@ -352,8 +359,8 @@
 .cardName {
   margin: 0;
   font-family: var(--f-display);
-  font-size: clamp(1.75rem, 3vw, 2.5rem);
-  line-height: 1;
+  font-size: clamp(1.15rem, 1.9vw, 1.5rem);
+  line-height: 1.1;
 }
 
 .cardPrice {
@@ -473,11 +480,15 @@
   color: #8a5f12;
 }
 
+/* A pull quote is a sentence of running text, not a branding moment — Titan One
+   at this length reads as a poster, not a quote. It keeps Nunito at a heavy
+   weight, which is the pairing's job. */
 .pressQuote {
   margin: var(--f-step-3) 0 0;
-  font-family: var(--f-display);
-  font-size: clamp(1.4rem, 2.4vw, 2rem);
-  line-height: 1.12;
+  font-family: var(--f-body);
+  font-size: clamp(1.15rem, 1.8vw, 1.45rem);
+  font-weight: 700;
+  line-height: 1.42;
 }
 
 .pressMeta {
@@ -547,8 +558,8 @@
 .placeName {
   margin: 0;
   font-family: var(--f-display);
-  font-size: clamp(2rem, 4vw, 3rem);
-  line-height: 1;
+  font-size: clamp(1.35rem, 2.4vw, 1.85rem);
+  line-height: 1.08;
 }
 
 .placeAddress {
