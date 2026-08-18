@@ -209,6 +209,43 @@ const settle = (ms) => new Promise((r) => setTimeout(r, ms));
     mobileSrc.includes("acai-sequence-768.mp4"),
     mobileSrc || "(no src)",
   );
+
+  /*
+    And the phone must SCRUB, not play.
+
+    This assertion exists because the opposite shipped. Phones used to play the
+    film through once on entry, on both briefs' advice about seek cost. That
+    decouples the film from the scroll, and the scroll is far faster: the film
+    window is ~1240px on a phone, a two-second flick, against 11.6s of footage.
+    A visitor reached the product handoff — where the finished cup fades in over
+    the film's last frame — while the video was two seconds in and showing the
+    explosion, and the two crossfaded into each other.
+
+    Nothing in the suite caught it, because every assertion was about the desktop
+    transport. Scrolling to a point and asserting the video is near where that
+    point maps to is the check that would have.
+  */
+  const mobileScrub = await page.evaluate(async () => {
+    const section = document.querySelector('section[aria-labelledby="story-title"]');
+    const video = document.querySelector('section[aria-labelledby="story-title"] video');
+    if (!section || !video || !Number.isFinite(video.duration)) return null;
+    const top = section.getBoundingClientRect().top + window.scrollY;
+    const travel = section.offsetHeight - window.innerHeight;
+    // 0.80 sits inside the film window (0.37 -> 0.86), near its end.
+    window.scrollTo(0, top + travel * 0.8);
+    await new Promise((r) => setTimeout(r, 2500));
+    const expected = ((0.8 - 0.37) / (0.86 - 0.37)) * video.duration;
+    return { expected, actual: video.currentTime };
+  });
+  check(
+    "mobile scrubs the film rather than playing it",
+    mobileScrub !== null &&
+      Math.abs(mobileScrub.actual - mobileScrub.expected) < 1.5,
+    mobileScrub
+      ? `expected ~${mobileScrub.expected.toFixed(2)}s, got ${mobileScrub.actual.toFixed(2)}s`
+      : "could not measure",
+  );
+
   await page.setViewport({ width: 1440, height: 900 });
 
   // ---- 5. reduced motion ----

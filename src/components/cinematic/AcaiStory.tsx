@@ -29,12 +29,39 @@ gsap.registerPlugin(ScrollTrigger);
    --------------------------------------------------------------------------- */
 const ACT = {
   buildStart: 0.14,
-  buildEnd: 0.3,
-  seamIn: 0.28,
-  filmIn: 0.36,
+  // The cutouts finish converging BEFORE the dissolve starts. The first version
+  // overlapped them: the constellation still faded up from 0.28 while the
+  // cutouts were still fading out at 0.36, so for ~250px of scroll you saw two
+  // different arrangements of the same fruit at once. A double exposure is what
+  // "the transition feels off" looks like.
+  buildEnd: 0.32,
+  seamIn: 0.32,
+  seamFull: 0.37,
+  filmIn: 0.37,
   filmOut: 0.86,
   productIn: 0.9,
 } as const;
+
+/*
+  How hard the timeline is eased.
+
+  This started at 0.6, on the reference spec's advice that ~0.5-0.6 makes the
+  footage "glide rather than snap". Measured on the built page, it did not glide
+  — it trailed. Driving a brisk scroll through the film window and sampling every
+  frame, the video ran a mean 0.95s of footage behind the scroll, and 1.8-2.2s
+  behind on a fast flick. On an 11.6s film that is up to a fifth of the whole
+  sequence lagging the wheel.
+
+  The cause was three independent easing layers compounding: Lenis smoothing the
+  scroll, ScrollTrigger's scrub smoothing the progress, and a per-frame lerp
+  smoothing the video time again on top. CPU throttling barely moved the number
+  and only 6% of frames failed to advance, which rules out decode cost — it was
+  purely accumulated smoothing.
+
+  So there is now exactly one easing stage for the film, and this is it. The lerp
+  is gone; currentTime is written straight from the already-scrubbed progress.
+*/
+const SCRUB = 0.25;
 
 const CHAPTERS = [
   { id: "origin", in: 0.02, out: 0.13 },
@@ -128,11 +155,24 @@ export function AcaiStory() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     /*
-      Phones do not scrub. iOS Safari's seek on a compressed H.264 is slow and
-      lumpy enough that the illusion breaks, and the fix is not more code — it
-      is a different interaction. Mobile keeps the pin, the choreography and the
-      chapter copy, and plays the film through once when it reaches the film
-      window. Same footage, same beats, none of the fragility.
+      `compact` now selects the file, and nothing else.
+
+      It used to also mean "do not scrub — play the film through once", which is
+      what both source briefs advise, because seeking a GOP-encoded H.264 on a
+      phone is slow and lumpy. That advice was right about the encode and wrong
+      once the encode changed: the delivered cuts are all-intra, so every seek is
+      a single-frame decode with nothing to walk forward from.
+
+      It was also actively broken. Play-once decouples the film from the scroll,
+      and the scroll is much faster than the film: the film window is about
+      1240px on a phone, which is a two-second flick, against 11.6s of footage.
+      So a visitor arrived at the product handoff — where the finished cup fades
+      in over the film's final frame — while the video was still two seconds in
+      and showing the explosion. The two crossfaded into each other. Measured on
+      a 390x844 capture before this change.
+
+      Scrubbing on both makes the transport identical everywhere, which is also
+      one code path instead of two.
     */
     const compact = window.matchMedia("(max-width: 47.99rem)").matches;
 
@@ -169,28 +209,12 @@ export function AcaiStory() {
       const q = gsap.utils.selector(stage);
 
       // ---- the scrub ----------------------------------------------------
-      // Scroll sets a target time; a ticker eases the element toward it. Writing
-      // currentTime straight from the scroll handler tracks every jitter in the
-      // wheel and reads as stutter even on densely-keyframed footage.
-      let target = 0;
-      let current = 0;
       let ready = video.readyState >= 1;
-      let played = false;
 
       const onMeta = () => {
         ready = true;
       };
       video.addEventListener("loadedmetadata", onMeta);
-
-      const drive = () => {
-        if (compact || !ready || !Number.isFinite(video.duration)) return;
-        current += (target - current) * 0.14;
-        if (Math.abs(target - current) < 0.002) current = target;
-        // Seeking while a previous seek is still in flight drops frames on
-        // Safari, so a seek is only issued once the last one has landed.
-        if (!video.seeking) video.currentTime = current;
-      };
-      gsap.ticker.add(drive);
 
       // ---- the master timeline -------------------------------------------
       // One trigger, one timeline, normalised 0-1. Everything above reads off
@@ -201,16 +225,19 @@ export function AcaiStory() {
           trigger: root,
           start: "top top",
           end: "bottom bottom",
-          scrub: 0.6,
+          scrub: SCRUB,
           onUpdate: (self) => {
-            if (compact || !ready || !Number.isFinite(video.duration)) return;
+            if (!ready || !Number.isFinite(video.duration)) return;
             const span = ACT.filmOut - ACT.filmIn;
             const p = gsap.utils.clamp(
               0,
               1,
               (self.progress - ACT.filmIn) / span,
             );
-            target = p * video.duration;
+            // `self.progress` is already the scrub-eased value, so this is the
+            // one and only smoothing the film gets. The guard stays: issuing a
+            // seek while the last one is still in flight drops frames on Safari.
+            if (!video.seeking) video.currentTime = p * video.duration;
           },
         },
       });
@@ -286,24 +313,87 @@ export function AcaiStory() {
       const seam = q<HTMLElement>(`.${styles.seam}`)[0];
       const film = q<HTMLElement>(`.${styles.film}`)[0];
 
+      /*
+        A true dissolve: the two sides share one window and both run linear, so
+        their alphas sum to roughly constant across it and there is no moment
+        where both are near full and the frame goes bright.
+
+        The cutouts also keep moving through it — a further 4vmin inward and a
+        touch of scale, as if they are being absorbed into the larger
+        constellation. That is what actually sells the seam. Two still images
+        cross-dissolving read as two images; two images cross-dissolving while
+        one is still travelling reads as one thing continuing to move.
+      */
+      const dissolve = ACT.seamFull - ACT.seamIn;
       tl.to(
         seam,
-        { autoAlpha: 1, ease: "power1.inOut", duration: ACT.filmIn - ACT.seamIn },
+        { autoAlpha: 1, ease: "none", duration: dissolve },
         ACT.seamIn,
       );
-      // The whole cutout layer leaves at once — items and bloom together — so
-      // the browser composites one fading layer instead of six, and so the
-      // bloom can't outlive the food it was lighting.
+
+      const ingredientLayer = q<HTMLElement>(`.${styles.ingredients}`)[0];
+      /*
+        The whole cutout layer leaves at once — items and bloom together — so the
+        browser composites one fading layer instead of six, and so the bloom
+        can't outlive the food it was lighting.
+
+        It also defocuses on the way out. A straight opacity crossfade between
+        five sharp cutouts and a constellation of twenty-five reads as two
+        stacked layers, because both sides are sharp and the eye can separate
+        them. Blurring the outgoing side turns it into depth instead: the
+        cutouts read as falling out of focus while the thing behind them
+        resolves, which is a camera doing something rather than a website
+        swapping images.
+      */
+      gsap.set(ingredientLayer, { filter: "blur(0px)" });
+      // Opacity runs linear so the two sides sum to a constant across the
+      // dissolve. The defocus gets its own fast-out ease instead, because the
+      // moment that needs help is the midpoint — where both layers sit near 50%
+      // and the eye is most able to separate them. A linear blur would only be
+      // halfway there exactly when it is needed most.
       tl.to(
-        q<HTMLElement>(`.${styles.ingredients}`)[0],
-        { autoAlpha: 0, ease: "power1.in", duration: 0.06 },
-        ACT.seamIn + 0.02,
+        ingredientLayer,
+        { autoAlpha: 0, ease: "none", duration: dissolve },
+        ACT.seamIn,
       );
+      tl.to(
+        ingredientLayer,
+        { filter: "blur(10px)", ease: "power2.out", duration: dissolve },
+        ACT.seamIn,
+      );
+      items.forEach((el, index) => {
+        const cutout = CUTOUTS[index];
+        if (!cutout) return;
+        // Everything drifts a little further in as it goes, so the layer is
+        // still travelling throughout the dissolve.
+        tl.to(
+          el,
+          {
+            x: `${cutout.end.x * 0.8}vmin`,
+            y: `${cutout.end.y * 0.8}vmin`,
+            scale: index === 0 ? 1.04 : 1.08,
+            ease: "power1.in",
+            duration: dissolve,
+          },
+          ACT.seamIn,
+        );
+        // The outer four clear out early. The açaí cluster is the one cutout
+        // that has a genuine counterpart in the incoming frame — it is the
+        // constellation's core — so it is the last thing holding, and the
+        // handoff happens on the element where the two sides actually agree.
+        if (index > 0) {
+          tl.to(
+            el,
+            { autoAlpha: 0, ease: "power2.in", duration: dissolve * 0.62 },
+            ACT.seamIn,
+          );
+        }
+      });
 
       // The video is pixel-identical to the still underneath it at t=0, so this
       // fade has nothing to reveal — it exists only to get a <video> on screen
       // before it needs to move.
-      tl.to(film, { autoAlpha: 1, duration: 0.03 }, ACT.filmIn - 0.03);
+      tl.to(film, { autoAlpha: 1, duration: 0.02 }, ACT.filmIn - 0.01);
 
       /*
         The still is deliberately NOT hidden once the video is up.
@@ -357,25 +447,7 @@ export function AcaiStory() {
         }
       });
 
-      // ---- mobile: play once instead of scrubbing --------------------------
-      if (compact) {
-        ScrollTrigger.create({
-          trigger: root,
-          start: "top top",
-          end: "bottom bottom",
-          onUpdate: (self) => {
-            if (played || self.progress < ACT.filmIn) return;
-            played = true;
-            // If autoplay is refused the poster stays up, and the poster is the
-            // finished cup — the same thing the film would have ended on. The
-            // failure mode is a still, never a black rectangle.
-            video.play().catch(() => {});
-          },
-        });
-      }
-
       return () => {
-        gsap.ticker.remove(drive);
         video.removeEventListener("loadedmetadata", onMeta);
       };
     }, rootRef);

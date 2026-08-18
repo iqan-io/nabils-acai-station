@@ -62,6 +62,18 @@
     the sides of a phone — a cheaper loss than a seam that pops.
   */
   --film-scale: 1;
+
+  /*
+    The rendered height of the film's picture — the `contain` calculation for a
+    16:9 frame inside the viewport, written out, times the portrait blow-up.
+
+    It exists so the static product image can be sized off the same number
+    instead of a percentage of the stage. Those are not the same thing: at
+    1440x900 the film's cup renders 776px tall while `height: 64%` of the stage
+    gave 576px, so the second seam handed a cup to a cup 26% smaller and popped.
+    On a phone the error ran the other way and was worse.
+  */
+  --film-box-h: calc(min(100vw, 100svh * 16 / 9) * 9 / 16 * var(--film-scale));
 }
 
 @media (max-aspect-ratio: 1 / 1) {
@@ -241,10 +253,27 @@
 
 .productImage {
   width: auto;
-  height: 64%;
+  /*
+    Matched to the cup in the film's final frame, not to the stage. The cup fills
+    ~96% of the film frame's height, and this is the same cup — the last frame of
+    the video and this cutout are the same photograph — so the two only crossfade
+    invisibly if they are also the same size on screen.
+  */
+  height: calc(var(--film-box-h) * 0.96);
+  /* Guard for very wide stages, where the film box can approach the full
+     viewport height and the lift would push the cup off the top. */
+  max-height: 88%;
   max-width: 86vw;
   object-fit: contain;
-  filter: drop-shadow(0 2rem 4rem rgb(0 0 0 / 0.6));
+  /*
+    The film passes through a black-level crush and H.264 at CRF 26; this cutout
+    does not. Untouched, the still fades up fractionally brighter and more
+    saturated than the frame it is replacing, which reads as a light coming on at
+    the exact moment the handoff is supposed to be invisible. This puts the two
+    back on the same grade.
+  */
+  filter: saturate(0.95) brightness(0.94)
+    drop-shadow(0 2rem 4rem rgb(0 0 0 / 0.6));
 }
 
 /* ------------------------------------------------------------- chapter type */

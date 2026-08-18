@@ -30,7 +30,16 @@ export function useSmoothScroll(enabled = true) {
 
     gsap.registerPlugin(ScrollTrigger);
 
-    const lenis = new Lenis({ duration: 1.1, smoothWheel: true });
+    /*
+      0.8, not the 1.1 this shipped with.
+
+      Lenis is one of three things that were smoothing the homepage film, and
+      together they put the video most of a second behind the wheel. The other
+      two are fixed in AcaiStory (one easing stage instead of two); this is the
+      remaining one. 0.8 still reads as smooth scrolling — it stops reading as
+      the page owing you scroll.
+    */
+    const lenis = new Lenis({ duration: 0.8, smoothWheel: true });
     const onScroll = () => ScrollTrigger.update();
     lenis.on("scroll", onScroll);
 
