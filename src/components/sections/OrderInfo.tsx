@@ -33,6 +33,7 @@ export function OrderHero() {
     <section className={styles.opening} aria-labelledby="order-title">
       <Image
         className={styles.openingMedia}
+        data-parallax
         src="/images/enhanced/signature-dubai-strawberry-cup-v2.jpg"
         alt=""
         aria-hidden="true"
@@ -61,14 +62,14 @@ export function OrderInfo() {
     <div className={styles.root}>
       <section className={`${styles.band} ${styles.paper}`} aria-labelledby="order-ways">
         <div className={styles.shell}>
-          <header className={styles.bandHead}>
+          <header className={styles.bandHead} data-reveal>
             <span className={styles.bandIndex}>01</span>
             <h2 id="order-ways" className={styles.bandTitle}>
               Two ways to get it
             </h2>
           </header>
 
-          <div className={styles.splitGrid}>
+          <div className={styles.splitGrid} data-reveal>
             <div>
               <span className={styles.kicker}>Delivery</span>
               <h3 className={styles.sectionTitle}>Bring Nabil&apos;s to you</h3>

@@ -19,8 +19,8 @@ export function Navbar() {
 
   useEffect(() => setOpen(false), [pathname]);
 
-  // The homepage opens on a full-bleed dark film, so the bar rides over it
-  // transparently and only takes its solid ground once you scroll off the hero.
+  // The homepage opens on a full-bleed dark frame, so the bar rides over it
+  // transparently and only takes a ground once you scroll off the hero.
   // Every other route keeps the solid bar from the first pixel.
   const isHome = pathname === "/";
 
@@ -38,6 +38,26 @@ export function Navbar() {
   // An open mobile menu always needs the solid ground behind it to stay legible.
   const overFilm = isHome && atTop && !open;
 
+  /*
+    The ground the scrolled bar takes, and why the homepage gets a different one.
+
+    Everywhere else the bar goes cream, which is right over cream pages. The
+    homepage spends 460vh inside a true-black cinematic section, and a cream bar
+    lying across that draws a hard horizontal edge over the top of the film —
+    the single most expensive thing you can do to an effect whose whole premise
+    is that there is no visible frame. So on `/` the scrolled bar takes the
+    night ground instead. It still reads as a solid bar over the paper sections
+    further down; it just stops cutting the film in half.
+  */
+  const scrolledGround = isHome
+    ? "border-b border-[rgb(var(--ds-ink-invert-rgb)/0.12)] bg-[rgb(var(--ds-night-rgb)/0.82)] text-[var(--ds-ink-invert)] backdrop-blur"
+    : "border-b border-[rgb(var(--ds-ink-rgb)/0.1)] bg-[rgb(var(--ds-paper-rgb)/0.95)] text-[var(--ds-ink)] backdrop-blur";
+
+  // Whether the bar's contents are drawn light-on-dark. True over the hero, and
+  // still true once scrolled on the homepage — unlike `overFilm`, which is only
+  // about transparency.
+  const onDark = isHome ? !open : false;
+
   return (
     <header
       className={`z-40 font-home-body transition-colors duration-300 ${
@@ -48,7 +68,7 @@ export function Navbar() {
       } ${
         overFilm
           ? "border-b border-transparent bg-transparent text-[var(--ds-ink-invert)]"
-          : "border-b border-[rgb(var(--ds-ink-rgb)/0.1)] bg-[rgb(var(--ds-paper-rgb)/0.95)] text-[var(--ds-ink)] backdrop-blur"
+          : scrolledGround
       }`}
     >
       <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-4 sm:px-6 lg:h-[80px] lg:px-10">
@@ -66,7 +86,7 @@ export function Navbar() {
           />
           <span
             className={`font-home-display hidden text-[1.7rem] leading-none sm:block ${
-              overFilm ? "text-[var(--ds-ink-invert)]" : "text-[var(--ds-ink)]"
+              onDark ? "text-[var(--ds-ink-invert)]" : "text-[var(--ds-ink)]"
             }`}
           >
             Nabil&apos;s Açaí Station
@@ -83,16 +103,16 @@ export function Navbar() {
                 aria-current={active ? "page" : undefined}
                 className={`relative inline-flex min-h-11 items-center px-4 text-[0.72rem] font-semibold uppercase tracking-[0.18em] transition-colors ${
                   active
-                    ? overFilm
+                    ? onDark
                       ? "text-[var(--ds-honey-light)]"
                       : "text-[var(--ds-honey-deep)]"
-                    : overFilm
+                    : onDark
                       ? "text-[rgb(var(--ds-ink-invert-rgb)/0.72)] hover:text-[var(--ds-honey-light)]"
                       : "text-[rgb(var(--ds-ink-rgb)/0.62)] hover:text-[var(--ds-honey-deep)]"
                 }`}
               >
                 {link.label}
-                {active && <span className={`absolute inset-x-4 bottom-1 h-px ${overFilm ? "bg-[var(--ds-honey-light)]" : "bg-[var(--ds-honey-deep)]"}`} />}
+                {active && <span className={`absolute inset-x-4 bottom-1 h-px ${onDark ? "bg-[var(--ds-honey-light)]" : "bg-[var(--ds-honey-deep)]"}`} />}
               </Link>
             );
           })}
@@ -102,7 +122,7 @@ export function Navbar() {
           <Link
             href="/order"
             className={`hidden min-h-11 items-center rounded-full px-6 text-[0.68rem] font-bold uppercase tracking-[0.16em] transition-colors sm:inline-flex ${
-              overFilm
+              onDark
                 ? "bg-[var(--ds-honey)] text-[var(--ds-night)] hover:bg-[var(--ds-honey-light)]"
                 : "bg-[var(--ds-night)] text-[var(--ds-ink-invert)] hover:bg-[var(--ds-honey)] hover:text-[var(--ds-night)]"
             }`}
@@ -115,7 +135,7 @@ export function Navbar() {
             aria-expanded={open}
             onClick={() => setOpen((value) => !value)}
             className={`relative inline-flex size-11 items-center justify-center rounded-full border md:hidden ${
-              overFilm
+              onDark
                 ? "border-[rgb(var(--ds-ink-invert-rgb)/0.45)] text-[var(--ds-ink-invert)]"
                 : "border-[rgb(var(--ds-ink-rgb)/0.25)] text-[var(--ds-ink)]"
             }`}

@@ -1,5 +1,5 @@
-import { FilmHome } from "@/components/home-film/FilmHome";
+import { HomeCinematic } from "@/components/home-cinematic/HomeCinematic";
 
 export default function Page() {
-  return <FilmHome />;
+  return <HomeCinematic />;
 }

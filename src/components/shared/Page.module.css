@@ -34,8 +34,14 @@
   position: relative;
   display: grid;
   place-items: center;
-  min-height: 68vh;
-  min-height: 68svh;
+  /*
+    Deep enough to read as a shot rather than a banner, deliberately short of a
+    full viewport. On `/menu` the whole point of the page starts one band down,
+    and a customer who arrived from "açaí near me" should be able to see that
+    there is something below without scrolling to find out.
+  */
+  min-height: 78vh;
+  min-height: 78svh;
   padding: calc(var(--ds-step-6) + 3rem) var(--ds-step-3) var(--ds-step-6);
   background: var(--ds-night);
   overflow: hidden;

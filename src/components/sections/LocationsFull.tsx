@@ -26,6 +26,7 @@ export function LocationsHero() {
     <section className={styles.opening} aria-labelledby="locations-title">
       <Image
         className={styles.openingMedia}
+        data-parallax
         src="/images/enhanced/location-mt-lawley-storefront-v2.jpg"
         alt=""
         aria-hidden="true"
@@ -65,7 +66,7 @@ export function LocationsFull() {
             aria-labelledby={`loc-${location.slug}`}
           >
             <div className={styles.shell}>
-              <header className={styles.bandHead}>
+              <header className={styles.bandHead} data-reveal>
                 <span className={styles.bandIndex}>
                   {String(index + 1).padStart(2, "0")}
                 </span>
@@ -76,7 +77,7 @@ export function LocationsFull() {
 
               {/* Same editorial row as the menu: one large photograph, the
                   facts beside it, sides alternating down the page. */}
-              <article className={`${styles.row} ${isNight ? styles.rowFlip : ""}`}>
+              <article className={`${styles.row} ${isNight ? styles.rowFlip : ""}`} data-reveal>
                 <div
                   className={styles.rowMedia}
                   style={

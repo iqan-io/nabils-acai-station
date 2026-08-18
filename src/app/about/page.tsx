@@ -5,6 +5,7 @@ import { AboutHero, FounderFeature } from "@/components/sections/AboutStory";
 // names + headshots land in `team` (src/lib/brand.ts).
 import { FinalCta } from "@/components/sections/FinalCta";
 import { pageMetadata } from "@/lib/seo";
+import { ScrollReveal } from "@/components/shared/ScrollReveal";
 
 export const metadata: Metadata = pageMetadata({
   title: "Our Story",
@@ -22,6 +23,7 @@ export const metadata: Metadata = pageMetadata({
 export default function Page() {
   return (
     <>
+      <ScrollReveal />
       <AboutHero />
       <FounderFeature />
       <FinalCta />

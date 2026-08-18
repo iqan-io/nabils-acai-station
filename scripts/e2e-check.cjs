@@ -79,11 +79,48 @@ const settle = (ms) => new Promise((r) => setTimeout(r, ms));
   await page.goto(BASE + "/", { waitUntil: "networkidle0" });
   await settle(600);
 
-  const poster = await page.evaluate(() => {
-    const img = document.querySelector("img[src*='acai-film-poster']");
-    return img ? { present: true, loaded: img.naturalWidth > 0 } : { present: false };
+  /*
+    The act is three rendering technologies crossfaded into each other — cutouts,
+    a scrubbed video, a static image — and the illusion only holds if all three
+    are actually on the page and actually decoded. A missing cutout does not
+    throw and does not 404 loudly; it just leaves a hole in the constellation and
+    the handoff stops matching. So every layer is asserted by `naturalWidth`,
+    which is the only thing that distinguishes "the element is in the DOM" from
+    "the browser has pixels for it".
+  */
+  const layers = await page.evaluate(() => {
+    const one = (sel) => {
+      const img = document.querySelector(sel);
+      return img ? { present: true, loaded: img.naturalWidth > 0 } : { present: false, loaded: false };
+    };
+    const cutouts = [...document.querySelectorAll("img[src*='/media/acai-story/']")].filter(
+      (img) => !img.src.includes("sequence-first-frame"),
+    );
+    return {
+      seam: one("img[src*='sequence-first-frame']"),
+      product: one("img[src*='nabils-bowl']"),
+      cutouts: cutouts.length,
+      cutoutsLoaded: cutouts.filter((img) => img.naturalWidth > 0).length,
+    };
   });
-  check("poster frame renders", poster.present && poster.loaded, JSON.stringify(poster));
+  // The seam still is the film's own first frame. It is what the cutouts land on
+  // and what the video fades up over; without it the DOM -> video handoff is a
+  // visible cut rather than a crossfade.
+  check(
+    "film's first-frame still renders",
+    layers.seam.present && layers.seam.loaded,
+    JSON.stringify(layers.seam),
+  );
+  check(
+    "product handoff image renders",
+    layers.product.present && layers.product.loaded,
+    JSON.stringify(layers.product),
+  );
+  check(
+    "every ingredient cutout decodes",
+    layers.cutouts >= 6 && layers.cutoutsLoaded === layers.cutouts,
+    `${layers.cutoutsLoaded}/${layers.cutouts} loaded`,
+  );
 
   const video = await page.evaluate(() => {
     const v = document.querySelector("video");
@@ -99,7 +136,7 @@ const settle = (ms) => new Promise((r) => setTimeout(r, ms));
   check("video element present", video.present);
   check(
     "desktop gets the full-res cut",
-    video.src.includes("acai-film.mp4"),
+    video.src.includes("acai-sequence-1280.mp4"),
     video.src || "(no src)",
   );
   // A non-muted or non-inline video is blocked by autoplay policy and would
@@ -152,6 +189,27 @@ const settle = (ms) => new Promise((r) => setTimeout(r, ms));
     scrubbed > startTime + 0.5,
     `${startTime.toFixed(2)}s -> ${scrubbed.toFixed(2)}s`,
   );
+
+  /*
+    Phones get their own cut, chosen on mount by breakpoint. This matters more
+    than it looks: the two files are 5.0MB and 2.1MB, the choice is made in JS
+    rather than by a <source media> the browser resolves, and a broken breakpoint
+    would silently push the desktop master down a phone connection with nothing
+    failing anywhere. Assert the actual file the phone viewport asks for.
+  */
+  await page.setViewport({ width: 390, height: 844, isMobile: true, hasTouch: true });
+  await page.goto(BASE + "/", { waitUntil: "networkidle0" });
+  await settle(600);
+  const mobileSrc = await page.evaluate(() => {
+    const v = document.querySelector("video");
+    return v ? v.getAttribute("src") || "" : "";
+  });
+  check(
+    "mobile gets the light cut",
+    mobileSrc.includes("acai-sequence-768.mp4"),
+    mobileSrc || "(no src)",
+  );
+  await page.setViewport({ width: 1440, height: 900 });
 
   // ---- 5. reduced motion ----
   await page.emulateMediaFeatures([

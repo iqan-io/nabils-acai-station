@@ -15,6 +15,7 @@ export function FinalCta() {
       <div className={styles.opening} style={{ minHeight: "44vh" }}>
         <Image
           className={styles.openingMedia}
+        data-parallax
           src="/images/enhanced/fruit-cocktail-client-enhanced.jpg"
           alt=""
           aria-hidden="true"

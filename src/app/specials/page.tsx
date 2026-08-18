@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { SpecialsComingSoon } from "@/components/sections/SpecialsComingSoon";
 import { pageMetadata } from "@/lib/seo";
+import { ScrollReveal } from "@/components/shared/ScrollReveal";
 
 export const metadata: Metadata = {
   ...pageMetadata({
@@ -22,5 +23,10 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <SpecialsComingSoon />;
+  return (
+    <>
+      <ScrollReveal />
+      <SpecialsComingSoon />
+    </>
+  );
 }

@@ -111,6 +111,7 @@ function EditorialRow({
     <article
       id={menuSlug(section.title)}
       className={`${styles.row} ${flip ? styles.rowFlip : ""}`}
+      data-reveal
     >
       <div
         className={styles.rowMedia}
@@ -153,6 +154,7 @@ export function MenuHero() {
       */}
       <Image
         className={styles.openingMedia}
+        data-parallax
         src="/images/enhanced/hero-bueno-editorial-v3.jpg"
         alt=""
         aria-hidden="true"
@@ -197,7 +199,7 @@ export function MenuFull() {
             aria-labelledby={`group-${menuSlug(group.label)}`}
           >
             <div className={styles.shell}>
-              <header className={styles.bandHead}>
+              <header className={styles.bandHead} data-reveal>
                 <span className={styles.bandIndex}>
                   {String(groupIndex + 1).padStart(2, "0")}
                 </span>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { OrderHero, OrderInfo } from "@/components/sections/OrderInfo";
 import { FinalCta } from "@/components/sections/FinalCta";
 import { pageMetadata } from "@/lib/seo";
+import { ScrollReveal } from "@/components/shared/ScrollReveal";
 
 export const metadata: Metadata = pageMetadata({
   title: "Order",
@@ -19,6 +20,7 @@ export const metadata: Metadata = pageMetadata({
 export default function Page() {
   return (
     <>
+      <ScrollReveal />
       <OrderHero />
       <OrderInfo />
       <FinalCta />

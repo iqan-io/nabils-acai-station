@@ -7,6 +7,7 @@ export function AboutHero() {
     <section className={styles.opening} aria-labelledby="about-title">
       <Image
         className={styles.openingMedia}
+        data-parallax
         src="/images/enhanced/story-mt-lawley-interior.jpg"
         alt=""
         aria-hidden="true"
@@ -36,14 +37,14 @@ export function FounderFeature() {
     <div className={styles.root}>
       <section className={`${styles.band} ${styles.paper}`} aria-labelledby="founder-title">
         <div className={styles.shell}>
-          <header className={styles.bandHead}>
+          <header className={styles.bandHead} data-reveal>
             <span className={styles.bandIndex}>01</span>
             <h2 id="founder-title" className={styles.bandTitle}>
               Meet the owner
             </h2>
           </header>
 
-          <article className={styles.row}>
+          <article className={styles.row} data-reveal>
             {/* The founder portrait is 1023x1537; the old fixed 4/3 box cut his
                 head and the bakery racks out of frame. */}
             <div

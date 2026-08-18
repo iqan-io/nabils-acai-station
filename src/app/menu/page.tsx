@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { MenuHero, MenuFull } from "@/components/sections/MenuFull";
 import { CategoryNav } from "@/components/menu/CategoryNav";
 import { pageMetadata } from "@/lib/seo";
+import { ScrollReveal } from "@/components/shared/ScrollReveal";
 
 export const metadata: Metadata = pageMetadata({
   title: "Menu",
@@ -19,6 +20,7 @@ export const metadata: Metadata = pageMetadata({
 export default function Page() {
   return (
     <>
+      <ScrollReveal />
       <MenuHero />
       <CategoryNav />
       {/* NightCta removed here: MenuFull now closes on its own night band with

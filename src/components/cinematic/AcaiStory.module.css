@@ -1,0 +1,561 @@
+/* ---------------------------------------------------------------------------
+   The açaí story — one pinned cinematic act.
+
+   Sequence: a berry on black -> the ingredients gather into the constellation
+   -> the constellation detonates -> the burst collapses into a vortex -> the
+   vortex resolves into the real Nabil's cup -> the cup becomes an ordinary
+   image on the page.
+
+   Two of those arrows are seams between different rendering technologies (DOM
+   cutouts -> scrubbed video -> static image) and hiding them is the whole job.
+   Both are hidden the same way: the outgoing and incoming layers show the same
+   subject, at the same scale, on the same pure black, and they crossfade while
+   still moving. Nothing here uses a wipe, a flash or a curtain.
+
+   Every colour and step comes from the site tokens in globals.css. The one
+   value that is NOT a token is the ground: it is #000, true black, because the
+   footage's own background is true black and the illusion depends on those two
+   being the same number. --ds-night (#160b18) is 10 units off and that is
+   enough to draw a visible rectangle around the video.
+   --------------------------------------------------------------------------- */
+
+.story {
+  position: relative;
+  /* Overridden per-breakpoint below. Drives how much scroll the act consumes. */
+  height: 460vh;
+  background: #000;
+  color: var(--ds-ink-invert);
+}
+
+.stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  background: #000;
+
+  /*
+    Every media layer is lifted off the vertical centre by this much.
+
+    The chapter type lives in the bottom quarter (see .chapters) and the film
+    fills nearly the whole frame, so without the lift the headline lands right
+    across the middle of the cup. Raising the food and dropping the type buys a
+    band of black between them at every beat, which is what keeps both legible
+    without a full-stage scrim greying the footage.
+  */
+  --media-lift: 5vh;
+
+  /*
+    How much the contained 16:9 film is blown up to meet the cutouts.
+
+    The cutout rosette is laid out in vmin, so it always occupies the same share
+    of the shorter edge. The film is `object-fit: contain`, so on a landscape
+    stage it fills the width and its constellation lands within 1% of the
+    rosette — nothing to correct. On a portrait stage contain letterboxes the
+    same 16:9 into a fraction of the height and the constellation comes out
+    about 1.6x too small, so the handoff would visibly shrink.
+
+    1.6 is that ratio, and it is the same number on every portrait size because
+    both the rosette (vmin) and the contained film (width-bound) scale with the
+    shorter edge. It costs the outermost debris of the explosion, cropped off
+    the sides of a phone — a cheaper loss than a seam that pops.
+  */
+  --film-scale: 1;
+}
+
+@media (max-aspect-ratio: 1 / 1) {
+  .stage {
+    --film-scale: 1.6;
+  }
+}
+
+/* Each act layer fills the stage and is composited by GSAP `autoAlpha`, so a
+   hidden layer also stops hit-testing. An opacity-0 overlay still swallows
+   clicks meant for the layer beneath it, which is how a previous build of this
+   homepage shipped with dead buttons. */
+.layer {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+
+/* -------------------------------------------------------- ingredient build */
+
+.ingredients {
+  z-index: 2;
+  transform: translateY(calc(var(--media-lift) * -1));
+}
+
+/*
+  A cutout on flat black has no light around it, and the footage it hands off to
+  does — the constellation carries a magenta bloom from the juice. This is that
+  bloom, faded up with the ingredients so the DOM half of the sequence is lit
+  the same way the video half is. Without it the handoff reads as "the lights
+  came on".
+*/
+.ingredientGlow {
+  position: absolute;
+  width: min(96vmin, 62rem);
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: radial-gradient(
+    circle,
+    rgb(224 37 122 / 0.2) 0%,
+    rgb(139 44 111 / 0.1) 38%,
+    rgb(139 44 111 / 0) 68%
+  );
+  pointer-events: none;
+}
+
+/*
+  Each cutout is centred on the stage and moved by transform only, so nothing
+  in this animation touches layout. `--x`/`--y` are the resting rosette offsets
+  (the arrangement that has to match the film's first frame); GSAP animates
+  from an off-frame start into them.
+*/
+.ingredient {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--size);
+  height: auto;
+  margin-left: calc(var(--size) / -2);
+  transform-origin: 50% 50%;
+  will-change: transform, opacity;
+  /* The cutouts were lit to match the footage, but a cutout sitting on flat
+     black has no contact shadow of its own. A small drop shadow in the footage's
+     magenta seats them in the same space. */
+  filter: drop-shadow(0 0 2.5rem rgb(224 37 122 / 0.16));
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------- the seam still
+
+   The film's own first frame, exported at encode time. It sits between the
+   cutouts and the video: the cutouts converge onto it, then the video fades up
+   over an image it is pixel-identical to. That is what makes the DOM -> video
+   handoff invisible rather than merely quick.
+*/
+.product {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: translateY(calc(var(--media-lift) * -1));
+  will-change: opacity, transform;
+}
+
+/*
+  The two 16:9 frames are sized to the picture, not to the stage.
+
+  The obvious way to do this is `inset: 0` plus `object-fit: contain`, and the
+  first build did exactly that. It is wrong here, and subtly: `contain`
+  letterboxes the picture inside a full-stage element, so the element's box and
+  the painted picture are different rectangles — and a CSS mask follows the box.
+  On a landscape screen the letterbox is thin and it does not show. On a phone
+  the same 16:9 lands as a shallow band with two hard horizontal edges running
+  the full width, the mask nowhere near them, and the explosion — which is bright
+  to the very edge of frame — sliced clean across. A visible rectangle is the one
+  failure this whole technique exists to avoid.
+
+  So the box is given the picture's own dimensions instead. This is the `contain`
+  calculation written out: fit 16:9 inside the stage, which is exactly the
+  viewport. The element now *is* the picture, the mask lands on the real edges,
+  and `cover` has nothing left to letterbox.
+*/
+.seam,
+.film {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(100vw, calc(100svh * 16 / 9));
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  transform: translate(-50%, -50%)
+    translateY(calc(var(--media-lift) * -1))
+    scale(var(--film-scale));
+  will-change: opacity, transform;
+}
+
+.seam {
+  z-index: 3;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.film {
+  z-index: 4;
+  opacity: 0;
+  visibility: hidden;
+}
+
+/*
+  Feathered top and bottom edges, and three reasons for exactly that shape.
+
+  Why feather at all: one of the three source clips passes through a stretch of
+  pale cold vapour that fills the frame. Against the page's true black that
+  lights up the picture's rectangle, and a visible rectangle is what this whole
+  technique exists to avoid.
+
+  Why only top and bottom: those are the only edges that are ever on screen. On
+  a landscape stage the 16:9 picture fills the width, so its left and right
+  edges sit flush with the viewport; on a portrait stage --film-scale pushes them
+  well outside it. Feathering the sides too would cost contrast at the frame
+  centre for edges nobody can see.
+
+  Why a mask and not `mix-blend-mode: screen`: screen would also make the black
+  vanish, but it lifts every dark pixel in the footage — the deep purple of the
+  açaí included — and the product's colour matters more than the trick.
+*/
+.film,
+.seam {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 16%,
+    #000 84%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 16%,
+    #000 84%,
+    transparent 100%
+  );
+}
+
+/* --------------------------------------------------------- product handoff */
+
+.product {
+  z-index: 5;
+  opacity: 0;
+  visibility: hidden;
+  display: grid;
+  place-items: center;
+  object-fit: initial;
+}
+
+.productImage {
+  width: auto;
+  height: 64%;
+  max-width: 86vw;
+  object-fit: contain;
+  filter: drop-shadow(0 2rem 4rem rgb(0 0 0 / 0.6));
+}
+
+/* ------------------------------------------------------------- chapter type */
+
+/*
+  Foot scrim. The type sits in the bottom quarter of the stage, and the food is
+  lifted out of it, but the food still bleeds down into that band on the widest
+  beats. This darkens only the bottom third and only gradually, so the type
+  always has ground while the middle of the frame — where the product actually
+  is — is never touched. A full-stage scrim would have been simpler and would
+  have greyed the açaí, which is the one colour on this page that has to be
+  right.
+*/
+.foot {
+  position: absolute;
+  inset: auto 0 0;
+  height: 46%;
+  z-index: 5;
+  background: linear-gradient(
+    to top,
+    rgb(0 0 0 / 0.94) 0%,
+    rgb(0 0 0 / 0.78) 26%,
+    rgb(0 0 0 / 0.36) 58%,
+    rgb(0 0 0 / 0) 100%
+  );
+  pointer-events: none;
+}
+
+.chapters {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: grid;
+  align-items: end;
+  justify-items: center;
+  padding: calc(var(--ds-step-6) + 2rem) var(--ds-step-3) 9vh;
+  pointer-events: none;
+}
+
+.chapter {
+  grid-area: 1 / 1;
+  width: 100%;
+  max-width: 46rem;
+  align-self: end;
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  will-change: opacity, transform;
+}
+
+/* Purely a grouping box so the whole beat can be centred as one block. The
+   ground behind it is .foot, not a panel — a visible card floating over the
+   footage would read as a caption rather than as titling. */
+.chapterInner {
+  display: block;
+}
+
+.eyebrow {
+  display: block;
+  margin: 0 0 var(--ds-step-2);
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ds-honey-light);
+  font-variant-numeric: tabular-nums;
+}
+
+.chapterTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2rem, 6vw, 4.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.005em;
+  color: var(--ds-ink-invert);
+  text-wrap: balance;
+  text-shadow: 0 0.15em 1.4em rgb(0 0 0 / 0.75);
+}
+
+.chapterBody {
+  margin: var(--ds-step-3) auto 0;
+  max-width: 32rem;
+  font-family: var(--font-sans);
+  font-size: clamp(0.98rem, 1.5vw, 1.12rem);
+  line-height: 1.55;
+  color: rgb(var(--ds-ink-invert-rgb) / 0.88);
+  text-wrap: pretty;
+  text-shadow: 0 0.1em 1em rgb(0 0 0 / 0.8);
+}
+
+/* The closing beat is the only one that carries an action, so it is the only
+   one that takes pointer events back. */
+.chapterActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-step-2);
+  justify-content: center;
+  margin-top: var(--ds-step-4);
+  pointer-events: auto;
+}
+
+/* ------------------------------------------------------------------ chrome */
+
+/*
+  Skip affordance. The brief for this page is explicit that a customer looking
+  for the Mount Lawley hours must not be held hostage by a 460vh film, and
+  equally explicit that a big "SKIP INTRO" button would make the site feel like
+  2003. So it is a quiet text link in the corner, visible on focus, and it
+  simply anchors past the pinned section.
+*/
+.skip {
+  position: absolute;
+  right: var(--ds-step-3);
+  bottom: var(--ds-step-3);
+  z-index: 7;
+  padding: 0.6rem 0.9rem;
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgb(var(--ds-ink-invert-rgb) / 0.52);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.skip:hover {
+  color: var(--ds-honey-light);
+}
+
+.cue {
+  position: absolute;
+  left: 50%;
+  bottom: var(--ds-step-3);
+  z-index: 7;
+  transform: translateX(-50%);
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgb(var(--ds-ink-invert-rgb) / 0.45);
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------------ buttons */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0 var(--ds-step-4);
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btnPrimary {
+  background: var(--ds-honey);
+  color: #000;
+}
+
+.btnGhost {
+  border-color: rgb(var(--ds-ink-invert-rgb) / 0.42);
+  color: var(--ds-ink-invert);
+}
+
+.btnGhost:hover {
+  background: rgb(var(--ds-ink-invert-rgb) / 0.1);
+}
+
+.story a:focus-visible {
+  outline: 3px solid var(--ds-honey);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ---------------------------------------------------------- exit into paper
+
+   Section 19 of the brief: the page must not stay black forever. This is the
+   gradient that walks the ground from the film's true black, through the
+   brand's deep plum, to the night ground the next section starts on — so the
+   cinematic act ends by rejoining Nabil's palette rather than cutting to it.
+*/
+.exit {
+  position: relative;
+  height: 32vh;
+  background: linear-gradient(
+    to bottom,
+    #000 0%,
+    #0d0510 34%,
+    var(--deep-plum) 78%,
+    var(--ds-night) 100%
+  );
+}
+
+/* -------------------------------------------------------------- responsive */
+
+@media (max-width: 47.99rem) {
+  .story {
+    /* Mobile plays the film through once instead of scrubbing it, so the act
+       needs materially less scroll to cover the same beats. */
+    height: 300vh;
+  }
+
+  .productImage {
+    height: 60%;
+  }
+
+  .chapters {
+    padding-inline: var(--ds-step-2);
+  }
+}
+
+@media (min-width: 90rem) {
+  .story {
+    height: 500vh;
+  }
+}
+
+/* --------------------------------------------------------- reduced motion
+
+   No pin, no scrub, no video. The act unstacks into ordinary blocks — the
+   constellation still, then the finished cup — with every chapter's copy in
+   normal flow, and the page reads top to bottom with the scroll wheel
+   untouched. The story is still told; it just stops being a film.
+
+   This is a plain media query rather than a class the component sets on mount,
+   deliberately. A JS-set flag cannot apply until after hydration, so a reduced-
+   motion visitor would see the pinned 460vh layout paint first and then jump.
+   CSS resolves before the first paint. The component's own matchMedia check
+   still exists, but its only job is to not wire GSAP up at all — no timeline is
+   ever built, so nothing writes the inline styles that would beat these rules.
+*/
+@media (prefers-reduced-motion: reduce) {
+  .story {
+    height: auto;
+  }
+
+  .stage {
+    position: static;
+    height: auto;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-step-5);
+    padding: var(--ds-step-6) var(--ds-step-3);
+  }
+
+  .layer,
+  .chapters {
+    position: static;
+    inset: auto;
+    padding: 0;
+  }
+
+  .ingredients,
+  .film,
+  .cue,
+  .skip {
+    display: none;
+  }
+
+  .seam,
+  .product {
+    position: static;
+    opacity: 1;
+    visibility: visible;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    max-width: 56rem;
+  }
+
+  .productImage {
+    height: auto;
+    width: 100%;
+    max-width: 26rem;
+    margin: 0 auto;
+    display: block;
+  }
+
+  .chapters {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-step-5);
+  }
+
+  .chapter {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    margin: 0 auto;
+  }
+
+  .btn {
+    transition: none;
+  }
+
+  .btn:hover {
+    transform: none;
+  }
+}

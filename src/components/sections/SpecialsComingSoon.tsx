@@ -9,6 +9,7 @@ export function SpecialsComingSoon() {
       <section className={styles.opening} aria-labelledby="specials-title">
         <Image
           className={styles.openingMedia}
+        data-parallax
           src="/images/enhanced/menu-dubai-chocolate.png"
           alt=""
           aria-hidden="true"

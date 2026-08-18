@@ -1,0 +1,696 @@
+/* ---------------------------------------------------------------------------
+   The cinematic homepage.
+
+   Structure, and why it is in this order:
+
+     1. OPENING   a full-viewport night frame with the real cup and the two
+                  actions. This is the LCP and it is a single 158KB webp, so a
+                  hungry customer gets a usable page before the film is even
+                  requested.
+     2. STORY     the pinned cinematic act (its own stylesheet).
+     3. LINEUP    what people actually come in and ask for.
+     4. COUNTER   the build-your-own data — sizes, drizzles, toppings, prices.
+     5. PROOF     press and reviews.
+     6. FIND US   both counters, hours, directions.
+
+   The ground walks night -> true black -> night -> paper -> night, so the film
+   is the darkest thing on the page and everything after it steps back up into
+   Nabil's own palette. Every value is a --ds-* token from globals.css; the one
+   exception is the film's #000, and the reason is documented where it is used.
+   --------------------------------------------------------------------------- */
+
+.root {
+  background: var(--ds-night);
+  color: var(--ds-ink-invert);
+}
+
+/* ---------------------------------------------------------------- opening */
+
+.opening {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: calc(var(--ds-step-6) + 3rem) var(--ds-step-3) var(--ds-step-6);
+  overflow: hidden;
+  /* Two lights on a night ground: a warm one behind the type and a berry one
+     behind the cup. Not a "gradient background" — a lit room. */
+  background:
+    radial-gradient(
+      ellipse 60% 55% at 78% 42%,
+      rgb(224 37 122 / 0.16) 0%,
+      rgb(224 37 122 / 0) 70%
+    ),
+    radial-gradient(
+      ellipse 70% 60% at 12% 76%,
+      rgb(217 164 65 / 0.1) 0%,
+      rgb(217 164 65 / 0) 68%
+    ),
+    var(--ds-night);
+}
+
+.openingInner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: var(--ds-shell);
+  display: grid;
+  gap: var(--ds-step-5);
+  align-items: center;
+  grid-template-columns: 1fr;
+}
+
+.openingCopy {
+  text-align: center;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.42rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid rgb(var(--ds-ink-invert-rgb) / 0.18);
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgb(var(--ds-ink-invert-rgb) / 0.78);
+}
+
+.statusDot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--pistachio);
+}
+
+.statusDot[data-open="false"] {
+  background: var(--strawberry);
+}
+
+.title {
+  margin: var(--ds-step-3) 0 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.4rem, 7vw, 5.4rem);
+  line-height: 1;
+  letter-spacing: -0.012em;
+  color: var(--ds-ink-invert);
+  text-wrap: balance;
+}
+
+.tagline {
+  margin: var(--ds-step-3) auto 0;
+  max-width: 34rem;
+  font-family: var(--font-sans);
+  font-size: clamp(1rem, 1.9vw, 1.3rem);
+  line-height: 1.5;
+  color: rgb(var(--ds-ink-invert-rgb) / 0.82);
+}
+
+.openingActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-step-2);
+  justify-content: center;
+  margin-top: var(--ds-step-4);
+}
+
+.openingMedia {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+/* The glow is a separate element rather than a filter on the image because a
+   drop-shadow large enough to read as backlight is expensive to composite on
+   every frame, and this one never moves. */
+.openingGlow {
+  position: absolute;
+  width: min(74vw, 34rem);
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: radial-gradient(
+    circle,
+    rgb(139 44 111 / 0.55) 0%,
+    rgb(139 44 111 / 0.16) 45%,
+    rgb(139 44 111 / 0) 72%
+  );
+  pointer-events: none;
+}
+
+/* Sized against the viewport height, not just its width. On a phone the copy
+   block above already eats most of the screen, and a width-only rule pushed the
+   cup off the bottom edge — the one thing the opening has to get right is that
+   a customer sees actual food without scrolling. */
+.openingBowl {
+  position: relative;
+  width: auto;
+  height: min(34svh, 26rem);
+  max-width: 62vw;
+  object-fit: contain;
+  filter: drop-shadow(0 1.5rem 3rem rgb(0 0 0 / 0.55));
+}
+
+.scrollCue {
+  position: absolute;
+  left: 50%;
+  bottom: var(--ds-step-3);
+  transform: translateX(-50%);
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgb(var(--ds-ink-invert-rgb) / 0.45);
+}
+
+/* --------------------------------------------------------------- sections */
+
+.section {
+  padding: var(--ds-step-6) var(--ds-step-3);
+}
+
+.night {
+  background: var(--ds-night);
+  color: var(--ds-ink-invert);
+}
+
+.paper {
+  background: var(--ds-paper);
+  color: var(--ds-ink);
+}
+
+.shell {
+  margin: 0 auto;
+  max-width: var(--ds-shell);
+}
+
+.sectionHead {
+  margin-bottom: var(--ds-step-5);
+}
+
+.eyebrow {
+  display: block;
+  margin-bottom: var(--ds-step-2);
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+
+.night .eyebrow {
+  color: var(--ds-honey-light);
+}
+
+.paper .eyebrow {
+  color: var(--ds-honey-deep);
+}
+
+.sectionTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.85rem, 4.4vw, 3.4rem);
+  line-height: 1.04;
+  text-wrap: balance;
+}
+
+.sectionLede {
+  margin: var(--ds-step-2) 0 0;
+  max-width: 38rem;
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+  line-height: 1.55;
+}
+
+.night .sectionLede {
+  color: rgb(var(--ds-ink-invert-rgb) / 0.82);
+}
+
+.paper .sectionLede {
+  color: var(--ds-ink-soft);
+}
+
+/* ----------------------------------------------------------------- lineup
+
+   Editorial rows, not a card grid. Each item gets a full-height plate of food
+   and the type sits beside it, alternating side. Three cards in a row would
+   make three small pictures; this makes three big ones, which is the whole
+   argument of the page above it.
+*/
+.lineup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-step-6);
+}
+
+.item {
+  display: grid;
+  gap: var(--ds-step-4);
+  align-items: center;
+  grid-template-columns: 1fr;
+}
+
+.itemMedia {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 1.25rem;
+  background: var(--ds-night-soft);
+}
+
+.itemMedia img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.itemTag {
+  position: absolute;
+  top: var(--ds-step-2);
+  left: var(--ds-step-2);
+  padding: 0.32rem 0.7rem;
+  border-radius: 999px;
+  background: var(--ds-honey);
+  color: var(--ds-night);
+  font-family: var(--font-sans);
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.itemIndex {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: var(--ds-honey-light);
+  font-variant-numeric: tabular-nums;
+}
+
+.itemName {
+  margin: var(--ds-step-2) 0 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.6rem, 3.4vw, 2.6rem);
+  line-height: 1.06;
+}
+
+.itemPrice {
+  display: block;
+  margin-top: var(--ds-step-1);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--ds-honey-light);
+}
+
+.itemBlurb {
+  margin: var(--ds-step-3) 0 0;
+  max-width: 32rem;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: rgb(var(--ds-ink-invert-rgb) / 0.76);
+}
+
+/* ---------------------------------------------------------------- counter */
+
+.counterGrid {
+  display: grid;
+  gap: var(--ds-step-5);
+  grid-template-columns: 1fr;
+}
+
+.subhead {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ds-honey-deep);
+}
+
+.subheadSpaced {
+  margin-top: var(--ds-step-4);
+}
+
+.priceRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--ds-step-2);
+  padding: var(--ds-step-2) 0;
+  border-bottom: 1px solid rgb(var(--ds-ink-rgb) / 0.12);
+  font-family: var(--font-sans);
+}
+
+.priceRow dt {
+  font-size: 1.05rem;
+}
+
+.priceRow dd {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--ds-honey-deep);
+}
+
+.tokenList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-step-1);
+  margin: var(--ds-step-3) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.token {
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgb(var(--ds-ink-rgb) / 0.16);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--ds-ink-soft);
+}
+
+.note {
+  margin: var(--ds-step-3) 0 0;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  color: var(--ds-ink-soft);
+}
+
+.orderBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ds-step-2);
+  margin-top: var(--ds-step-6);
+  padding-top: var(--ds-step-4);
+  border-top: 1px solid rgb(var(--ds-ink-rgb) / 0.12);
+}
+
+.orderLabel {
+  margin-right: var(--ds-step-2);
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ds-honey-deep);
+}
+
+/* ------------------------------------------------------------------ proof */
+
+.pressGrid {
+  display: grid;
+  gap: var(--ds-step-4);
+  grid-template-columns: 1fr;
+}
+
+.press {
+  display: flex;
+  flex-direction: column;
+  padding: var(--ds-step-4);
+  border-radius: 1.25rem;
+  background: var(--ds-paper-warm);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s ease;
+}
+
+.press:hover {
+  transform: translateY(-3px);
+}
+
+.pressOutlet {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ds-honey-deep);
+}
+
+/* A pull quote is a sentence of running text, not a branding moment — the
+   display face at this length reads as a poster rather than a quote. Heavy
+   Nunito is what the pairing is for. */
+.pressQuote {
+  margin: var(--ds-step-3) 0 0;
+  font-family: var(--font-sans);
+  font-size: clamp(1.12rem, 1.8vw, 1.4rem);
+  font-weight: 700;
+  line-height: 1.42;
+}
+
+.pressMeta {
+  margin: var(--ds-step-3) 0 0;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--ds-ink-soft);
+}
+
+.reviewGrid {
+  display: grid;
+  gap: var(--ds-step-4);
+  grid-template-columns: 1fr;
+  margin-top: var(--ds-step-5);
+}
+
+.review blockquote {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--ds-ink-soft);
+}
+
+.reviewAuthor {
+  display: block;
+  margin-top: var(--ds-step-2);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--ds-ink-soft);
+}
+
+.ratingRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-step-4);
+  margin-top: var(--ds-step-5);
+  padding-top: var(--ds-step-4);
+  border-top: 1px solid rgb(var(--ds-ink-rgb) / 0.14);
+  font-family: var(--font-sans);
+}
+
+.rating {
+  font-size: 0.95rem;
+  color: var(--ds-ink-soft);
+}
+
+.ratingValue {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--ds-ink);
+}
+
+/* ---------------------------------------------------------------- find us */
+
+.findGrid {
+  display: grid;
+  gap: var(--ds-step-5);
+  grid-template-columns: 1fr;
+}
+
+.placeName {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.35rem, 2.4vw, 1.9rem);
+  line-height: 1.08;
+}
+
+.placeAddress {
+  margin: var(--ds-step-2) 0 0;
+  font-family: var(--font-sans);
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: rgb(var(--ds-ink-invert-rgb) / 0.82);
+}
+
+.hours {
+  margin: var(--ds-step-3) 0 0;
+  font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums;
+}
+
+.hourRow {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--ds-step-2);
+  padding: 0.35rem 0;
+  border-bottom: 1px solid rgb(var(--ds-ink-invert-rgb) / 0.12);
+  font-size: 0.92rem;
+}
+
+.hourRow dt {
+  color: rgb(var(--ds-ink-invert-rgb) / 0.7);
+}
+
+.hourRow dd {
+  margin: 0;
+  color: var(--ds-ink-invert);
+}
+
+.placeActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-step-2);
+  margin-top: var(--ds-step-4);
+}
+
+.unknown {
+  margin: var(--ds-step-3) 0 0;
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: rgb(var(--ds-ink-invert-rgb) / 0.66);
+}
+
+/* --------------------------------------------------------------- buttons */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0 var(--ds-step-4);
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btnPrimary {
+  background: var(--ds-honey);
+  color: var(--ds-night);
+}
+
+.btnGhost {
+  border-color: rgb(var(--ds-ink-invert-rgb) / 0.42);
+  color: var(--ds-ink-invert);
+}
+
+.btnGhost:hover {
+  background: rgb(var(--ds-ink-invert-rgb) / 0.1);
+}
+
+.paper .btnGhost {
+  border-color: rgb(var(--ds-ink-rgb) / 0.28);
+  color: var(--ds-ink);
+}
+
+.paper .btnGhost:hover {
+  background: rgb(var(--ds-ink-rgb) / 0.06);
+}
+
+.root a:focus-visible,
+.root button:focus-visible {
+  outline: 3px solid var(--ds-honey);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ------------------------------------------------------------- responsive */
+
+@media (min-width: 48rem) {
+  .section {
+    padding: var(--ds-step-6) var(--ds-step-4);
+  }
+
+  .openingInner {
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: var(--ds-step-6);
+  }
+
+  .openingCopy {
+    text-align: left;
+  }
+
+  .tagline {
+    margin-inline: 0;
+  }
+
+  .openingActions {
+    justify-content: flex-start;
+  }
+
+  .openingBowl {
+    height: auto;
+    width: min(48vw, 22rem);
+    max-width: none;
+  }
+
+  .item {
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: var(--ds-step-5);
+  }
+
+  /* Alternate which side the plate sits on so the eye has to travel. */
+  .item:nth-child(even) .itemMedia {
+    order: 2;
+  }
+
+  .itemMedia {
+    aspect-ratio: 5 / 4;
+  }
+
+  .counterGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .pressGrid,
+  .findGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .reviewGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* --------------------------------------------------------- reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .press {
+    transition: none;
+  }
+
+  .btn:hover,
+  .press:hover {
+    transform: none;
+  }
+
+  .scrollCue {
+    display: none;
+  }
+}

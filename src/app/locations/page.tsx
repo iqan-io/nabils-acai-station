@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { LocationsHero, LocationsFull } from "@/components/sections/LocationsFull";
 import { NightCta } from "@/components/shared/NightCta";
 import { pageMetadata } from "@/lib/seo";
+import { ScrollReveal } from "@/components/shared/ScrollReveal";
 
 export const metadata: Metadata = pageMetadata({
   title: "Locations",
@@ -19,6 +20,7 @@ export const metadata: Metadata = pageMetadata({
 export default function Page() {
   return (
     <>
+      <ScrollReveal />
       <LocationsHero />
       <LocationsFull />
       <NightCta secondaryHref="/menu" secondaryLabel="Browse the menu" />
