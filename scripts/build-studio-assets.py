@@ -12,8 +12,11 @@ operation here is canvas — getting eight differently-proportioned frames onto
 the single 1200x1500 (4:5) box that `src/lib/productImages.ts` promises the
 card system, without ever cropping through a product.
 
-Three of the eight are not natively 4:5, so their own cream sweep is continued
-outwards to reach the ratio:
+Assets already on 4:5 are only resized. The rest reach the ratio one of two
+ways, preferring the one that invents nothing: if there is dead sweep to spare
+it is trimmed (the two crepe/mocktail frames), and only where trimming would
+cut the product is the asset's own cream sweep continued outwards instead
+(acai, the strawberry cup, the waffle pack). When extending:
 
   * the low-frequency sweep is linearly extrapolated from a lightly-smoothed
     edge profile, with the slope decaying across the fill so a long extension
@@ -130,6 +133,13 @@ PLAN = [
     ("nabil-waffle-snackpack.png", "waffle-snack-pack-studio", (92, 0, 1342, 1086), 0.80),
     ("nabil-fruit-cocktail.png", "fruit-cocktail-studio", None, 0.5),
     ("nabil-probiotic.png", "probiotic-splash-studio", None, 0.5),
+    # Second batch (2026-08-19), closing the two gaps flagged on the first pass.
+    # Both are 3:4 (1086x1448) and both carry dead sweep above the subject, so
+    # they reach 4:5 by dropping 91px off the top rather than growing 72px of
+    # width. Trimming empty sweep invents no pixels at all, which beats even a
+    # good extension; the shadow sits ~150px clear of the bottom either way.
+    ("nabil-classic-crepe.png", "crepe-classic-studio", (0, 91, 1086, 1448), 0.5),
+    ("nabil-mocktails.png", "mocktail-studio", (0, 91, 1086, 1448), 0.5),
 ]
 
 

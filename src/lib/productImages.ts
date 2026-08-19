@@ -52,10 +52,9 @@ export const productImages = {
     studio: true,
   },
   classicCrepes: {
-    // Pre-studio: hand-held tray in front of the shop signage.
-    src: "/images/enhanced/menu-classic-crepe.png",
-    alt: "A classic Nabil's crêpe tray with a Biscoff drizzle",
-    studio: false,
+    src: `${STUDIO}/crepe-classic-studio.webp`,
+    alt: "A classic Nabil's crêpe tray, cut into squares under a Biscoff drizzle",
+    studio: true,
   },
   signatureCrepes: {
     src: `${STUDIO}/crepe-signature-studio.webp`,
@@ -88,10 +87,9 @@ export const productImages = {
     studio: true,
   },
   mocktails: {
-    // Pre-studio: the shop interior, pendant lamp and arches behind the drinks.
-    src: "/images/enhanced/menu-mocktails.png",
-    alt: "Nabil's mocktails lined up over ice",
-    studio: false,
+    src: `${STUDIO}/mocktail-studio.webp`,
+    alt: "Four Nabil's mocktails in branded cans, over ice with fruit and mint",
+    studio: true,
   },
   probioticSplash: {
     src: `${STUDIO}/probiotic-splash-studio.webp`,
@@ -194,30 +192,36 @@ export const REPLACEMENTS: ReadonlyArray<{
     usedBy: "Menu / Probiotic Splash",
     issue: "Shop counter and warm interior behind the cans.",
   },
+  // Second batch, 2026-08-19. These two closed the last System B gaps.
+  {
+    from: "/images/enhanced/menu-classic-crepe.png",
+    to: "classicCrepes",
+    usedBy: "Menu / Classic Crêpes",
+    issue: "Hand holding the tray in front of the shop signage; cool interior light.",
+  },
+  {
+    from: "/images/enhanced/menu-mocktails.png",
+    to: "mocktails",
+    usedBy: "Menu / Mocktails",
+    issue: "Shop counter with a pendant lamp and the arches behind the drinks.",
+  },
 ];
 
 /*
   Sections still waiting on an approved studio asset. Per the art direction we
-  keep the real photograph rather than substituting a stand-in, and flag it.
+  keep the real photograph rather than substituting a stand-in, and flag it here.
+
+  Empty as of 2026-08-19: every menu section that has a photograph is now on the
+  studio set. Matcha, Iced Lattes and Milkshakes are deliberately absent from
+  `menuSectionImageKey` rather than listed here — they have never had a
+  photograph and render as a compact price list, which is a layout choice, not
+  a gap.
+
+  Anything added back here must keep its real photograph until an approved
+  replacement exists. Never substitute a stand-in or a stock image.
 */
 export const NEEDS_STUDIO_REPLACEMENT: ReadonlyArray<{
   key: ProductKey;
   location: string;
   issue: string;
-}> = [
-  {
-    key: "classicCrepes",
-    location: "Menu / Classic Crêpes",
-    issue:
-      "Hand holding the tray in front of the shop signage, cool interior light. " +
-      "The supplied crêpe asset is the studio version of the Signature tray, so " +
-      "Classic still needs its own.",
-  },
-  {
-    key: "mocktails",
-    location: "Menu / Mocktails",
-    issue:
-      "Shot on the shop counter with a pendant lamp and the arches behind it — " +
-      "environmental background and a different colour temperature to the set.",
-  },
-];
+}> = [];
