@@ -485,9 +485,20 @@
 
 @media (max-width: 47.99rem) {
   .story {
-    /* Mobile plays the film through once instead of scrubbing it, so the act
-       needs materially less scroll to cover the same beats. */
-    height: 300vh;
+    /*
+      400vh, up from 300vh, and the reason is scrub feel rather than pacing.
+
+      The film window is about half the act. At 300vh that was ~830px of scroll
+      carrying 11.6s of footage — 14ms of video per pixel, nearly twice the
+      desktop density. The same easing therefore put the phone 0.34s behind the
+      finger where the desktop was 0.12s behind the wheel, which is most of why
+      it still felt laggy there after the desktop fix landed.
+
+      Lengthening the act is the honest fix: it gives the film more scroll to
+      play across, so every pixel moves less footage and the decoder gets more
+      runway per seek. It costs about one more screen of scrolling on a phone.
+    */
+    height: 400vh;
   }
 
   .productImage {

@@ -60,8 +60,14 @@ const ACT = {
 
   So there is now exactly one easing stage for the film, and this is it. The lerp
   is gone; currentTime is written straight from the already-scrubbed progress.
+
+  Phones get a tighter value. Scrub is a time constant, so the seconds-of-video
+  it puts you behind depend on how much footage each pixel of scroll carries —
+  and a phone's act is shorter, so its film is denser even after the pin was
+  lengthened. Matching the *feel* means not matching the number.
 */
-const SCRUB = 0.25;
+const SCRUB_DESKTOP = 0.25;
+const SCRUB_COMPACT = 0.14;
 
 const CHAPTERS = [
   { id: "origin", in: 0.02, out: 0.13 },
@@ -192,7 +198,7 @@ export function AcaiStory() {
     */
     const load = () => {
       video.src = compact
-        ? "/media/acai-story/acai-sequence-768.mp4"
+        ? "/media/acai-story/acai-sequence-mobile.mp4"
         : "/media/acai-story/acai-sequence-1280.mp4";
       video.load();
     };
@@ -225,7 +231,7 @@ export function AcaiStory() {
           trigger: root,
           start: "top top",
           end: "bottom bottom",
-          scrub: SCRUB,
+          scrub: compact ? SCRUB_COMPACT : SCRUB_DESKTOP,
           onUpdate: (self) => {
             if (!ready || !Number.isFinite(video.duration)) return;
             const span = ACT.filmOut - ACT.filmIn;

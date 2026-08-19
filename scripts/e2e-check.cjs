@@ -27,11 +27,19 @@ const puppeteer = loadPuppeteer();
 // client_run.py serves on harness.json's `port`; override for ad-hoc runs.
 const BASE = process.env.E2E_BASE || process.argv[2] || "http://localhost:3000";
 const ROUTES = ["/", "/menu", "/locations", "/about", "/order", "/specials"];
+// The assets the current act actually loads. This list used to name the
+// retired film's files under /videos/, which still sit in public/ and so still
+// answered 200 — the check passed while asserting nothing about the live page.
 const FILM_ASSETS = [
-  "/videos/acai-film.mp4",
-  "/videos/acai-film-mobile.mp4",
-  "/videos/acai-film-poster.webp",
-  "/videos/acai-film-poster.jpg",
+  "/media/acai-story/acai-sequence-1280.mp4",
+  "/media/acai-story/acai-sequence-mobile.mp4",
+  "/media/acai-story/sequence-first-frame.webp",
+  "/media/acai-story/nabils-bowl.webp",
+  "/media/acai-story/acai-berries.webp",
+  "/media/acai-story/strawberries.webp",
+  "/media/acai-story/blueberries.webp",
+  "/media/acai-story/granola.webp",
+  "/media/acai-story/drizzle.webp",
 ];
 
 let pass = 0;
@@ -192,7 +200,7 @@ const settle = (ms) => new Promise((r) => setTimeout(r, ms));
 
   /*
     Phones get their own cut, chosen on mount by breakpoint. This matters more
-    than it looks: the two files are 5.0MB and 2.1MB, the choice is made in JS
+    than it looks: the two files are 5.0MB and 3.4MB, the choice is made in JS
     rather than by a <source media> the browser resolves, and a broken breakpoint
     would silently push the desktop master down a phone connection with nothing
     failing anywhere. Assert the actual file the phone viewport asks for.
@@ -206,7 +214,7 @@ const settle = (ms) => new Promise((r) => setTimeout(r, ms));
   });
   check(
     "mobile gets the light cut",
-    mobileSrc.includes("acai-sequence-768.mp4"),
+    mobileSrc.includes("acai-sequence-mobile.mp4"),
     mobileSrc || "(no src)",
   );
 
