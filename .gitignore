@@ -42,3 +42,6 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
+
+# Python bytecode from scripts/build-studio-assets.py
+__pycache__/
