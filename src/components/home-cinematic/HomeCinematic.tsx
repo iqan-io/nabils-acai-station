@@ -167,9 +167,17 @@ export function HomeCinematic() {
       <AcaiStory />
 
       {/* ---------------------------------------------------------- lineup */}
+      {/*
+        The lineup is merchandising, not film. It used to sit on a night band,
+        which was right when its photographs carried their own environments —
+        but the studio set is a continuous cream sweep, and on black each card
+        became a lit rectangle rather than a product. Paper here also gives the
+        film the contrast it needs: black sequence, real product reveal, then
+        the cream product world opens on this section.
+      */}
       <section
         id="lineup"
-        className={`${styles.section} ${styles.night}`}
+        className={`${styles.section} ${styles.paper}`}
         aria-labelledby="lineup-title"
       >
         <div className={styles.shell}>
@@ -186,9 +194,9 @@ export function HomeCinematic() {
                 <div className={styles.itemMedia}>
                   <Image
                     src={item.image}
-                    alt={item.name}
+                    alt={item.imageAlt}
                     fill
-                    sizes="(min-width: 48rem) 55vw, 100vw"
+                    sizes="(min-width: 64rem) 34rem, (min-width: 48rem) 45vw, 100vw"
                   />
                   {item.tag ? (
                     <span className={styles.itemTag}>{item.tag}</span>

@@ -256,12 +256,22 @@
   grid-template-columns: 1fr;
 }
 
+/*
+  4/5, the one product-card ratio the site uses — the same box the menu rows
+  use, because these are the same photographs. It was 4/3 (5/4 on desktop),
+  which centre-cropped a portrait cup down to a band across its middle and cut
+  the drizzle off the top and the base off the bottom.
+
+  The ground is paper, not night-soft: the studio assets are a cream sweep, so
+  the placeholder has to be the same cream or the box flashes dark and then
+  draws a rectangle around every product.
+*/
 .itemMedia {
   position: relative;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 4 / 5;
   overflow: hidden;
   border-radius: 1.25rem;
-  background: var(--ds-night-soft);
+  background: var(--ds-paper);
 }
 
 .itemMedia img {
@@ -319,6 +329,22 @@
   font-size: 1rem;
   line-height: 1.6;
   color: rgb(var(--ds-ink-invert-rgb) / 0.76);
+}
+
+/*
+  The three rules above are written for a night ground — light gold and cream
+  ink. The lineup now sits on paper, so they need the paper half of the same
+  pair, exactly as .eyebrow already does. Both halves are kept rather than
+  rewriting the base, so the band can be flipped back without the text
+  disappearing into it.
+*/
+.paper .itemIndex,
+.paper .itemPrice {
+  color: var(--ds-honey-deep);
+}
+
+.paper .itemBlurb {
+  color: rgb(var(--ds-ink-rgb) / 0.76);
 }
 
 /* ---------------------------------------------------------------- counter */
@@ -649,8 +675,14 @@
     max-width: none;
   }
 
+  /*
+    The media column was the wider of the two, which was fine for a landscape
+    box. At 4/5 that same column renders roughly 800px tall and the section
+    turns into three full screens of photograph, so the split is reversed: the
+    picture stays large, the copy gets the extra room.
+  */
   .item {
-    grid-template-columns: 1.1fr 0.9fr;
+    grid-template-columns: 0.85fr 1.15fr;
     gap: var(--ds-step-5);
   }
 
@@ -659,9 +691,17 @@
     order: 2;
   }
 
-  .itemMedia {
-    aspect-ratio: 5 / 4;
+  /*
+    Reordering alone sent the photograph into the wider 1.15fr column on every
+    second card, so the middle product rendered visibly bigger than the two
+    around it. Mirror the tracks so the media column is 0.85fr on both sides
+    and all three products carry the same weight.
+  */
+  .item:nth-child(even) {
+    grid-template-columns: 1.15fr 0.85fr;
   }
+
+  /* Ratio is fixed at 4/5 across breakpoints; only the column split changes. */
 
   .counterGrid {
     grid-template-columns: 1fr 1fr;

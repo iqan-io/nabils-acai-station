@@ -4,6 +4,11 @@ const nextConfig: NextConfig = {
   trailingSlash: false,
   images: {
     qualities: [75, 90],
+    // The studio product set is the heaviest imagery on the site. AVIF lands
+    // roughly 20-30% under WebP on this kind of smooth-gradient food
+    // photography; browsers that do not send an AVIF Accept header still get
+    // the WebP. Ordered by preference.
+    formats: ["image/avif", "image/webp"],
   },
   turbopack: {
     root: __dirname,

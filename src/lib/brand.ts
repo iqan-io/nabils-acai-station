@@ -1,3 +1,5 @@
+import { productImages } from "@/lib/productImages";
+
 export const brand = {
   name: "Nabil's Açaí Station",
   tagline: "Made for sweet moments.",
@@ -202,16 +204,25 @@ export type Signature = {
   price: string;
   blurb: string;
   image: string;
+  /** Describes the photograph, not the product — the name is already HTML. */
+  imageAlt: string;
   tag: "viral" | "signature" | null;
 };
 
+/*
+  The photographs come from `lib/productImages.ts` rather than being written out
+  here, so the homepage lineup and the matching menu row can never end up on
+  different pictures of the same product. Names, prices and blurbs stay here:
+  this file remains the single source for menu content.
+*/
 export const signatures: Signature[] = [
   {
     name: "Build Your Own Açaí",
     price: "from $9",
     blurb:
       "Large · Regular · Small · Cone. Granola, banana and strawberries included — then drizzle and top your way.",
-    image: "/images/enhanced/signature-build-your-own-acai-v2.jpg",
+    image: productImages.acai.src,
+    imageAlt: productImages.acai.alt,
     tag: "signature",
   },
   {
@@ -219,7 +230,8 @@ export const signatures: Signature[] = [
     price: "$15",
     blurb:
       "Avocado · Mango · Strawberry · Sunset Swirl · The Beast. Blended fresh with ashta, cashew and honey.",
-    image: "/images/enhanced/fruit-cocktail-client-enhanced.jpg",
+    image: productImages.fruitCocktails.src,
+    imageAlt: productImages.fruitCocktails.alt,
     tag: null,
   },
   {
@@ -227,7 +239,8 @@ export const signatures: Signature[] = [
     price: "from $18",
     blurb:
       "Nabil's viral Dubai chocolate with pistachio kataifi filling and a thick milk chocolate shell.",
-    image: "/images/enhanced/menu-dubai-chocolate.png",
+    image: productImages.dubaiChocolate.src,
+    imageAlt: productImages.dubaiChocolate.alt,
     tag: "viral",
   },
 ];

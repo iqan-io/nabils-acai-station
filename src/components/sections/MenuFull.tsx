@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { brand, menu, menuGroups, menuSlug, type MenuSection } from "@/lib/brand";
+import { menuSectionImage, PRODUCT_CARD_RATIO } from "@/lib/productImages";
 import styles from "@/components/shared/Page.module.css";
 
 /*
@@ -8,75 +9,12 @@ import styles from "@/components/shared/Page.module.css";
   one large image beside its prices, alternating side down the page. The three
   without one (Matcha, Iced Lattes, Milkshakes) run as a compact list at the foot
   of their band; giving them an empty image column would only advertise the gap.
+
+  Which photograph a section gets — and its alt text — is no longer decided
+  here. It comes from `lib/productImages.ts`, the single registry for System B
+  merchandising photography, so the menu and the homepage lineup can never drift
+  apart. This file only decides layout.
 */
-const featuredImage: Record<
-  string,
-  { src: string; alt: string; w: number; h: number }
-> = {
-  // `w`/`h` are the real pixel dimensions of each file. They drive the media
-  // box's aspect ratio, so nothing is cropped. Nine of these ten are portrait;
-  // the waffle pack is the only landscape shot.
-  "Açaí — Build Your Own": {
-    src: "/images/enhanced/menu-acai.png",
-    alt: "A Nabil's açaí bowl topped with strawberries, banana and chocolate drizzle",
-    w: 1024,
-    h: 1536,
-  },
-  "Classic Crêpes": {
-    src: "/images/enhanced/menu-classic-crepe.png",
-    alt: "A classic Nabil's crêpe with strawberries, banana and sauce",
-    w: 1122,
-    h: 1402,
-  },
-  "Signature Crêpes": {
-    src: "/images/enhanced/menu-signature-crepe.png",
-    alt: "A signature Nabil's crêpe with pistachio, chocolate and crushed nuts",
-    w: 1122,
-    h: 1402,
-  },
-  "Strawberry Cups": {
-    src: "/images/enhanced/menu-strawberry-cup.png",
-    alt: "A Nabil's strawberry cup with milk chocolate and pistachio",
-    w: 1024,
-    h: 1536,
-  },
-  "Dubai Chocolate": {
-    src: "/images/enhanced/menu-dubai-chocolate.png",
-    alt: "Nabil's pistachio-filled Dubai chocolate",
-    w: 1122,
-    h: 1402,
-  },
-  Brownies: {
-    src: "/images/enhanced/menu-brownie.png",
-    alt: "A Nabil's brownie dessert with milk chocolate and pistachio",
-    w: 1122,
-    h: 1402,
-  },
-  "Waffle Snack Pack": {
-    src: "/images/enhanced/menu-waffle-snack-pack.png",
-    alt: "A waffle snack pack with strawberries, banana and drizzle",
-    w: 1448,
-    h: 1086,
-  },
-  "Fruit Cocktails": {
-    src: "/images/enhanced/fruit-cocktail-client-enhanced.jpg",
-    alt: "A Nabil's fruit cocktail layered with fruit, ashta, cashew and honey",
-    w: 1122,
-    h: 1402,
-  },
-  Mocktails: {
-    src: "/images/enhanced/menu-mocktails.png",
-    alt: "A bright Nabil's mocktail over ice",
-    w: 1086,
-    h: 1448,
-  },
-  "Probiotic Splash": {
-    src: "/images/enhanced/menu-probiotic-splash.png",
-    alt: "Two sparkling probiotic splash drinks with citrus and ice",
-    w: 1122,
-    h: 1402,
-  },
-};
 
 const sectionByTitle = new Map(menu.map((section) => [section.title, section]));
 
@@ -106,16 +44,23 @@ function EditorialRow({
   section: MenuSection;
   flip: boolean;
 }) {
-  const media = featuredImage[section.title];
+  const media = menuSectionImage(section.title);
+  if (!media) return null;
   return (
     <article
       id={menuSlug(section.title)}
       className={`${styles.row} ${flip ? styles.rowFlip : ""}`}
       data-reveal
     >
+      {/*
+        One ratio for every product row. The box used to take each file's own
+        dimensions, which meant a 2:3 açaí sat beside a 4:3 waffle pack and the
+        grid never settled. The studio assets are all delivered on the same 4:5
+        canvas, so the box can be fixed and `cover` crops nothing.
+      */}
       <div
-        className={styles.rowMedia}
-        style={{ "--media-ratio": `${media.w} / ${media.h}` } as React.CSSProperties}
+        className={`${styles.rowMedia} ${styles.productMedia}`}
+        style={{ "--media-ratio": PRODUCT_CARD_RATIO } as React.CSSProperties}
       >
         <Image
           src={media.src}
@@ -180,22 +125,29 @@ export function MenuHero() {
 }
 
 export function MenuFull() {
-  // Bands alternate paper and night, the same rhythm the homepage film uses
-  // below the fold, so the two surfaces read as one site.
+  /*
+    The product bands used to alternate paper and night. That worked when the
+    photographs carried their own environments, but the studio set is a single
+    continuous cream sweep: on a night band each photo became a lit rectangle
+    floating on near-black, and scrolling the menu broke into ten separate
+    pictures instead of one shoot. The bands are all paper now, so the cream in
+    the photograph and the cream of the page are the same surface and only the
+    food changes colour down the page. The closing CTA keeps its night ground —
+    it carries no product.
+  */
   return (
     <div className={styles.root}>
       {menuGroups.map((group, groupIndex) => {
         const sections = group.sections
           .map((title) => sectionByTitle.get(title))
           .filter((section): section is MenuSection => Boolean(section));
-        const withMedia = sections.filter((s) => featuredImage[s.title]);
-        const withoutMedia = sections.filter((s) => !featuredImage[s.title]);
-        const isNight = groupIndex % 2 === 1;
+        const withMedia = sections.filter((s) => menuSectionImage(s.title));
+        const withoutMedia = sections.filter((s) => !menuSectionImage(s.title));
 
         return (
           <section
             key={group.label}
-            className={`${styles.band} ${isNight ? styles.night : styles.paper}`}
+            className={`${styles.band} ${styles.paper}`}
             aria-labelledby={`group-${menuSlug(group.label)}`}
           >
             <div className={styles.shell}>

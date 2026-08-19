@@ -236,6 +236,23 @@
   background: var(--ds-night-soft);
 }
 
+/*
+  Product ("System B") media, as opposed to the storytelling photographs that
+  also use .rowMedia — the founder portrait and the two storefronts, which keep
+  their own ratios and their own environments.
+
+  Every studio asset is delivered on the same 1200x1500 cream canvas, so this
+  box is fixed at 4/5 by its caller and `cover` never reaches the food. The
+  loading ground is --ds-paper rather than --ds-paper-warm so that the box is
+  invisible against the band: the image's cream and the page's cream have to
+  read as one surface, which is the whole point of the set. No border, no
+  radius, no drop shadow — the photograph is the card.
+*/
+.productMedia,
+.night .productMedia {
+  background: var(--ds-paper);
+}
+
 .rowMedia img {
   object-fit: cover;
   transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
@@ -472,6 +489,17 @@
   .row {
     grid-template-columns: 1.05fr 0.95fr;
     gap: var(--ds-step-6);
+  }
+
+  /*
+    The columns are not equal, and .rowFlip only reorders the children — so a
+    flipped row put the photograph in the 0.95fr column and an unflipped one in
+    the 1.05fr column. Every second product was rendering about 10% smaller
+    than the one above it. Mirror the track sizes on flipped rows so the media
+    column is the same width whichever side it sits on.
+  */
+  .rowFlip {
+    grid-template-columns: 0.95fr 1.05fr;
   }
 
   .compactGrid {
