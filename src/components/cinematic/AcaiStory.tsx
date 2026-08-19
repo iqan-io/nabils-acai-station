@@ -444,10 +444,23 @@ export function AcaiStory() {
       // static bowl can fade in over a frame that is already still. Once it
       // has, the video is dropped and the rest of the page is plain DOM.
       const product = q<HTMLElement>(`.${styles.product}`)[0];
+      /*
+        The photograph resolves out of blur as it arrives, meeting the defocus
+        the film racks into. This is the one filter animation left in the act and
+        it is affordable where the others were not: a single image, over 3% of
+        the scroll, once — against five images animating continuously for a fifth
+        of it. Measured after the change rather than assumed.
+      */
+      gsap.set(product, { filter: "blur(18px)" });
       tl.to(
         product,
         { autoAlpha: 1, ease: "power1.inOut", duration: 0.05 },
         ACT.productIn - 0.02,
+      );
+      tl.to(
+        product,
+        { filter: "blur(0px)", ease: "power2.out", duration: 0.055 },
+        ACT.productIn - 0.005,
       );
       // Film and still leave together — the still has been sitting under the
       // video as its safety net since the first seam.
@@ -549,11 +562,12 @@ export function AcaiStory() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               className={styles.productImage}
-              src="/media/acai-story/nabils-bowl.webp"
-              alt="A finished Nabil's açaí cup — açaí, granola, strawberries, blueberries and a pistachio drizzle."
+              src="/media/acai-story/real-acai-counter.webp"
+              alt="A Nabil's açaí cup built at the counter — açaí swirl, granola, blueberries and strawberry, with drizzle being poured over the top."
               loading="lazy"
               decoding="async"
             />
+            <span className={styles.productScrim} aria-hidden="true" />
           </div>
 
           <div className={styles.foot} aria-hidden="true" />

@@ -34,7 +34,7 @@ const FILM_ASSETS = [
   "/media/acai-story/acai-sequence-1280.mp4",
   "/media/acai-story/acai-sequence-mobile.mp4",
   "/media/acai-story/sequence-first-frame.webp",
-  "/media/acai-story/nabils-bowl.webp",
+  "/media/acai-story/real-acai-counter.webp",
   "/media/acai-story/acai-berries.webp",
   "/media/acai-story/strawberries.webp",
   "/media/acai-story/blueberries.webp",
@@ -106,7 +106,7 @@ const settle = (ms) => new Promise((r) => setTimeout(r, ms));
     );
     return {
       seam: one("img[src*='sequence-first-frame']"),
-      product: one("img[src*='nabils-bowl']"),
+      product: one("img[src*='real-acai-counter']"),
       cutouts: cutouts.length,
       cutoutsLoaded: cutouts.filter((img) => img.naturalWidth > 0).length,
     };
@@ -120,7 +120,7 @@ const settle = (ms) => new Promise((r) => setTimeout(r, ms));
     JSON.stringify(layers.seam),
   );
   check(
-    "product handoff image renders",
+    "product handoff shows the REAL product photo",
     layers.product.present && layers.product.loaded,
     JSON.stringify(layers.product),
   );

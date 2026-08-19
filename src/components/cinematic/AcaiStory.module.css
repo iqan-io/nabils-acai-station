@@ -293,29 +293,71 @@
   object-fit: initial;
 }
 
+/*
+  The reveal is a photograph of the actual product, and it deliberately does not
+  match the shot before it.
+
+  The film used to end on the generated studio cup and hand off to a cutout of
+  that same generated cup. Both looked expensive and neither is what Nabil's
+  serves: the counter serves a white paper cup with a drizzle tower, or this —
+  a clear cup built at the topping station. A product shot is a factual claim
+  about what arrives in the bag, so the last frame of the homepage has to be a
+  real one.
+
+  That means the two sides of this seam can never be matched on scale or
+  lighting, so they are not matched at all. Instead the cut happens while
+  nothing is legible: the film's last 0.45s racks out of focus (baked into the
+  encode, so it costs nothing at runtime) and this resolves from blurred to
+  sharp over the same moment. The eye accepts any cut it cannot read.
+*/
+/*
+  Positioned absolutely rather than sized with height: 100%.
+
+  The parent is a centred grid, and a grid whose single row is `align-items:
+  center` sizes that row to its item's content — so an item asking for
+  `height: 100%` is asking the row how tall it is while the row is asking the
+  item. The percentage resolves to auto, the image took its intrinsic aspect at
+  full width, and the box came out 1440x1975 inside a 900-tall stage: the whole
+  photograph was there, just cropped to a band. `inset: 0` against the
+  absolutely-positioned layer has no such circularity.
+*/
 .productImage {
-  width: auto;
-  /*
-    Matched to the cup in the film's final frame, not to the stage. The cup fills
-    ~96% of the film frame's height, and this is the same cup — the last frame of
-    the video and this cutout are the same photograph — so the two only crossfade
-    invisibly if they are also the same size on screen.
-  */
-  height: calc(var(--film-box-h) * 0.96);
-  /* Guard for very wide stages, where the film box can approach the full
-     viewport height and the lift would push the cup off the top. */
-  max-height: 88%;
-  max-width: 86vw;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* Landscape keeps the whole portrait photograph, letterboxed into black —
+     which reads as a deliberate frame on a page that is already black, and
+     preserves the drizzle mid-pour at the top of the shot. */
   object-fit: contain;
-  /*
-    The film passes through a black-level crush and H.264 at CRF 26; this cutout
-    does not. Untouched, the still fades up fractionally brighter and more
-    saturated than the frame it is replacing, which reads as a light coming on at
-    the exact moment the handoff is supposed to be invisible. This puts the two
-    back on the same grade.
-  */
-  filter: saturate(0.95) brightness(0.94)
-    drop-shadow(0 2rem 4rem rgb(0 0 0 / 0.6));
+  object-position: 50% 50%;
+}
+
+@media (max-aspect-ratio: 1 / 1) {
+  /* A phone is close enough in aspect to the photograph to fill the screen with
+     it, which is the more forceful version of the same idea. */
+  .productImage {
+    object-fit: cover;
+  }
+}
+
+/*
+  The tagline and both CTAs sit over this, and unlike every other beat in the act
+  the ground underneath is now daylight rather than black. .foot alone was tuned
+  for black and is not enough here.
+*/
+.productScrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    to top,
+    rgb(0 0 0 / 0.92) 0%,
+    rgb(0 0 0 / 0.66) 30%,
+    rgb(0 0 0 / 0.18) 62%,
+    rgb(0 0 0 / 0.28) 100%
+  );
+  pointer-events: none;
 }
 
 /* ------------------------------------------------------------- chapter type */
@@ -541,10 +583,6 @@
       runway per seek. It costs about one more screen of scrolling on a phone.
     */
     height: 400vh;
-  }
-
-  .productImage {
-    height: 60%;
   }
 
   .chapters {
