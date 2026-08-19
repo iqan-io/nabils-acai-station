@@ -562,12 +562,11 @@ export function AcaiStory() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               className={styles.productImage}
-              src="/media/acai-story/real-acai-counter.webp"
-              alt="A Nabil's açaí cup built at the counter — açaí swirl, granola, blueberries and strawberry, with drizzle being poured over the top."
+              src="/media/acai-story/nabils-bowl.webp"
+              alt="A finished Nabil's açaí cup — açaí, granola, blueberries, strawberry and a drizzle swirl."
               loading="lazy"
               decoding="async"
             />
-            <span className={styles.productScrim} aria-hidden="true" />
           </div>
 
           <div className={styles.foot} aria-hidden="true" />
