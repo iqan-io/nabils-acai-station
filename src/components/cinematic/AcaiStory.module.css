@@ -53,13 +53,13 @@
     of the shorter edge. The film is `object-fit: contain`, so on a landscape
     stage it fills the width and its constellation lands within 1% of the
     rosette — nothing to correct. On a portrait stage contain letterboxes the
-    same 16:9 into a fraction of the height and the constellation comes out
-    about 1.6x too small, so the handoff would visibly shrink.
+    same 16:9 into a fraction of the height, so the film needs enlarging to meet
+    the cutouts.
 
-    1.6 is that ratio, and it is the same number on every portrait size because
-    both the rosette (vmin) and the contained film (width-bound) scale with the
-    shorter edge. It costs the outermost debris of the explosion, cropped off
-    the sides of a phone — a cheaper loss than a seam that pops.
+    The portrait value is set in the media query below, and it is capped by the
+    source resolution rather than chosen for composition — see the note there.
+    Whatever it is, --rosette must carry the same ratio so the cutouts shrink
+    with it and the handoff still lines up.
   */
   --film-scale: 1;
 
@@ -74,11 +74,42 @@
     On a phone the error ran the other way and was worse.
   */
   --film-box-h: calc(min(100vw, 100svh * 16 / 9) * 9 / 16 * var(--film-scale));
+
+  /* Multiplies the cutout rosette. It must track --film-scale exactly, or the
+     DOM constellation stops matching the film's first frame and the seam pops. */
+  --rosette: 1;
 }
 
+/*
+  Portrait blow-up, and why it is 1.25 rather than the 1.6 it started at.
+
+  The source footage is 1280x720. That is a hard ceiling — no amount of scaling
+  invents detail past it. What a phone actually paints is:
+
+    CSS box (100vw) x --film-scale x devicePixelRatio
+
+  At 1.6 on a 390px phone at DPR 3 that asks for 1872 device pixels from a
+  1280px source. With the half-resolution mobile cut also in play that was a
+  2.44x magnification; even after that cut was fixed it was still 1.46x. Both
+  were visible, and both were reported as pixelated — correctly.
+
+  At 1.25 the same phone asks for 1463 device pixels against a 1280px source —
+  a 1.14x upscale, which is below the threshold anyone picks out at phone
+  viewing distance, and a long way from the 2.44x that was actually shipping.
+
+  1.15 was tried first and is genuinely pixel-exact, but it left the film a
+  small band in the middle of a tall screen and cost more in presence than it
+  bought in sharpness. 1.25 is the compromise. Raising it buys size and spends
+  crispness; while the source is 720p no value gives both, which is exactly why
+  this is a token and not a magic number buried in a transform.
+
+  --rosette carries the same ratio (1.25 / 1.6 = 0.78) so the cutout
+  constellation shrinks with the film and the handoff still lines up.
+*/
 @media (max-aspect-ratio: 1 / 1) {
   .stage {
-    --film-scale: 1.6;
+    --film-scale: 1.25;
+    --rosette: 0.78;
   }
 }
 
@@ -131,16 +162,27 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  width: var(--size);
+  width: calc(var(--size) * var(--rosette));
   height: auto;
-  margin-left: calc(var(--size) / -2);
+  margin-left: calc(var(--size) * var(--rosette) / -2);
   transform-origin: 50% 50%;
   will-change: transform, opacity;
-  /* The cutouts were lit to match the footage, but a cutout sitting on flat
-     black has no contact shadow of its own. A small drop shadow in the footage's
-     magenta seats them in the same space. */
-  filter: drop-shadow(0 0 2.5rem rgb(224 37 122 / 0.16));
   pointer-events: none;
+  /*
+    No drop-shadow here, deliberately.
+
+    There was one — a 2.5rem magenta glow, to seat each cutout in the same light
+    as the footage. It cost more than it was worth. A filter forces the element
+    out of the cheap transform-only compositing path and into a re-rasterise on
+    every frame it moves, and these five move continuously for a fifth of the
+    act. Profiling the build phase on a phone at DPR 3 measured a 26ms mean frame
+    with 234ms spikes, against 16.7ms during the video scrub — the DOM half of
+    this act was costing more than the scrubbed video it hands off to.
+
+    The bloom behind them (.ingredientGlow) already provides the shared light,
+    it is one element instead of five, and it never re-rasterises because it
+    never changes.
+  */
 }
 
 /* ------------------------------------------------------------- the seam still

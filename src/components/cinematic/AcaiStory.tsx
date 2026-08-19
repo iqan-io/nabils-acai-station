@@ -183,6 +183,19 @@ export function AcaiStory() {
     const compact = window.matchMedia("(max-width: 47.99rem)").matches;
 
     /*
+      Matches the --rosette token in the stylesheet, and must keep matching it.
+
+      A portrait stage magnifies the film less than a landscape one does (see
+      --film-scale: the source is 720p and a phone at DPR 3 runs out of real
+      pixels fast), so the cutout constellation has to shrink by the same ratio
+      or it stops lining up with the frame it dissolves into. The CSS token
+      handles the cutouts' size; this handles the distances GSAP moves them.
+    */
+    const rosette = window.matchMedia("(max-aspect-ratio: 1 / 1)").matches
+      ? 0.78
+      : 1;
+
+    /*
       The film is requested on the first idle frame, not on mount.
 
       Two reasons it is assigned in JS at all rather than in the markup: only one
@@ -288,8 +301,8 @@ export function AcaiStory() {
 
         gsap.set(el, {
           autoAlpha: 0,
-          x: `${cutout.start.x}vmin`,
-          y: `${cutout.start.y}vmin`,
+          x: `${cutout.start.x * rosette}vmin`,
+          y: `${cutout.start.y * rosette}vmin`,
           rotate: cutout.start.rotate,
           scale: cutout.start.scale,
         });
@@ -299,8 +312,8 @@ export function AcaiStory() {
           el,
           {
             autoAlpha: 1,
-            x: `${cutout.end.x}vmin`,
-            y: `${cutout.end.y}vmin`,
+            x: `${cutout.end.x * rosette}vmin`,
+            y: `${cutout.end.y * rosette}vmin`,
             rotate: cutout.end.rotate,
             scale: cutout.end.scale,
             // power2.out, not an elastic or a back: food arriving on a spring
@@ -351,12 +364,23 @@ export function AcaiStory() {
         resolves, which is a camera doing something rather than a website
         swapping images.
       */
-      gsap.set(ingredientLayer, { filter: "blur(0px)" });
-      // Opacity runs linear so the two sides sum to a constant across the
-      // dissolve. The defocus gets its own fast-out ease instead, because the
-      // moment that needs help is the midpoint — where both layers sit near 50%
-      // and the eye is most able to separate them. A linear blur would only be
-      // halfway there exactly when it is needed most.
+      /*
+        Opacity runs linear so the two sides sum to a constant across the
+        dissolve; the layer also swells slightly as it goes, which reads as the
+        cutouts passing the camera rather than simply switching off.
+
+        It used to defocus instead — an animated blur from 0 to 10px, which
+        separated the two layers by depth and looked better than this does. It
+        was removed on measurement, not on taste. Animating a blur on a
+        full-viewport layer means re-rasterising it every frame; profiled on a
+        phone at DPR 3 that phase ran a 29.5ms mean frame with 196ms spikes,
+        against 16.7ms during the video scrub. The seam was the slowest thing on
+        a page whose whole selling point is that it moves smoothly.
+
+        A transform and an opacity are the two properties a compositor can
+        animate without touching the main thread, so this version is effectively
+        free.
+      */
       tl.to(
         ingredientLayer,
         { autoAlpha: 0, ease: "none", duration: dissolve },
@@ -364,7 +388,7 @@ export function AcaiStory() {
       );
       tl.to(
         ingredientLayer,
-        { filter: "blur(10px)", ease: "power2.out", duration: dissolve },
+        { scale: 1.12, ease: "power2.out", duration: dissolve },
         ACT.seamIn,
       );
       items.forEach((el, index) => {
@@ -375,8 +399,8 @@ export function AcaiStory() {
         tl.to(
           el,
           {
-            x: `${cutout.end.x * 0.8}vmin`,
-            y: `${cutout.end.y * 0.8}vmin`,
+            x: `${cutout.end.x * 0.8 * rosette}vmin`,
+            y: `${cutout.end.y * 0.8 * rosette}vmin`,
             scale: index === 0 ? 1.04 : 1.08,
             ease: "power1.in",
             duration: dissolve,
