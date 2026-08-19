@@ -470,10 +470,20 @@
   2003. So it is a quiet text link in the corner, visible on focus, and it
   simply anchors past the pinned section.
 */
+/*
+  Centred, not tucked into the right corner. Every frame of the film is a
+  centred subject on black, so a label pinned to the right edge was the only
+  thing in the composition off the centre line and it read as a stray bit of
+  chrome rather than an offer.
+
+  This owns the bottom slot permanently: it is the one control that survives
+  the whole pinned sequence, so it must not move when the cue above it goes.
+*/
 .skip {
   position: absolute;
-  right: var(--ds-step-3);
+  left: 50%;
   bottom: var(--ds-step-3);
+  transform: translateX(-50%);
   z-index: 7;
   padding: 0.6rem 0.9rem;
   font-family: var(--font-sans);
@@ -490,10 +500,17 @@
   color: var(--ds-honey-light);
 }
 
+/*
+  Sits directly above .skip rather than sharing its slot: both are centred, and
+  the two are only on screen together at scroll 0 — the cue fades at 3% of the
+  timeline and does not return, leaving the skip alone on the centre line.
+  Stacking them keeps the skip focusable from the very top instead of hiding a
+  navigation control behind an animation.
+*/
 .cue {
   position: absolute;
   left: 50%;
-  bottom: var(--ds-step-3);
+  bottom: calc(var(--ds-step-3) + 2.1rem);
   z-index: 7;
   transform: translateX(-50%);
   font-family: var(--font-sans);
