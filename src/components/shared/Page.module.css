@@ -253,13 +253,16 @@
   background: var(--ds-paper);
 }
 
+/*
+  No hover scale. There was a scale(1.03) here, and it had two problems. A row
+  is an <article>, not a link — nothing happens when you click it, so offering
+  a hover state advertises an interaction that does not exist. And now that the
+  frame edge is locked to #f5ecdf, scaling the image inside a fixed box pulls
+  that locked edge out of view and slides the sweep under a stationary frame,
+  which is the rectangle coming back the long way round.
+*/
 .rowMedia img {
   object-fit: cover;
-  transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
-}
-
-.row:hover .rowMedia img {
-  transform: scale(1.03);
 }
 
 .rowBody {

@@ -19,10 +19,25 @@
   So this registry — not the components — decides what a product looks like.
 
   Approved assets were supplied by Ali on 2026-08-18 and normalised onto one
-  1200x1500 (4:5) canvas. The normalisation is canvas only: five were already
+  1200x1500 (4:5) canvas by `scripts/build-studio-assets.py`. Five were already
   4:5 and were resized; açaí, the strawberry cup and the waffle pack were
   extended outwards along their own cream sweep so that no product was cropped.
-  The food itself is untouched. Do not regenerate or re-grade these.
+
+  The same script also grounds them: every frame's sweep is mapped onto one
+  shared backdrop that sits on --ds-paper (#f5ecdf) at the frame edge. That is
+  a white balance of the BACKDROP, derived from each frame's own sweep — the
+  food is untouched, because the correction is a smooth low-frequency field and
+  every local thing (the food, its grain, the contact shadow) rides on top of
+  it as a residual.
+
+  It is not optional polish. These render with no border, no radius and no drop
+  shadow on purpose — the photograph is meant to BE the card — so the frame
+  edge is the only thing hiding the box. As delivered the set missed the page
+  by up to 39 units and missed EACH OTHER by up to 27, so the menu read as ten
+  rectangles on the cream. `--check` measures it; it is now inside 1.
+
+  Do not regenerate or re-grade the food. Do not hand-edit these webps either:
+  they are build output, and the next run of the script will overwrite them.
 
   Two sections are still on their pre-studio photograph and are marked
   `studio: false`. They are listed in NEEDS_STUDIO_REPLACEMENT with what is

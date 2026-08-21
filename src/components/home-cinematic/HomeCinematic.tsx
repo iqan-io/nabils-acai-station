@@ -241,14 +241,24 @@ export function HomeCinematic() {
                     fill
                     sizes="(min-width: 64rem) 34rem, (min-width: 48rem) 45vw, 100vw"
                   />
-                  {item.tag ? (
-                    <span className={styles.itemTag}>{item.tag}</span>
-                  ) : null}
                 </div>
                 <div>
-                  <span className={styles.itemIndex}>
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
+                  {/*
+                    The tag used to be a filled honey pill sitting on top of the
+                    photograph, anchored to the card's top-left corner. There is
+                    no corner any more — the studio assets now land on the page's
+                    own cream, so the card has no edge and the pill was left
+                    floating in the band. It reads as what it is here: a label on
+                    the product, set as type beside the index.
+                  */}
+                  <p className={styles.itemMeta}>
+                    <span className={styles.itemIndex}>
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    {item.tag ? (
+                      <span className={styles.itemTag}>{item.tag}</span>
+                    ) : null}
+                  </p>
                   <h3 className={styles.itemName}>{item.name}</h3>
                   <span className={styles.itemPrice}>{item.price}</span>
                   <p className={styles.itemBlurb}>{item.blurb}</p>

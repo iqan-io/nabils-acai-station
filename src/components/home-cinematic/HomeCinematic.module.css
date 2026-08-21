@@ -309,12 +309,19 @@
   The ground is paper, not night-soft: the studio assets are a cream sweep, so
   the placeholder has to be the same cream or the box flashes dark and then
   draws a rectangle around every product.
+
+  No radius. It had 1.25rem, and that only ever worked by accident: the
+  assets' cream did not match the page's, so rounding the corners hid the
+  worst of the mismatch. Now that every asset lands on #f5ecdf at its frame
+  edge the photograph genuinely bleeds into the band, and a radius cuts four
+  notches of page cream out of a field that is already continuous. It also
+  made the homepage contradict /menu, which renders the very same files
+  square. One card system, one treatment.
 */
 .itemMedia {
   position: relative;
   aspect-ratio: 4 / 5;
   overflow: hidden;
-  border-radius: 1.25rem;
   background: var(--ds-paper);
 }
 
@@ -324,19 +331,31 @@
   object-fit: cover;
 }
 
+/*
+  Index and tag on one line, in the body column. The tag is type now, not a
+  filled pill on the photograph — a pill needs a card corner to sit in and the
+  cards no longer have corners.
+*/
+.itemMeta {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin: 0;
+}
+
+.itemMeta .itemTag::before {
+  content: "·";
+  margin-right: 0.6rem;
+  color: rgb(var(--ds-ink-rgb) / 0.35);
+}
+
 .itemTag {
-  position: absolute;
-  top: var(--ds-step-2);
-  left: var(--ds-step-2);
-  padding: 0.32rem 0.7rem;
-  border-radius: 999px;
-  background: var(--ds-honey);
-  color: var(--ds-night);
   font-family: var(--font-sans);
-  font-size: 0.66rem;
-  font-weight: 800;
-  letter-spacing: 0.14em;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
+  color: var(--ds-honey-light);
 }
 
 .itemIndex {
@@ -383,7 +402,8 @@
   disappearing into it.
 */
 .paper .itemIndex,
-.paper .itemPrice {
+.paper .itemPrice,
+.paper .itemTag {
   color: var(--ds-honey-deep);
 }
 
