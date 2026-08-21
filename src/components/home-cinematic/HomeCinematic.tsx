@@ -6,6 +6,7 @@ import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { AcaiStory } from "@/components/cinematic/AcaiStory";
+import { ArrivalClip } from "@/components/home-cinematic/ArrivalClip";
 import { brand, locations, press, reviews, signatures } from "@/lib/brand";
 import { getOpenStatus } from "@/lib/hours";
 import { track } from "@/lib/analytics";
@@ -165,6 +166,48 @@ export function HomeCinematic() {
 
       {/* ----------------------------------------------------------- story */}
       <AcaiStory />
+
+      {/* ------------------------------------------------------------ neon */}
+      {/*
+        The film spends 460vh arriving at its closing card, which sets
+        `brand.tagline` — "Made for sweet moments." — in Titan One on black.
+        That line is not a copywriter's invention: it is a neon sign on the wall
+        above the counter in Mount Lawley, and this is the photograph of it.
+
+        So the sequence asserts the line and this proves it, in that order. It
+        is deliberately the quietest block on the page — one photograph, the
+        shared `data-reveal` entrance, no pin and no scrub. The film does the
+        work; this only has to be true.
+
+        Night ground because AcaiStory's `.exit` gradient lands on --ds-night,
+        so the film walks into this with no seam, and the lineup's paper still
+        gets its contrast one section later.
+      */}
+      <section
+        className={`${styles.section} ${styles.night}`}
+        aria-labelledby="neon-title"
+      >
+        <div className={styles.shell}>
+          <figure className={styles.neon} data-reveal>
+            <Image
+              className={styles.neonImage}
+              src="/media/mt-lawley/neon.webp"
+              alt="A neon sign reading “Made for Sweet Moments” glowing on the wall above the counter at Nabil's Açaí Station in Mount Lawley, with topping jars on the shelf and the lit display cabinet below."
+              width={1436}
+              height={1200}
+              sizes="(min-width: 64rem) 46rem, 92vw"
+            />
+            <figcaption className={styles.neonCaption}>
+              <h2 id="neon-title" className={styles.neonTitle}>
+                On the wall
+              </h2>
+              <p className={styles.neonNote}>
+                Mount Lawley. Not a line we wrote for the website.
+              </p>
+            </figcaption>
+          </figure>
+        </div>
+      </section>
 
       {/* ---------------------------------------------------------- lineup */}
       {/*
@@ -375,6 +418,27 @@ export function HomeCinematic() {
               Two stations
             </h2>
           </header>
+
+          {/*
+            This band was pure text until now — names, addresses, hours, three
+            buttons. The arrival clip is Nabil's own phone footage of walking
+            into Mount Lawley, and it belongs here rather than higher up: it is
+            the answer to "what is it actually like when I get there", which is
+            the question this section exists to answer.
+
+            It is Mount Lawley only. Ballajura has no real footage and nothing
+            here should imply otherwise.
+          */}
+          <div className={styles.arrival} data-reveal>
+            <div className={styles.arrivalMedia}>
+              <ArrivalClip className={styles.arrivalClip} />
+            </div>
+            <p className={styles.arrivalNote}>
+              <span className={styles.arrivalLabel}>Walking in</span>
+              Mount Lawley, after dark — through the door, past the counter.
+              Filmed in the shop on Nabil&apos;s phone.
+            </p>
+          </div>
 
           <div className={styles.findGrid} data-reveal>
             <div>

@@ -8,10 +8,14 @@ import { TrackedLink } from "@/components/shared/TrackedLink";
 // cropped one or the other badly.
 const locationPhotos = [
   {
-    src: "/images/locations/location-mount-lawley.png",
-    alt: "Inside Nabil's Açaí Station in Mount Lawley",
-    w: 1086,
-    h: 1449,
+    // Nabil's own photograph of the Mount Lawley room, supplied 2026-08-19.
+    // It replaces a 2.4MB render of the same corner — same arches, same
+    // terrazzo, same fluted timber — which was the only interior this page
+    // had. Real beats rendered when both show the identical room.
+    src: "/media/mt-lawley/interior-arch.webp",
+    alt: "The arched, lit alcove and timber panelling inside Nabil's Açaí Station in Mount Lawley, with a marble table and wishbone chairs",
+    w: 1400,
+    h: 1867,
   },
   {
     src: "/images/locations/location-ballajura.png",

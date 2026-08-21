@@ -42,6 +42,16 @@ const FILM_ASSETS = [
   "/media/acai-story/drizzle.webp",
 ];
 
+// Nabil's own Mount Lawley photography and footage, supplied 2026-08-19. These
+// are the first real moving frames on the site; everything in FILM_ASSETS that
+// moves is generated.
+const MT_LAWLEY_ASSETS = [
+  "/media/mt-lawley/neon.webp",
+  "/media/mt-lawley/arrival.mp4",
+  "/media/mt-lawley/arrival-poster.webp",
+  "/media/mt-lawley/interior-arch.webp",
+];
+
 let pass = 0;
 let fail = 0;
 function check(name, ok, detail = "") {
@@ -62,7 +72,7 @@ const settle = (ms) => new Promise((r) => setTimeout(r, ms));
   }
 
   // ---- 2. film assets are actually served ----
-  for (const asset of FILM_ASSETS) {
+  for (const asset of [...FILM_ASSETS, ...MT_LAWLEY_ASSETS]) {
     const res = await page.goto(BASE + asset, { waitUntil: "domcontentloaded" });
     check(`asset ${asset}`, [200, 304].includes(res.status()), `HTTP ${res.status()}`);
   }
@@ -156,6 +166,71 @@ const settle = (ms) => new Promise((r) => setTimeout(r, ms));
     () => document.querySelectorAll("[data-chapter]").length,
   );
   check("four chapter beats present", chapters === 4, `got ${chapters}`);
+
+  // ---- 4b. Nabil's real Mount Lawley media ----
+  // The film closes on brand.tagline; the neon photograph is that same line on
+  // the actual wall. If this image ever stops rendering, the closing card goes
+  // back to being an unsupported claim.
+  // It sits below the film and is lazily loaded, so it has to be brought into
+  // view before naturalWidth means anything.
+  await page.evaluate(() => {
+    document.querySelector("#neon-title").scrollIntoView({ block: "center" });
+  });
+  await settle(1500);
+  const neon = await page.evaluate(() => {
+    const img = document.querySelector("img[src*='neon']");
+    return { present: !!img, w: img ? img.naturalWidth : 0 };
+  });
+  check("neon photograph renders", neon.present && neon.w > 0, `naturalWidth ${neon.w}`);
+
+  // The arrival clip must not decode until it is on screen — the film above it
+  // owns the frame budget. preload="none" is the mechanism.
+  const beforeScroll = await page.evaluate(() => {
+    const v = document.querySelector("video[aria-label*='Walking in']");
+    return v ? { present: true, preload: v.preload, readyState: v.readyState } : { present: false };
+  });
+  check("arrival clip present", beforeScroll.present);
+  check(
+    "arrival clip does not preload",
+    beforeScroll.preload === "none",
+    `preload=${beforeScroll.preload}`,
+  );
+
+  await page.evaluate(() => {
+    document.querySelector("#find-title").scrollIntoView({ block: "center" });
+  });
+  await settle(3000);
+  const arrival = await page.evaluate(() => {
+    const v = document.querySelector("video[aria-label*='Walking in']");
+    if (!v) return { present: false };
+    return {
+      present: true,
+      paused: v.paused,
+      muted: v.muted,
+      loop: v.loop,
+      playsInline: v.hasAttribute("playsinline"),
+      // Portrait phone footage: the source carries rotation=-90 over a 1024x576
+      // stream and the rotation is baked into the encode, so the decoder must
+      // report it upright. A 1024x576 here means the rotation came back.
+      w: v.videoWidth,
+      h: v.videoHeight,
+    };
+  });
+  check("arrival clip plays in view", arrival.present && !arrival.paused);
+  check("arrival clip is muted + playsinline", arrival.muted && arrival.playsInline);
+  // It ends inside the shop; looping would cut back to the dark arcade.
+  check("arrival clip does not loop", arrival.loop === false);
+  check(
+    "arrival clip decodes upright (portrait)",
+    arrival.h > arrival.w,
+    `${arrival.w}x${arrival.h}`,
+  );
+
+  // This block scrolled to the bottom of the page. Everything after it — the
+  // hero hit-tests and the scrub measurement — assumes a page at rest at the
+  // top, so reload rather than leaving the next check to inherit this scroll.
+  await page.goto(BASE + "/", { waitUntil: "networkidle0" });
+  await settle(500);
 
   // The four beats share one grid cell. A faded-out beat that still hit-tests
   // sits on top of the hero and swallows its clicks — which is exactly what
@@ -264,16 +339,26 @@ const settle = (ms) => new Promise((r) => setTimeout(r, ms));
   await settle(500);
 
   const reduced = await page.evaluate(() => {
-    const v = document.querySelector("video");
+    // Every video on the page, not just the first. The film's is the first and
+    // used to be the only one; the Mount Lawley arrival clip is a second, and
+    // checking querySelector("video") alone would have stopped covering it.
+    const videos = [...document.querySelectorAll("video")];
     const beats = [...document.querySelectorAll("[data-chapter]")];
     return {
       // No src is ever assigned under reduced motion, so nothing downloads or moves.
-      videoSrc: v ? v.getAttribute("src") : null,
+      videoSrcs: videos.map((v) => v.getAttribute("src")).filter(Boolean),
+      // The arrival clip degrades to its own poster frame rather than vanishing.
+      arrivalStill: !!document.querySelector("img[src*='arrival-poster']"),
       hidden: beats.filter((b) => Number(getComputedStyle(b).opacity) < 0.9).length,
       count: beats.length,
     };
   });
-  check("reduced motion loads no video", !reduced.videoSrc, reduced.videoSrc || "no src");
+  check(
+    "reduced motion loads no video",
+    reduced.videoSrcs.length === 0,
+    reduced.videoSrcs.join(", ") || "no src on any video",
+  );
+  check("reduced motion still shows the arrival still", reduced.arrivalStill);
   check(
     "reduced motion shows every beat",
     reduced.hidden === 0 && reduced.count === 4,
