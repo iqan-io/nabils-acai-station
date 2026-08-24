@@ -258,7 +258,102 @@ def ground_normalise(a: np.ndarray) -> np.ndarray:
     return np.clip(target + (graded - target) * w, 0.0, 255.0)
 
 
-def to_card(path: str, crop=None, bias: float = 0.5) -> Image.Image:
+# ---------------------------------------------------------------------- shelf
+
+# Where a gallery card's product stands. Height as a share of the frame, and
+# the y its contact point sits on. 0.86 is close to the tallest card as
+# delivered (0.921) so most frames scale UP and are cropped — cropping empty
+# sweep invents nothing, and only one card has to grow any sweep at all.
+SHELF_H = 0.86
+SHELF_BASELINE = 1420
+SHELF_MAX_W = 0.90  # never let a wide product touch the side of the frame
+
+
+def _product_bbox(a: np.ndarray) -> tuple[int, int, int, int]:
+    """Where the food is, as (x0, y0, x1, y1).
+
+    Reuses the chromaticity mask that the ground pass already trusts, so the
+    contact shadow counts as ground and does not drag the box downwards. The
+    per-line thresholds drop stray specks without eroding a real edge.
+    """
+    fg = ~_background_mask(a)
+    h, w = a.shape[:2]
+    rows = np.where(fg.sum(axis=1) > w * 0.012)[0]
+    cols = np.where(fg.sum(axis=0) > h * 0.012)[0]
+    if rows.size == 0 or cols.size == 0:
+        return 0, 0, w - 1, h - 1
+    return int(cols[0]), int(rows[0]), int(cols[-1]), int(rows[-1])
+
+
+def _place(a: np.ndarray, top: int, left: int, h: int, w: int) -> np.ndarray:
+    """Window a resampled frame back onto the h x w canvas.
+
+    Positive offsets crop; negative ones continue the sweep outwards with the
+    same extrapolation the canvas step uses.
+    """
+    if top > 0:
+        a = a[top:]
+    elif top < 0:
+        a = _extend_edge(a, -top, axis=0, side="start")
+    if a.shape[0] > h:
+        a = a[:h]
+    elif a.shape[0] < h:
+        a = _extend_edge(a, h - a.shape[0], axis=0, side="end")
+
+    if left > 0:
+        a = a[:, left:]
+    elif left < 0:
+        a = _extend_edge(a, -left, axis=1, side="start")
+    if a.shape[1] > w:
+        a = a[:, :w]
+    elif a.shape[1] < w:
+        a = _extend_edge(a, w - a.shape[1], axis=1, side="end")
+    return a
+
+
+def shelf_normalise(a: np.ndarray) -> np.ndarray:
+    """Stand every gallery card's product at one size on one ground line.
+
+    ONLY for the açaí build gallery, never for the editorial-row heroes — the
+    heroes are shipped, approved artwork and each is seen alone, so nothing is
+    gained by rescaling them and an approved asset would silently change.
+
+    The gallery is different: five cards sit side by side in one strip, and as
+    built they ranged 0.735-0.921 of the frame in height with 84px between
+    their contact points. Read as a row that is not five sizes of cup, it is
+    five photographs taken from five distances. Products keep their own aspect
+    ratio — a wide tub stays wide, which is real — but they share a scale and
+    a baseline, which is how a lineup is actually shot.
+
+    The whole frame is resampled, sweep and contact shadow included, so the
+    shadow keeps its size relative to the cup it belongs to. Runs BEFORE
+    ground_normalise, which must stay last so it locks the edge that ships.
+    """
+    h, w = a.shape[:2]
+    x0, y0, x1, y1 = _product_bbox(a)
+    scale = min(
+        (SHELF_H * h) / max(y1 - y0 + 1, 1),
+        (SHELF_MAX_W * w) / max(x1 - x0 + 1, 1),
+    )
+
+    big = np.asarray(
+        Image.fromarray(a.astype(np.uint8)).resize(
+            (int(round(w * scale)), int(round(h * scale))), Image.LANCZOS
+        )
+    ).astype(float)
+
+    bottom = (y1 + 1) * scale
+    centre = ((x0 + x1 + 1) / 2.0) * scale
+    return _place(
+        big,
+        int(round(bottom - SHELF_BASELINE)),
+        int(round(centre - w / 2.0)),
+        h,
+        w,
+    )
+
+
+def to_card(path: str, crop=None, bias: float = 0.5, shelf: bool = False) -> Image.Image:
     """1200x1500 RGB.
 
     `bias` is the share of the pad taken on the start (top/left) edge, so the
@@ -284,6 +379,8 @@ def to_card(path: str, crop=None, bias: float = 0.5) -> Image.Image:
     card = np.asarray(
         Image.fromarray(a.astype(np.uint8)).resize((TARGET_W, TARGET_H), Image.LANCZOS)
     ).astype(float)
+    if shelf:
+        card = shelf_normalise(card)
     return Image.fromarray(ground_normalise(card).astype(np.uint8))
 
 
@@ -308,7 +405,36 @@ PLAN = [
     # good extension; the shadow sits ~150px clear of the bottom either way.
     ("nabil-classic-crepe.png", "crepe-classic-studio", (0, 91, 1086, 1448), 0.5),
     ("nabil-mocktails.png", "mocktail-studio", (0, 91, 1086, 1448), 0.5),
+    # Third batch (2026-08-24), from Ali's own counter photographs of açaí
+    # builds. Unlike the first two batches these did not arrive as studio
+    # frames: they were phone shots on the shop's purple/blue backdrop, in
+    # hand, or against the counter. Each was relit onto the System B sweep by
+    # a gpt-image-2 image-to-image edit that changed the ENVIRONMENT ONLY —
+    # the food is the food in Ali's photograph, not a generated dessert. The
+    # unedited originals are kept beside them at
+    # ../assets/source/soft-serve-2026-08-24/ so the pair can be compared.
+    #
+    # All six arrive already on 4:5 (1024x1280), so they are only resized and
+    # grounded — no crop, no extension, nothing invented at the canvas step.
+    ("nabil-acai-chocolate.png", "acai-chocolate-studio", None, 0.5),
+    ("nabil-acai-biscoff.png", "acai-biscoff-studio", None, 0.5),
+    ("nabil-acai-pistachio.png", "acai-pistachio-studio", None, 0.5),
+    ("nabil-acai-pistachio-choc.png", "acai-pistachio-choc-studio", None, 0.5),
+    ("nabil-acai-pistachio-loaded.png", "acai-loaded-studio", None, 0.5),
+    ("nabil-brownie-bowl.png", "brownie-bowl-studio", None, 0.5),
 ]
+
+
+# The açaí build gallery. These five run side by side in one strip on /menu, so
+# they get the shelf pass; every other asset is an editorial-row hero, seen
+# alone, and is left exactly as approved.
+SHELF_ASSETS = {
+    "acai-loaded-studio",
+    "acai-chocolate-studio",
+    "acai-biscoff-studio",
+    "acai-pistachio-studio",
+    "acai-pistachio-choc-studio",
+}
 
 
 RING = 8
@@ -391,7 +517,7 @@ def main() -> None:
         if not os.path.exists(path):
             print(f"SKIP {name}: no source at {path}")
             continue
-        card = to_card(path, crop, bias)
+        card = to_card(path, crop, bias, shelf=name in SHELF_ASSETS)
         dest = os.path.join(args.out, name + ".webp")
         card.save(dest, "WEBP", quality=88, method=6)
         print(f"{name + '.webp':<34} {os.path.getsize(dest) // 1024:>5} KB  {card.size}")

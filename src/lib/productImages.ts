@@ -111,6 +111,63 @@ export const productImages = {
     alt: "Two cans of Nabil's probiotic splash",
     studio: true,
   },
+
+  /*
+    Third batch, 2026-08-24 — the açaí build gallery.
+
+    These six came from Ali's own counter photographs rather than from a
+    studio shoot: phone shots on the shop's purple and blue backdrop, in hand,
+    or against the counter. Each was relit onto the System B sweep by a
+    gpt-image-2 image-to-image edit that replaced the ENVIRONMENT ONLY, so the
+    dessert in every frame is the dessert Ali photographed. The unedited
+    originals sit beside them at
+    `clients/nabils-acai-station/assets/source/soft-serve-2026-08-24/` for
+    comparison, and the relit sources at `.../studio-2026-08-24/`.
+
+    ALT TEXT IS DELIBERATELY DESCRIPTIVE, NOT NOMINAL. It says "a pale green
+    drizzle", never "pistachio". The açaí footnote sells nine drizzles and
+    several of them are hard to tell apart in a photograph — a tan flood could
+    be Biscoff, peanut butter or Bueno — so naming one would be inventing a
+    business fact about what the customer is looking at. If Ali confirms which
+    drizzle is in which frame, the names belong here and captions can go on in
+    `menuSectionGalleryKeys` below.
+  */
+  acaiLoaded: {
+    src: `${STUDIO}/acai-loaded-studio.webp`,
+    alt: "A clear cup of Nabil's açaí layered over granola with mango, blueberries and strawberries, under a thick pale green drizzle",
+    studio: true,
+  },
+  acaiChocolate: {
+    src: `${STUDIO}/acai-chocolate-studio.webp`,
+    alt: "A Nabil's açaí swirl coated in dark chocolate, with strawberries, banana and golden crumble around the base",
+    studio: true,
+  },
+  acaiBiscoff: {
+    src: `${STUDIO}/acai-biscoff-studio.webp`,
+    alt: "A Nabil's açaí swirl flooded with a thick caramel-toned drizzle, packed with strawberries",
+    studio: true,
+  },
+  acaiPistachio: {
+    src: `${STUDIO}/acai-pistachio-studio.webp`,
+    alt: "A pale green Nabil's soft-serve swirl ringed with whole strawberries",
+    studio: true,
+  },
+  acaiPistachioChoc: {
+    src: `${STUDIO}/acai-pistachio-choc-studio.webp`,
+    alt: "A chocolate Nabil's açaí swirl under a pale green drizzle, with strawberries and banana around the base",
+    studio: true,
+  },
+
+  /*
+    Registered, built, and deliberately NOT placed on any page yet — see
+    UNPLACED below. It is in this registry so the asset is tracked rather than
+    orphaned, not because a component reads it.
+  */
+  brownieBowl: {
+    src: `${STUDIO}/brownie-bowl-studio.webp`,
+    alt: "A tub of Nabil's brownie pieces with a scoop of pistachio gelato and a vanilla soft-serve swirl",
+    studio: true,
+  },
 } satisfies Record<string, ProductImage>;
 
 export type ProductKey = keyof typeof productImages;
@@ -138,6 +195,67 @@ export function menuSectionImage(title: string): ProductImage | undefined {
   const key = menuSectionImageKey[title];
   return key ? productImages[key] : undefined;
 }
+
+/*
+  ---------------------------------------------------------------------------
+  Section galleries — extra frames that run BELOW a section's editorial row.
+  ---------------------------------------------------------------------------
+
+  An editorial row shows one photograph. That is right for a section whose
+  items are variations on one object (there is only one way a brownie looks),
+  and wrong for "Açaí — Build Your Own", which is the one section on the menu
+  where the product is a CHOICE: four sizes, nine drizzles and a topping list,
+  all sold by a footnote in 0.82rem grey type and illustrated by a single cup.
+  The gallery is that footnote, photographed.
+
+  Deliberately uncaptioned. See the alt-text note in `productImages` above —
+  captions would have to name a drizzle, and naming one we cannot verify from
+  the photograph is inventing a business fact. The frames carry themselves.
+
+  Order is chosen so no two adjacent cards share a dominant colour: the
+  layered clear cup first because it is the only one that shows what is under
+  the swirl, then dark, then caramel, then pale green, then the two-tone.
+*/
+export const menuSectionGalleryKeys: Record<string, readonly ProductKey[]> = {
+  "Açaí — Build Your Own": [
+    "acaiLoaded",
+    "acaiChocolate",
+    "acaiBiscoff",
+    "acaiPistachio",
+    "acaiPistachioChoc",
+  ],
+};
+
+export function menuSectionGallery(title: string): readonly ProductImage[] {
+  return (menuSectionGalleryKeys[title] ?? []).map((key) => productImages[key]);
+}
+
+/*
+  ---------------------------------------------------------------------------
+  Built but not placed.
+  ---------------------------------------------------------------------------
+  `brownieBowl` is a relit frame of a real Nabil's dessert — brownie pieces, a
+  scoop of pistachio gelato and a vanilla soft-serve swirl in a tub — and it
+  has no honest home on the menu as written.
+
+  The nearest listing is Brownies / "Brownie Bowl" ($14), described in brand.ts
+  as "Premium milk chocolate, strawberries and choice of drizzle". The
+  photograph has no strawberries and carries two things that listing does not
+  mention, so hanging it on that row would advertise an item that may not be
+  orderable. Per AGENTS.md we do not invent business facts, and per the art
+  direction we do not substitute a stand-in.
+
+  To place it, Ali needs to confirm one thing: what is in the tub and what it
+  is called on the menu. Then either point `brownieBowl` at the right section
+  here, or add the section to brand.ts.
+*/
+export const UNPLACED: ReadonlyArray<{ key: ProductKey; blockedOn: string }> = [
+  {
+    key: "brownieBowl",
+    blockedOn:
+      "No matching menu item. Ali to confirm what the tub is and what it is called before it goes on a page.",
+  },
+];
 
 /*
   ---------------------------------------------------------------------------

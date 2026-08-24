@@ -401,6 +401,83 @@
   scroll-margin-top: 9rem;
 }
 
+/* --------------------------------------------------------- section gallery */
+
+/*
+  Extra System B frames below a section's editorial row. Only "Açaí — Build
+  Your Own" has them: it is the one section that sells a CHOICE rather than an
+  object, and the choice was previously carried by a grey footnote alone.
+
+  The cards keep the row's rules exactly — .rowMedia + .productMedia, so 4:5,
+  no border, no radius, no shadow, and a --ds-paper ground. On a paper band
+  that means the strip reads as photographs lying on the page rather than as a
+  row of tiles, which is the same reason the menu rows dropped their frames.
+  Do not add a gap-filling background, a card surface or a hover state here.
+*/
+.gallery {
+  margin-top: var(--ds-step-5);
+  padding-top: var(--ds-step-5);
+  border-top: 1px solid rgb(22 11 24 / 0.1);
+}
+
+.night .gallery {
+  border-top: 1px solid rgb(245 236 223 / 0.12);
+}
+
+/* Matches .footnote — this labels the strip, it does not headline it. */
+.galleryLede {
+  margin: 0 0 var(--ds-step-4);
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--ds-muted);
+}
+
+.night .galleryLede {
+  color: rgb(245 236 223 / 0.58);
+}
+
+/*
+  Flex, not grid, and the reason is the orphan.
+
+  There are five cards, so EVERY column count except five leaves a short final
+  row — 3+2 on desktop, 2+2+1 on a phone. In grid that short row hangs to the
+  left and reads as a mistake, and the fix is a pile of `:nth-last-child`
+  special-casing that silently breaks the moment a section has four frames or
+  six. `flex-wrap` with `justify-content: center` centres whatever ends up on
+  the last row, at any count, with no arithmetic.
+
+  Cards are sized by flex-basis rather than by a track, so the basis is the
+  single place the column count lives.
+
+  Two up on a phone: one-up makes each card taller than the viewport, and
+  three-up at 390px leaves the swirl ~100px wide, at which point the drizzle —
+  the entire point of the strip — stops being legible.
+*/
+.galleryGrid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--ds-step-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.galleryGrid > li {
+  flex: 0 1 calc((100% - var(--ds-step-3)) / 2);
+}
+
+/* A gallery, like a row, still needs a rule before an imageless list. */
+.gallery + .compactGrid {
+  margin-top: var(--ds-step-5);
+  border-top: 1px solid rgb(22 11 24 / 0.1);
+}
+
+.night .gallery + .compactGrid {
+  border-top: 1px solid rgb(245 236 223 / 0.12);
+}
+
 /* ------------------------------------------------------------------ closing */
 
 .closing {
@@ -486,6 +563,7 @@
   .compactGrid {
     grid-template-columns: repeat(2, 1fr);
   }
+
 }
 
 @media (min-width: 64rem) {
@@ -507,6 +585,22 @@
 
   .compactGrid {
     grid-template-columns: repeat(3, 1fr);
+  }
+
+  /*
+    Three up, not five. At five the cards rendered 218px against the section's
+    own 605px photograph — 36% of its width and 13% of its area — so they read
+    as thumbnails dropped under the real picture rather than as part of the
+    same page. Three puts them near 390px, about two thirds of the hero, which
+    is a deliberate second tier: clearly subordinate to the section photograph,
+    clearly not an afterthought. The trailing pair centres itself.
+  */
+  .galleryGrid {
+    gap: var(--ds-step-4);
+  }
+
+  .galleryGrid > li {
+    flex-basis: calc((100% - 2 * var(--ds-step-4)) / 3);
   }
 }
 

@@ -1,7 +1,12 @@
+import { Fragment } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { brand, menu, menuGroups, menuSlug, type MenuSection } from "@/lib/brand";
-import { menuSectionImage, PRODUCT_CARD_RATIO } from "@/lib/productImages";
+import {
+  menuSectionGallery,
+  menuSectionImage,
+  PRODUCT_CARD_RATIO,
+} from "@/lib/productImages";
 import styles from "@/components/shared/Page.module.css";
 
 /*
@@ -76,6 +81,53 @@ function EditorialRow({
         <PriceList section={section} />
       </div>
     </article>
+  );
+}
+
+/*
+  The extra frames for a section that has them, run as a full-width strip below
+  its editorial row rather than inside it — the row is a two-column grid and a
+  gallery nested in either column would be half the page wide and land at a
+  different size on flipped rows.
+
+  Only "Açaí — Build Your Own" has one today. The section's whole proposition
+  is choice, and until now the choice was carried entirely by a grey 0.82rem
+  footnote listing nine drizzles under a single photograph.
+
+  Uncaptioned on purpose: `productImages.ts` explains why a caption would have
+  to name a drizzle we cannot verify from the photograph. So each figure is
+  just the frame, and the alt text does the describing.
+*/
+function BuildGallery({ section }: { section: MenuSection }) {
+  const frames = menuSectionGallery(section.title);
+  if (frames.length === 0) return null;
+  return (
+    <div className={styles.gallery} data-reveal>
+      <p className={styles.galleryLede}>A few builds from the counter</p>
+      <ul className={styles.galleryGrid}>
+        {frames.map((frame) => (
+          <li key={frame.src}>
+            <div
+              className={`${styles.rowMedia} ${styles.productMedia}`}
+              style={{ "--media-ratio": PRODUCT_CARD_RATIO } as React.CSSProperties}
+            >
+              <Image
+                src={frame.src}
+                alt={frame.alt}
+                fill
+                quality={90}
+                /*
+                  Three up on desktop, two below — matching the flex-basis in
+                  Page.module.css so the browser never fetches a 1200px card to
+                  paint it a third of that. Keep the two in step.
+                */
+                sizes="(min-width: 64rem) 30vw, 46vw"
+              />
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
@@ -161,7 +213,10 @@ export function MenuFull() {
               </header>
 
               {withMedia.map((section, i) => (
-                <EditorialRow key={section.title} section={section} flip={i % 2 === 1} />
+                <Fragment key={section.title}>
+                  <EditorialRow section={section} flip={i % 2 === 1} />
+                  <BuildGallery section={section} />
+                </Fragment>
               ))}
 
               {withoutMedia.length > 0 && (
