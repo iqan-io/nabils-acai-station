@@ -95,7 +95,11 @@ export default function RootLayout({
 
   return (
     <html lang="en" className="h-full antialiased">
-      <body className="min-h-full flex flex-col bg-[var(--cream)] text-[var(--acai-deep)]">
+      {/* The ground is black on every route now that the inner pages run the
+          reference's panel language. This matters beyond aesthetics: a cream
+          body flashed at the top and bottom of every navigation, and showed
+          through the 8px gaps between the panels. */}
+      <body className="min-h-full flex flex-col bg-black text-[var(--ds-paper)]">
         <Analytics />
         <VercelAnalytics />
         <SpeedInsights />

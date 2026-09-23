@@ -1,530 +1,311 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Fragment, useEffect, useRef, type CSSProperties } from "react";
 import { AcaiStory } from "@/components/cinematic/AcaiStory";
-import { ArrivalClip } from "@/components/home-cinematic/ArrivalClip";
-import { brand, locations, press, reviews, signatures } from "@/lib/brand";
-import { getOpenStatus } from "@/lib/hours";
+import { ArrivalClip } from "./ArrivalClip";
+import { OrderPickupPill } from "@/components/station/OrderPickupPill";
+import { ReviewRows } from "./ReviewRows";
+import { PanelStack } from "@/components/station/PanelStack";
+import { brand, locations, menuGroups, menuSlug } from "@/lib/brand";
 import { track } from "@/lib/analytics";
 import { useSmoothScroll } from "@/lib/useSmoothScroll";
-import styles from "./HomeCinematic.module.css";
+import styles from "./Station.module.css";
 
-gsap.registerPlugin(ScrollTrigger);
-
-const SIZES = [
-  ["Large", "$15"],
-  ["Regular", "$12"],
-  ["Small", "$10"],
-  ["Cone", "$9"],
+/* Hero-only background edits of Nabil's existing product photographs. The menu
+   keeps its cream merchandising system; these live on black because their job
+   is to disappear into the reference's long, narrow photographic apertures. */
+const heroPhotos = [
+  "/images/products/hero-dark/acai-dark-v1.webp",
+  "/images/products/hero-dark/crepe-dark-v1.webp",
+  "/images/products/hero-dark/dubai-chocolate-dark-v1.webp",
+  "/images/products/hero-dark/fruit-cocktail-dark-v1.webp",
 ] as const;
 
-const DRIZZLES = [
-  "Honey",
-  "Condensed milk",
-  "Passion fruit",
-  "Nutella",
-  "Pistachio",
-  "Biscoff",
-  "Bueno",
-  "Peanut butter",
-  "Milk chocolate",
-] as const;
+/*
+  The capsule lattice.
 
-const TOPPINGS = [
-  "Banana",
-  "Granola",
-  "M&M's",
-  "Strawberries",
-  "Blueberries",
-  "Crushed pistachios",
-  "Crushed almonds",
-  "Paçoca",
-  "Oreo crumbs",
-  "Biscoff crumbs",
-  "Coconut",
-  "Choc chips",
-  "Dubai filling",
-] as const;
+  The field is a grid in the capsules' own rotated frame — `--cols` columns
+  across, `--rows` rows along the drift axis — and Station.module.css slides the
+  whole lattice two row pitches per cycle. Three rules keep that loop invisible
+  while still turning the dishes over:
+
+    1. The photograph is chosen from `(col * 2 + row % 2)`, so it repeats every
+       TWO rows. That is exactly the animation's travel, so the reset lands on
+       an identical field. It also means a capsule always arrives where a
+       different dish just was, which is what makes the roster appear to rotate.
+    2. The per-column stagger steps each column along the drift axis by 2/5 of
+       a row pitch, wrapped into one pitch. 2 and 5 are coprime, so the five
+       columns land on five evenly spread phases (0, .4, .8, .2, .6) and the
+       field reads as even diagonal bands. A plain 0.31 step clustered them and
+       left the density lurching through the cycle; an unwrapped step would push
+       the later columns out of the covered area entirely.
+    3. The crop scale and origin vary per cell, so the four sources do not read
+       as four repeated tiles. They are derived from the same `(col, row % 2)`
+       pair, so they stay periodic too.
+
+  The counts are the smallest that cover the viewport once rotated by 30deg,
+  plus the two rows of overscan the loop consumes. Every cell reuses one of four
+  already-downloaded images, so the extra capsules cost DOM, not network.
+*/
+const LATTICE = { cols: 5, rows: 7 } as const;
+const CAP_SCALES = ["1.32", "1.46", "1.58"] as const;
+const CAP_ORIGINS = ["44%", "56%", "68%"] as const;
+
+type Cell = {
+  key: string;
+  photo: string;
+  col: number;
+  row: number;
+  stagger: string;
+  scale: string;
+  origin: string;
+  priority: boolean;
+};
+
+function latticeCells(): Cell[] {
+  const cells: Cell[] = [];
+  for (let col = 0; col < LATTICE.cols; col += 1) {
+    for (let row = 0; row < LATTICE.rows; row += 1) {
+      const phase = (col * 2 + (row % 2)) % heroPhotos.length;
+      const variant = (col + (row % 2) * 2) % CAP_SCALES.length;
+      cells.push({
+        key: `${col}-${row}`,
+        photo: heroPhotos[phase],
+        col,
+        row,
+        // Wrapped into one row pitch — see rule 2 above.
+        stagger: (((col * 2) / LATTICE.cols) % 1).toFixed(3),
+        scale: CAP_SCALES[variant],
+        origin: CAP_ORIGINS[variant],
+        // Every cell draws one of the same four files, so preloading the first
+        // occurrence of each is enough for the whole field to paint at once.
+        // Marking all 35 priority would preload nothing extra and just flood
+        // the first paint with duplicate hints.
+        priority: false,
+      });
+    }
+  }
+  // Promote the first cell that uses each photograph, so all four sources are
+  // fetched eagerly and no capsule paints as an empty black pill.
+  const seen = new Set<string>();
+  for (const cell of cells) {
+    if (!seen.has(cell.photo)) {
+      seen.add(cell.photo);
+      cell.priority = true;
+    }
+  }
+  return cells;
+}
+
+const CELLS = latticeCells();
 
 export function HomeCinematic() {
-  const rootRef = useRef<HTMLDivElement>(null);
-
-  // The open/closed pill is real-time, so it cannot be rendered on the server
-  // without shipping a status that is stale by the time it arrives. It renders
-  // as nothing until the client knows the actual Perth time.
-  const [status, setStatus] = useState<ReturnType<typeof getOpenStatus> | null>(
-    null,
-  );
-  useEffect(() => setStatus(getOpenStatus()), []);
-
+  const heroRef = useRef<HTMLElement>(null);
+  const photosRef = useRef<HTMLDivElement>(null);
   useSmoothScroll();
 
+  /* The collage drifts along its own diagonal as the hero scrolls, while the
+     wordmark stays put — the reference's opening move. The capsules are rotated
+     -28deg, so travelling on that same axis reads as sliding along their length
+     rather than as a layer sliding behind the type.
+
+     rAF rather than a scroll event: the page is driven by Lenis, whose smoothed
+     position does not land on native scroll events, and reading the hero's own
+     rect each frame keeps this independent of AcaiStory's engine. It writes one
+     transform on one element and never touches the film. */
   useEffect(() => {
+    const hero = heroRef.current;
+    const photos = photosRef.current;
+    if (!hero || !photos) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const ctx = gsap.context(() => {
-      // One shared entrance for every block below the film: the children rise
-      // and fade as their container reaches the lower third. Deliberately the
-      // only motion down here — after a 460vh film, more movement reads as
-      // noise rather than polish.
-      gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((el) => {
-        gsap.from(el.children, {
-          opacity: 0,
-          y: 36,
-          duration: 0.7,
-          stagger: 0.08,
-          ease: "power3.out",
-          scrollTrigger: { trigger: el, start: "top 78%" },
-        });
-      });
-    }, rootRef);
-
-    return () => ctx.revert();
+    let raf = 0;
+    let last = -1;
+    let covered = false;
+    const tick = () => {
+      raf = requestAnimationFrame(tick);
+      // The hero is pinned (see .heroScene), so its own rect no longer moves.
+      // Progress is how far the film has slid up over it instead: 0 at the top
+      // of the page, 1 once the hero is completely covered.
+      const height = Math.max(hero.offsetHeight, 1);
+      const p = Math.min(1, Math.max(0, window.scrollY / height));
+      // Stop compositing a drift nobody can see: the lattice pauses once the
+      // film fully covers the hero, and resumes on the way back up.
+      const nowCovered = p >= 1;
+      if (nowCovered !== covered) {
+        covered = nowCovered;
+        hero.toggleAttribute("data-covered", covered);
+      }
+      if (Math.abs(p - last) < 0.0005) return;
+      last = p;
+      // Unit vector of the -28deg axis, travelled backwards so the field falls
+      // down-and-left and fresh capsules enter from the top right.
+      photos.style.transform = `translate3d(${(-15 * p).toFixed(2)}vw, ${(8 * p).toFixed(2)}vh, 0)`;
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
   }, []);
 
-  const mtLawley = locations[0];
-  const ballajura = locations[1];
-
   return (
-    <div className={styles.root} ref={rootRef}>
-      {/* --------------------------------------------------------- opening */}
-      <section className={styles.opening} aria-labelledby="home-title">
-        <div className={styles.openingInner}>
-          <div className={styles.openingCopy}>
-            {status ? (
-              <p className={styles.status}>
-                <span
-                  className={styles.statusDot}
-                  data-open={status.open}
-                  aria-hidden="true"
-                />
-                {status.open
-                  ? `Open now · till ${status.closesAt}`
-                  : status.opensDay
-                    ? `Closed · opens ${status.opensDay} ${status.opensAt}`
-                    : `Closed · opens ${status.opensAt}`}
-              </p>
-            ) : null}
-
-            <h1 id="home-title" className={styles.title}>
-              Nabil&apos;s Açaí Station
-            </h1>
-            <p className={styles.tagline}>
-              Açaí, crêpes and the viral Dubai chocolate, built to order in
-              Mount Lawley and Ballajura. {brand.tagline}
-            </p>
-
-            <div className={styles.openingActions}>
-              <Link href="/menu" className={`${styles.btn} ${styles.btnPrimary}`}>
-                See the menu
-              </Link>
-              <a
-                href={brand.orderUrl}
-                className={`${styles.btn} ${styles.btnGhost}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() =>
-                  track("order_click", {
-                    platform: "ubereats",
-                    placement: "home_hero",
-                  })
-                }
-              >
-                Order delivery
-              </a>
-            </div>
-          </div>
-
-          <div className={styles.openingMedia}>
-            <span className={styles.openingGlow} aria-hidden="true" />
-            {/*
-              The opening image is the real cup on transparency, not the film's
-              poster frame — it is 158KB against the video's 5MB, it needs no
-              decode of a keyframe, and it is the same product the film spends
-              460vh arriving at. Priority-loaded because it is the LCP.
-            */}
-            <Image
-              className={styles.openingBowl}
-              src="/media/acai-story/nabils-bowl.webp"
-              alt="A Nabil's açaí cup with granola, strawberries, blueberries and a pistachio drizzle."
-              width={760}
-              height={950}
-              priority
-              sizes="(min-width: 48rem) 22rem, 66vw"
-            />
-          </div>
-        </div>
-
-        <span className={styles.scrollCue} aria-hidden="true">
-          Scroll
-        </span>
-      </section>
-
-      {/* ----------------------------------------------------------- story */}
-      <AcaiStory />
-
-      {/* ------------------------------------------------------------ neon */}
-      {/*
-        The film spends 460vh arriving at its closing card, which sets
-        `brand.tagline` — "Made for sweet moments." — in Titan One on black.
-        That line is not a copywriter's invention: it is a neon sign on the wall
-        above the counter in Mount Lawley, and this is the photograph of it.
-
-        So the sequence asserts the line and this proves it, in that order. It
-        is deliberately the quietest block on the page — one photograph, the
-        shared `data-reveal` entrance, no pin and no scrub. The film does the
-        work; this only has to be true.
-
-        Night ground because AcaiStory's `.exit` gradient lands on --ds-night,
-        so the film walks into this with no seam, and the lineup's paper still
-        gets its contrast one section later.
-      */}
-      <section
-        className={`${styles.section} ${styles.night}`}
-        aria-labelledby="neon-title"
-      >
-        <div className={styles.shell}>
-          <figure className={styles.neon} data-reveal>
-            <Image
-              className={styles.neonImage}
-              src="/media/mt-lawley/neon.webp"
-              alt="A neon sign reading “Made for Sweet Moments” glowing on the wall above the counter at Nabil's Açaí Station in Mount Lawley, with topping jars on the shelf and the lit display cabinet below."
-              width={1436}
-              height={1200}
-              sizes="(min-width: 64rem) 46rem, 92vw"
-            />
-            <figcaption className={styles.neonCaption}>
-              <h2 id="neon-title" className={styles.neonTitle}>
-                On the wall
-              </h2>
-              <p className={styles.neonNote}>
-                Mount Lawley. Not a line we wrote for the website.
-              </p>
-            </figcaption>
-          </figure>
-        </div>
-      </section>
-
-      {/* ---------------------------------------------------------- lineup */}
-      {/*
-        The lineup is merchandising, not film. It used to sit on a night band,
-        which was right when its photographs carried their own environments —
-        but the studio set is a continuous cream sweep, and on black each card
-        became a lit rectangle rather than a product. Paper here also gives the
-        film the contrast it needs: black sequence, real product reveal, then
-        the cream product world opens on this section.
-      */}
-      <section
-        id="lineup"
-        className={`${styles.section} ${styles.paper}`}
-        aria-labelledby="lineup-title"
-      >
-        <div className={styles.shell}>
-          <header className={styles.sectionHead}>
-            <span className={styles.eyebrow}>The lineup</span>
-            <h2 id="lineup-title" className={styles.sectionTitle}>
-              What people come for
-            </h2>
-          </header>
-
-          <div className={styles.lineup}>
-            {signatures.map((item, index) => (
-              <article className={styles.item} key={item.name} data-reveal>
-                <div className={styles.itemMedia}>
+    <div className={styles.root}>
+      {/* The reference's opening move: the hero stays pinned and the next
+          surface slides up over it, wordmark and all. The pin is scoped to this
+          wrapper — hero plus film — so the hero unpins when the film ends and
+          can never show through the gutters between the panels further down. */}
+      <div className={styles.heroScene}>
+      <section className={styles.hero} aria-labelledby="home-title" ref={heroRef}>
+        {/* Outer wrapper takes the scroll parallax (written by the effect
+            above); the lattice inside it carries the continuous drift, so the
+            two never fight over one transform. */}
+        <div className={styles.heroPhotos} aria-hidden="true" ref={photosRef}>
+          <div className={styles.heroDrift}>
+            <div className={styles.heroLattice}>
+              {CELLS.map((cell) => (
+                <div
+                  className={styles.capsule}
+                  key={cell.key}
+                  style={
+                    {
+                      "--col": cell.col,
+                      "--row": cell.row,
+                      "--stagger": cell.stagger,
+                      "--cap-scale": cell.scale,
+                      "--cap-origin": cell.origin,
+                    } as CSSProperties
+                  }
+                >
                   <Image
-                    src={item.image}
-                    alt={item.imageAlt}
+                    src={cell.photo}
+                    alt=""
                     fill
-                    sizes="(min-width: 64rem) 34rem, (min-width: 48rem) 45vw, 100vw"
+                    // Capsule width x the up-to-1.58x crop scale inside it.
+                    // The old 26vw/46vw hint served 640-750px files for a
+                    // 1024px source and left every capsule soft on retina.
+                    // On tablets the capsule is 30vw and its crop up to 1.58x,
+                    // so it needs ~47vw of file; 60vw clears it everywhere.
+                    sizes="(min-width: 48rem) 60vw, 100vw"
+                    priority={cell.priority}
                   />
                 </div>
-                <div>
-                  {/*
-                    The tag used to be a filled honey pill sitting on top of the
-                    photograph, anchored to the card's top-left corner. There is
-                    no corner any more — the studio assets now land on the page's
-                    own cream, so the card has no edge and the pill was left
-                    floating in the band. It reads as what it is here: a label on
-                    the product, set as type beside the index.
-                  */}
-                  <p className={styles.itemMeta}>
-                    <span className={styles.itemIndex}>
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    {item.tag ? (
-                      <span className={styles.itemTag}>{item.tag}</span>
-                    ) : null}
-                  </p>
-                  <h3 className={styles.itemName}>{item.name}</h3>
-                  <span className={styles.itemPrice}>{item.price}</span>
-                  <p className={styles.itemBlurb}>{item.blurb}</p>
-                </div>
-              </article>
-            ))}
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className={styles.heroCopy}>
+          <h1 id="home-title">Nabil&apos;s <span>Açaí Station</span></h1>
+          <div className={styles.heroActions}>
+            <a href={brand.orderUrl} target="_blank" rel="noopener noreferrer"
+              onClick={() => track("order_click", { platform: "ubereats", placement: "home_hero" })}>Order delivery</a>
+            <Link href="/menu">See the menu</Link>
           </div>
         </div>
       </section>
 
-      {/* --------------------------------------------------------- counter */}
-      <section
-        className={`${styles.section} ${styles.paper}`}
-        aria-labelledby="counter-title"
-      >
-        <div className={styles.shell}>
-          <header className={styles.sectionHead}>
-            <span className={styles.eyebrow}>The counter</span>
-            <h2 id="counter-title" className={styles.sectionTitle}>
-              Build your own
-            </h2>
-            <p className={styles.sectionLede}>
-              Every cup comes with granola, banana and strawberries. Pick a
-              size, then keep going.
-            </p>
-          </header>
+      <div className={styles.heroCover}>
+        <div id="acai-film" className={styles.storyIntro}>A little berry. A whole lot of possibility.</div>
+        {/* Preserve the approved movie verbatim, including its mobile and reduced-motion paths. */}
+        <AcaiStory />
+      </div>
+      </div>
 
-          <div className={styles.counterGrid} data-reveal>
-            <div>
-              <p className={styles.subhead}>Sizes</p>
-              <dl>
-                {SIZES.map(([label, price]) => (
-                  <div className={styles.priceRow} key={label}>
-                    <dt>{label}</dt>
-                    <dd>{price}</dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-
-            <div>
-              <p className={styles.subhead}>Drizzles · $1–$2</p>
-              <ul className={styles.tokenList}>
-                {DRIZZLES.map((drizzle) => (
-                  <li className={styles.token} key={drizzle}>
-                    {drizzle}
-                  </li>
-                ))}
-              </ul>
-
-              <p className={`${styles.subhead} ${styles.subheadSpaced}`}>
-                Toppings · $1–$3
-              </p>
-              <ul className={styles.tokenList}>
-                {TOPPINGS.map((topping) => (
-                  <li className={styles.token} key={topping}>
-                    {topping}
-                  </li>
-                ))}
-              </ul>
-              <p className={styles.note}>Crunchy Dubai filling is $3.</p>
-            </div>
-          </div>
-
-          <div className={styles.orderBar}>
-            <span className={styles.orderLabel}>Order</span>
-            <Link href="/menu" className={`${styles.btn} ${styles.btnPrimary}`}>
-              Full menu
-            </Link>
-            <a
-              href={brand.orderUrl}
-              className={`${styles.btn} ${styles.btnGhost}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() =>
-                track("order_click", {
-                  platform: "ubereats",
-                  placement: "home_close",
-                })
-              }
-            >
-              Uber Eats
-            </a>
-            <a
-              href={brand.doordashUrl}
-              className={`${styles.btn} ${styles.btnGhost}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() =>
-                track("order_click", {
-                  platform: "doordash",
-                  placement: "home_close",
-                })
-              }
-            >
-              DoorDash
-            </a>
-          </div>
+      {/* The panels below are sticky siblings: each one pins under the nav and the
+          next slides up over it, so sections stack instead of scrolling past. This
+          is the reference's signature and it lives entirely in CSS, above the
+          film rather than through it — AcaiStory keeps its own scroll handler. */}
+      <div className={styles.stack} data-home-stack>
+      <section data-panel className={`${styles.panel} ${styles.neonPanel}`} aria-labelledby="neon-title">
+        <div className={styles.neonPhoto}>
+          <Image src="/media/mt-lawley/neon.webp" alt="Made for Sweet Moments in neon above the counter at Nabil's Mount Lawley shop." fill sizes="(min-width: 48rem) 54vw, 100vw" />
+        </div>
+        <div className={styles.neonCopy}>
+          <p className={styles.label}>From our counter, with love</p>
+          <h2 id="neon-title">Your kind of<br />sweet spot.</h2>
+          <p>Choose your açaí. Find your favourite drizzle. Stay for something sweet at Mount Lawley or Ballajura.</p>
+          <Link href="/about" className={styles.textLink}>Meet Nabil&apos;s <span aria-hidden="true">↗</span></Link>
         </div>
       </section>
 
-      {/* ----------------------------------------------------------- proof */}
-      <section
-        className={`${styles.section} ${styles.paper}`}
-        aria-labelledby="proof-title"
-      >
-        <div className={styles.shell}>
-          <header className={styles.sectionHead}>
-            <span className={styles.eyebrow}>On the record</span>
-            <h2 id="proof-title" className={styles.sectionTitle}>
-              The Dubai chocolate one
-            </h2>
-          </header>
-
-          <div className={styles.pressGrid} data-reveal>
-            {press.map((entry) => (
-              <a
-                key={entry.outlet}
-                className={styles.press}
-                href={entry.url}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <span className={styles.pressOutlet}>{entry.outlet}</span>
-                <blockquote className={styles.pressQuote}>
-                  &ldquo;{entry.quote}&rdquo;
-                </blockquote>
-                <span className={styles.pressMeta}>
-                  {entry.author} · {entry.date}
-                </span>
-              </a>
-            ))}
+      {/* id="lineup" is the target of the film's "Skip to the food" link. It used to
+          be the homepage menu browser; when that moved to /menu the anchor went
+          with it and the skip link pointed at nothing. The film is approved and
+          untouched, so the target moved here — the section that is the food. */}
+      <section id="lineup" data-panel className={`${styles.panel} ${styles.cravings}`} aria-labelledby="cravings-title">
+        <div className={styles.cravingsLeft}>
+          <h2 id="cravings-title">Sweet cravings start here,</h2>
+          <div className={styles.cravingRound}>
+            <Image src="/images/products/hero-dark/acai-dark-v1.webp" alt="A Nabil's açaí cup with granola, blueberries and strawberries under a thick drizzle"
+              fill sizes="(min-width: 48rem) 30vw, 68vw" />
           </div>
-
-          <div className={styles.reviewGrid} data-reveal>
-            {reviews.map((review) => (
-              <figure className={styles.review} key={review.author}>
-                <blockquote>&ldquo;{review.quote}&rdquo;</blockquote>
-                <figcaption className={styles.reviewAuthor}>
-                  {review.author}
-                  {review.badge ? ` · ${review.badge}` : ""}
-                </figcaption>
-              </figure>
+          <p>made to order, from open till late.</p>
+        </div>
+        <div className={styles.cravingsRight}>
+          <h3>Come for the açaí.<br />Stay for the Dubai chocolate.</h3>
+          <p className={styles.label} style={{ marginTop: "var(--ds-step-3)" }}>Our desserts and drinks</p>
+          {/* Indexes the real menu groups and deep-links into `/menu`, so this
+              is a way in rather than a picture of one. */}
+          <nav className={styles.indexList} aria-label="Menu categories">
+            {menuGroups.map((group) => (
+              <Link key={group.label} href={`/menu#${menuSlug(group.sections[0])}`}>{group.label}</Link>
             ))}
-          </div>
-
-          <div className={styles.ratingRow}>
-            {locations.map((loc) => (
-              <span className={styles.rating} key={loc.slug}>
-                <span className={styles.ratingValue}>{loc.rating}★</span>{" "}
-                {loc.name} · {loc.reviewCount} Google reviews
-              </span>
-            ))}
-          </div>
+          </nav>
         </div>
       </section>
 
-      {/* --------------------------------------------------------- find us */}
-      <section
-        className={`${styles.section} ${styles.night}`}
-        aria-labelledby="find-title"
-      >
-        <div className={styles.shell}>
-          <header className={styles.sectionHead}>
-            <span className={styles.eyebrow}>Find us</span>
-            <h2 id="find-title" className={styles.sectionTitle}>
-              Two stations
-            </h2>
-          </header>
+      {/* The reference's full-bleed word band. Deliberately static — see the
+          note in Station.module.css. */}
+      <div className={`${styles.panel} ${styles.ticker}`} aria-hidden="true">
+        {Array.from({ length: 9 }).map((_, index) => (
+          <Fragment key={index}><span>Reviews</span><i>•</i></Fragment>
+        ))}
+      </div>
 
-          {/*
-            This band was pure text until now — names, addresses, hours, three
-            buttons. The arrival clip is Nabil's own phone footage of walking
-            into Mount Lawley, and it belongs here rather than higher up: it is
-            the answer to "what is it actually like when I get there", which is
-            the question this section exists to answer.
+      <ReviewRows />
 
-            It is Mount Lawley only. Ballajura has no real footage and nothing
-            here should imply otherwise.
-          */}
-          <div className={styles.arrival} data-reveal>
-            <div className={styles.arrivalMedia}>
-              <ArrivalClip className={styles.arrivalClip} />
-            </div>
-            <p className={styles.arrivalNote}>
-              <span className={styles.arrivalLabel}>Walking in</span>
-              Mount Lawley, after dark — through the door, past the counter.
-              Filmed in the shop on Nabil&apos;s phone.
-            </p>
-          </div>
 
-          <div className={styles.findGrid} data-reveal>
-            <div>
-              <h3 className={styles.placeName}>{mtLawley.name}</h3>
-              <p className={styles.placeAddress}>{mtLawley.address}</p>
-              <dl className={styles.hours}>
-                {mtLawley.hours.map(([day, time]) => (
-                  <div className={styles.hourRow} key={day}>
-                    <dt>{day}</dt>
-                    <dd>{time}</dd>
-                  </div>
-                ))}
-              </dl>
-              <div className={styles.placeActions}>
-                <a
-                  href={mtLawley.mapsUrl}
-                  className={`${styles.btn} ${styles.btnGhost}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() =>
-                    track("directions_click", {
-                      platform: "google_maps",
-                      location: mtLawley.slug,
-                      placement: "home_locations",
-                    })
-                  }
-                >
-                  Directions
-                </a>
+      <section data-panel className={`${styles.panel} ${styles.locations}`} aria-labelledby="find-title">
+        <div className={styles.locationBody}>
+          <p className={styles.label}>Come on over</p>
+          <h2 id="find-title">Two stations.<br />See you at yours.</h2>
+          <div className={styles.locationGrid}>
+            {locations.map((location) => <article key={location.slug}>
+              <h3>{location.name}</h3><p>{location.address}</p>
+              {location.hours ? <dl className={styles.hours}>{location.hours.map(([day, time]) =>
+                <div key={day}><dt>{day}</dt><dd>{time}</dd></div>)}</dl>
+                : <p className={styles.footnote}>Call the shop for trading hours before heading over.</p>}
+              <div className={styles.locationActions}>
+                <a href={location.mapsUrl} target="_blank" rel="noopener noreferrer" className={styles.pill}
+                  onClick={() => track("directions_click", { platform: "google_maps", location: location.slug, placement: "home_locations" })}>Directions ↗</a>
+                {location.slug === "ballajura" && <a href={brand.phoneHref} className={styles.textLink}
+                  onClick={() => track("call_click", { location: location.slug, placement: "home_locations" })}>Call the shop ↗</a>}
               </div>
-            </div>
-
-            <div>
-              <h3 className={styles.placeName}>{ballajura.name}</h3>
-              <p className={styles.placeAddress}>{ballajura.address}</p>
-              {/*
-                Ballajura's full trading hours are still unconfirmed. Saying so
-                is better than publishing a closing time we would be guessing at.
-              */}
-              <p className={styles.unknown}>
-                Trading hours for Ballajura aren&apos;t confirmed yet — call the
-                shop before heading over.
-              </p>
-              <div className={styles.placeActions}>
-                <a
-                  href={brand.phoneHref}
-                  className={`${styles.btn} ${styles.btnGhost}`}
-                  onClick={() =>
-                    track("call_click", {
-                      location: ballajura.slug,
-                      placement: "home_locations",
-                    })
-                  }
-                >
-                  {brand.phone}
-                </a>
-                <a
-                  href={ballajura.mapsUrl}
-                  className={`${styles.btn} ${styles.btnGhost}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() =>
-                    track("directions_click", {
-                      platform: "google_maps",
-                      location: ballajura.slug,
-                      placement: "home_locations",
-                    })
-                  }
-                >
-                  Directions
-                </a>
-              </div>
-            </div>
+            </article>)}
           </div>
         </div>
+        <figure className={styles.arrival}>
+          <ArrivalClip />
+          <figcaption>Inside Mount Lawley ↗</figcaption>
+        </figure>
       </section>
+      <section data-panel className={`${styles.panel} ${styles.closing}`} aria-label="Order delivery">
+        <p>Make it a sweet night.</p>
+        <div><a href={brand.orderUrl} target="_blank" rel="noopener noreferrer" className={styles.pill}
+          onClick={() => track("order_click", { platform: "ubereats", placement: "home_close" })}>Uber Eats ↗</a>
+          <a href={brand.doordashUrl} target="_blank" rel="noopener noreferrer" className={styles.pill}
+            onClick={() => track("order_click", { platform: "doordash", placement: "home_close" })}>DoorDash ↗</a></div>
+      </section>
+      </div>
+
+      {/* The persistent pill is in every frame of the reference, the hero
+          included. It shipped on the five inner routes and was missing here —
+          on the one page a visitor is most likely to land on. */}
+      {/* Height-aware pinning for the homepage stack: a panel taller than the
+          space under the nav pins only once its bottom is on screen. With a
+          fixed 88px pin, the last index links and both press quotes were never
+          visible at all on a 390px phone. */}
+      <PanelStack selector="[data-home-stack] > [data-panel]" belowNav />
+      <OrderPickupPill placement="home" />
     </div>
   );
 }

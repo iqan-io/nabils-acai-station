@@ -1,0 +1,606 @@
+/* PHO reference: dark ground, photographic capsules and fine outlined panels.
+   Nabil's owns the type, colour, imagery and film. Scoped to the representative
+   homepage so the remaining sitemap can be reviewed before rollout. */
+.root {
+  --station-ground: #000;
+  --station-line: rgb(var(--ds-paper-rgb) / .65);
+  --station-muted: rgb(var(--ds-paper-rgb) / .72);
+  --station-radius: 3rem;
+  background: var(--station-ground);
+  color: var(--ds-paper);
+  font-family: var(--font-sans);
+}
+.root h1, .root h2, .root h3 { font-weight: 400; letter-spacing: 0; }
+.root a:focus-visible, .root button:focus-visible, .menuPanel:focus-visible {
+  outline: 3px solid var(--ds-honey); outline-offset: 5px;
+}
+.root h2 { font-size: clamp(2rem, 4vw, 3.6rem); line-height: 1.08; }
+.nav {
+  position: fixed; inset: 0 0 auto; z-index: 40; display: flex;
+  align-items: center; gap: 4.5vw; height: 164px;
+  padding: 18px 7.5vw 18px 9vw; color: #fff;
+  background: transparent; font-family: var(--font-sans);
+  transition: background .25s, height .25s;
+}
+.navSolid { height: 96px; background: #000; }
+.logo { flex-shrink: 0; }
+.logo img { width: clamp(80px, 6.8vw, 128px); height: auto; transition: width .25s; }
+.navSolid .logo img { width: 68px; }
+.navLinks { display: flex; align-items: center; gap: 2.4vw; }
+.navLinks a { display: flex; align-items: center; min-height: 44px; font-weight: 700; font-size: clamp(.95rem, 1.55vw, 1.85rem); text-transform: uppercase; white-space: nowrap; }
+/* The reference dims every link except the page you are on, which is what makes
+   the bar read as navigation rather than as four equal words. The circled ORDER
+   is an action, not a location, so it stays bright. */
+.navLinks a { color: rgb(var(--ds-paper-rgb) / .6); transition: color .18s; }
+.navLinks a:hover, .navLinks a:focus-visible { color: var(--ds-honey-light); }
+.textLink:hover { color: var(--ds-honey-light); }
+.navLinks a[aria-current], .navLinks a.navOrder { color: #fff; }
+.navOrder { position: relative; padding: 9px 13px; }
+.navOrder::before { content: ""; position: absolute; inset: 0; border: 2px solid currentColor; border-radius: 50%; transform: rotate(-7deg); }
+.navActions { margin-left: auto; display: flex; align-items: center; gap: var(--ds-step-2); }
+.navActions .pill { background: #000; border-width: 2px; font-size: clamp(.95rem, 1.7vw, 2rem); text-transform: uppercase; white-space: nowrap; padding: 15px 25px; }
+.pill {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--ds-step-3);
+  padding: var(--ds-step-2) var(--ds-step-4); min-height: 44px;
+  border: 1px solid currentColor; border-radius: 999px; color: inherit;
+  font-size: .88rem; font-weight: 800; transition: background .2s, color .2s;
+}
+.pill:hover { background: var(--ds-paper); color: var(--ds-night); }
+.navToggle { display: none; }
+/* The pin's containing block: hero plus film. Sticky only works within it, so
+   the hero stops being pinned the moment the film has finished. */
+.heroScene { position: relative; }
+.hero {
+  height: max(700px, 100svh);
+  position: sticky; top: 0; z-index: 0;
+  overflow: hidden; color: #fff; background: #000;
+}
+/* Oversized on the axis the collage travels along, so there is always another
+   capsule waiting outside the frame to move into it. `will-change` keeps the
+   per-frame transform on the compositor. */
+/* ---- the drifting capsule field -------------------------------------------
+   MEASURED FROM THE REFERENCE RECORDING, not estimated. Phase-correlating a
+   capsule-only region of `Recording 2026-09-08 174639.mp4` across its static
+   opening (the wordmark and CTAs do not move, so the page is not scrolling)
+   gives a rigid global translation of **(-21, -37) px/s at a 1906x898
+   viewport**, perfectly linear over 1.2s — constant velocity, no easing.
+
+   Normalised that is (-0.494, -0.870), which is exactly the capsules' own long
+   axis at -30deg. The field slides ALONG the capsules' length, up and to the
+   left, at about 42 px/s. Individual capsules never spin: their orientation
+   holds at -30deg for the whole recording.
+
+   The previous build moved the field only as a function of scroll position, so
+   with the page at rest nothing moved at all — the reference is in continuous
+   motion whether you scroll or not. The scroll parallax is kept, on the outer
+   wrapper, and this drift runs underneath it on its own element.
+
+   HOW THE LOOP IS SEAMLESS. The capsules are a lattice in their own rotated
+   frame: columns across, rows along the drift axis. One animation cycle
+   translates the lattice by exactly TWO row pitches, and the images repeat
+   every two rows, so the reset lands on a field identical to the one it left
+   and cannot be seen. Because a capsule always arrives where a *different*
+   dish was, the roster keeps turning over as it travels — which is the
+   "different items" part. Nothing here is JS: one transform on one element. */
+
+.heroPhotos { position: absolute; inset: 0; pointer-events: none; will-change: transform; }
+
+.heroDrift {
+  --cap-w: 17vw;
+  --col-pitch: 25vw;
+  --row-pitch: 52vw;
+  /* 5 x 7 at every breakpoint; only the pitches change. Seven rows is not
+     decorative — the loop eats two row pitches of the lattice, so a field sized
+     only to the viewport runs out of capsules at the bottom partway through the
+     cycle and opens an empty wedge. Coverage was derived for 1440x900,
+     1920x1080, 834x1112, 390x844 and 430x932, in each case as
+     `(rows-1)*pitch + capsuleHeight - loop >= visibleBottom`. Do not lower it.
+     Every cell reuses one of four already-downloaded images, so the extra rows
+     cost DOM, not network. */
+  --cols: 5;
+  --rows: 7;
+  /* 2 * 52vw = 104vw; at a 1440px viewport that is 1498px, and 1498/35s is
+     42.8 px/s — the recording's measured speed. */
+  --drift-duration: 35s;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(var(--cols) * var(--col-pitch));
+  height: calc(var(--rows) * var(--row-pitch));
+  /* The container carries the -30deg for every capsule, which is what makes a
+     single straight translate read as motion along their length. */
+  transform: translate(-50%, -50%) rotate(-30deg);
+}
+
+.heroLattice {
+  position: absolute;
+  inset: 0;
+  animation: capsuleDrift var(--drift-duration) linear infinite;
+  will-change: transform;
+}
+
+@keyframes capsuleDrift {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(0, calc(-2 * var(--row-pitch)), 0); }
+}
+
+/* `--col`, `--row`, `--stagger`, `--cap-scale` and `--cap-origin` are set per
+   cell by the component. The stagger steps each column along the drift axis so
+   the field reads as diagonal bands rather than a grid; it is wrapped into one
+   row pitch, which keeps the lattice periodic and so keeps the loop seamless. */
+.capsule {
+  position: absolute;
+  width: var(--cap-w);
+  aspect-ratio: 1/2.2;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #111;
+  left: calc(var(--col) * var(--col-pitch));
+  top: calc(var(--row) * var(--row-pitch) + var(--stagger) * var(--row-pitch));
+}
+
+.capsule img {
+  object-fit: cover;
+  transform: scale(var(--cap-scale));
+  transform-origin: 50% var(--cap-origin);
+}
+/* Enough scrim to hold the wordmark, not so much that the collage disappears
+   behind it. It sits on the hero rather than on the moving layer so it stays
+   still while the photographs travel under it. */
+.hero::after { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none; background: rgb(0 0 0 / .42); }
+.heroCopy { position: absolute; inset: 40% 0 auto; z-index: 1; text-align: center; }
+.hero h1 { font-size: 7.2vw; line-height: 1.15; white-space: nowrap; }
+.hero h1 span { display: inline; }
+.heroActions { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; margin-top: 12vh; }
+.heroActions a { display: inline-flex; align-items: center; gap: 20px; min-height: 44px; font-size: clamp(1.25rem, 1.9vw, 2.3rem); line-height: 1.35; font-weight: 900; text-transform: uppercase; }
+.heroActions a::after { content: "→"; font-weight: 500; }
+.heroActions a:hover { color: var(--ds-honey-light); }
+.textLink { display: inline-flex; gap: var(--ds-step-3); align-items: center; min-height: 44px; font-size: .9rem; font-weight: 800; }
+/* Everything that slides over the pinned hero. Opaque and above it. */
+.heroCover { position: relative; z-index: 1; background: #000; }
+/* The leading edge of the cover is the reference's panel edge: rounded top
+   corners in the cream hairline, inset 8px, so what rises over the hero reads
+   as a panel arriving rather than a black rectangle. */
+.storyIntro {
+  padding: var(--ds-step-4); display: flex; justify-content: center;
+  color: var(--station-muted); font-size: .85rem; background: #000;
+  margin: 0 var(--ds-step-1);
+  /* Top hairline only: it tapers away round the corners. Side lines stopped
+     dead where the full-bleed film begins and read as a tab. */
+  border-top: 1px solid var(--station-line);
+  border-radius: var(--station-radius) var(--station-radius) 0 0;
+}
+.hero[data-covered] .heroLattice { animation-play-state: paused; }
+.neonPanel { position: relative; display: grid; grid-template-columns: 1.1fr 1fr; align-items: stretch; border: 1px solid var(--station-line); border-radius: var(--station-radius); overflow: hidden; }
+/* The reference's nested photo card: its own hairline and rounded corners, flush
+   to the panel's outer edges, so the photo's inner edge curves away from the copy. */
+.neonPhoto { position: relative; min-height: 470px; border: 1px solid var(--station-line); border-radius: var(--station-radius); margin: -1px; overflow: hidden; overflow: clip; }
+.neonPhoto img { object-fit: cover; }
+.neonCopy { padding: var(--ds-step-6); display: flex; flex-direction: column; align-items: flex-start; justify-content: center; }
+.label { font-size: .85rem; font-weight: 700; color: var(--ds-honey-light); margin-bottom: var(--ds-step-3); }
+.neonCopy > p:not(.label) { max-width: 35ch; margin: var(--ds-step-4) 0; line-height: 1.7; color: var(--station-muted); }
+.menuSection { padding: var(--ds-step-6) 0 0; scroll-margin-top: 16px; }
+.menuHeading { display: flex; justify-content: space-between; align-items: end; gap: var(--ds-step-4); padding: 0 var(--ds-step-5) var(--ds-step-5); }
+.menuFrame { display: grid; grid-template-columns: 205px 1fr; border: 1px solid var(--station-line); border-radius: var(--station-radius); padding: var(--ds-step-3) 0 var(--ds-step-3) var(--ds-step-3); }
+.categories { padding: var(--ds-step-3) 0; display: flex; flex-direction: column; align-items: stretch; gap: 3px; }
+.categories button { display: flex; align-items: center; justify-content: space-between; gap: var(--ds-step-2); text-align: left; min-height: 44px; padding: var(--ds-step-2) var(--ds-step-3); border-radius: 999px; font-size: .83rem; font-weight: 800; }
+.categories button span { visibility: hidden; }
+.categories button:hover { background: rgb(var(--ds-paper-rgb) / .1); }
+.categories button[aria-selected="true"] { color: var(--ds-night); background: var(--ds-paper); }
+.categories button[aria-selected="true"] span { visibility: visible; }
+.menuPanel { display: grid; grid-template-columns: 1fr 1fr; min-width: 0; }
+.menuCopy { padding: var(--ds-step-4) var(--ds-step-5); min-width: 0; }
+.menuMeta { font-size: .76rem; color: var(--station-muted); margin-bottom: var(--ds-step-4); }
+.menuCopy h3 { font-size: clamp(1.5rem, 2.3vw, 2.15rem); line-height: 1.13; }
+.menuIntro { font-size: .9rem; color: var(--station-muted); line-height: 1.6; margin-top: var(--ds-step-3); }
+.prices { margin: var(--ds-step-4) 0; }
+.prices li { padding: var(--ds-step-3) 0; border-bottom: 1px solid rgb(var(--ds-paper-rgb) / .16); }
+.prices li > div { display: flex; justify-content: space-between; gap: var(--ds-step-3); font-weight: 800; font-size: 1rem; }
+.prices li > div > span:last-child:not(:first-child) { white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--ds-honey-light); }
+.prices li p, .footnote { font-size: .85rem; color: var(--station-muted); line-height: 1.65; margin-top: var(--ds-step-2); }
+.footnote { margin-bottom: var(--ds-step-4); }
+.menuPhoto { position: sticky; top: 112px; min-height: 540px; height: min(680px, calc(100svh - 130px)); margin: -1rem -1px -1rem 0; border: 1px solid var(--station-line); border-radius: var(--station-radius); background: var(--ds-paper); overflow: hidden; }
+.menuPhoto img { object-fit: contain; }
+.photoLabel { position: absolute; bottom: var(--ds-step-4); inset-inline: 0; text-align: center; color: var(--ds-ink-soft); font-size: .8rem; font-weight: 700; }
+.drinksNote { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: var(--ds-step-4); padding: var(--ds-step-5); background: var(--ds-night-soft); border-radius: var(--station-radius); margin-right: var(--ds-step-3); }
+.drinksNote > span { font-size: .85rem; color: var(--ds-honey-light); }
+.drinksNote > p { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); line-height: 1.15; }
+.proof { display: grid; grid-template-columns: 1fr 1fr; gap: var(--ds-step-6); padding: var(--ds-step-6) var(--ds-step-5); }
+.proof article { max-width: 48ch; }
+.proof blockquote { font-size: clamp(1.05rem, 1.6vw, 1.4rem); line-height: 1.55; font-weight: 600; margin-bottom: var(--ds-step-3); }
+.proof a { color: var(--ds-honey-light); font-size: .85rem; font-weight: 800; }
+.locations { display: grid; grid-template-columns: 1fr minmax(280px, 32%); border: 1px solid var(--station-line); border-radius: var(--station-radius); overflow: hidden; }
+.locationBody { padding: var(--ds-step-6) var(--ds-step-5); }
+.locationBody h2 { scroll-margin-top: 16px; }
+.locationGrid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--ds-step-5); margin-top: var(--ds-step-5); }
+.locationGrid h3 { font-size: 1.45rem; margin-bottom: var(--ds-step-3); }
+.locationGrid p { font-size: .9rem; line-height: 1.6; max-width: 32ch; color: var(--station-muted); }
+.hours { font-size: .83rem; margin: var(--ds-step-4) 0; }
+.hours > div { display: flex; justify-content: space-between; gap: var(--ds-step-3); padding-block: 4px; }
+.hours dt { color: var(--station-muted); }
+.locationActions { display: flex; flex-wrap: wrap; gap: var(--ds-step-3); margin-top: var(--ds-step-4); }
+.arrival { position: relative; border-left: 1px solid var(--station-line); border-radius: var(--station-radius); overflow: hidden; background: var(--ds-night); min-height: 650px; }
+.arrival video, .arrival img { width: 100%; height: 100%; position: absolute; inset: 0; object-fit: cover; }
+.arrival figcaption { position: absolute; bottom: var(--ds-step-4); left: var(--ds-step-4); background: #080608; padding: var(--ds-step-2) var(--ds-step-3); border-radius: 999px; font-size: .8rem; }
+.closing { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--ds-step-4); padding: var(--ds-step-5); }
+.closing p { font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 2.4rem); }
+.closing > div { display: flex; flex-wrap: wrap; gap: var(--ds-step-4); }
+@media (max-width: 1100px) {
+  .nav { padding-inline: var(--ds-step-4); gap: var(--ds-step-4); height: 110px; }
+  .navSolid { height: 96px; }
+  .menuFrame { grid-template-columns: 175px 1fr; }
+  .menuCopy { padding-inline: var(--ds-step-4); }
+  .neonCopy { padding: var(--ds-step-5); }
+  .locationGrid { grid-template-columns: 1fr; }
+}
+@media (min-width: 768px) and (max-width: 1100px) and (orientation: portrait) {
+  /* Portrait tablet is taller than it is wide, so the rotated field needs more
+     rows and fewer columns to cover it. Duration rises with the row pitch to
+     hold the same screen-relative speed. */
+  /* Portrait tablet: bigger capsules, wider pitches. The duration is set from
+     the pitch so the drift stays clearly in motion rather than holding the
+     desktop's screen-relative rate, which on a narrow viewport reads as
+     stationary. ~32 px/s here. */
+  .heroDrift {
+    --cap-w: 30vw;
+    --col-pitch: 42vw;
+    --row-pitch: 88vw;
+    --drift-duration: 46s;
+  }
+}
+@media (max-width: 767px) {
+  .root { --station-radius: 1.75rem; }
+  .nav { height: 80px; padding: var(--ds-step-2) var(--ds-step-3); gap: var(--ds-step-2); }
+  .logo img, .navSolid .logo img { width: 54px; height: 54px; }
+  .navLinks { display: none; }
+  .navActions .pill { padding: 10px 13px; font-size: .75rem; gap: var(--ds-step-2); }
+  .navToggle { display: block; min-height: 44px; padding-inline: var(--ds-step-2); font-size: .8rem; font-weight: 800; }
+  .navDropdown { position: absolute; top: 79px; left: 0; right: 0; padding: var(--ds-step-3); background: #080608; border-bottom: 1px solid var(--ds-paper); display: flex; flex-direction: column; }
+  .navDropdown a { padding: var(--ds-step-3); font-weight: 800; }
+  .hero { height: max(680px, 100svh); }
+  .heroCopy { top: 37%; }
+  .hero h1 { font-size: 12vw; line-height: 1.13; white-space: normal; }
+  .hero h1 span { display: block; }
+  /* Phone: ~25 px/s. */
+  .heroDrift {
+    --cap-w: 42vw;
+    --col-pitch: 54vw;
+    --row-pitch: 116vw;
+    --drift-duration: 36s;
+  }
+  .heroActions { margin-top: 9vh; gap: 4px; }
+  .neonPanel { grid-template-columns: 1fr; }
+  .neonPhoto { min-height: 330px; }
+  .neonCopy { padding: var(--ds-step-5) var(--ds-step-4); }
+  .menuSection { padding-top: var(--ds-step-5); scroll-margin-top: 0; }
+  .menuHeading { padding: 0 var(--ds-step-4) var(--ds-step-4); align-items: start; flex-direction: column; gap: var(--ds-step-2); }
+  .menuFrame { display: block; padding: 0; }
+  .categories { position: sticky; top: 80px; z-index: 10; flex-direction: row; overflow-x: auto; padding: var(--ds-step-3); border-radius: var(--station-radius) var(--station-radius) 0 0; background: #080608; border-bottom: 1px solid rgb(var(--ds-paper-rgb) / .3); }
+  .categories button { white-space: nowrap; flex-shrink: 0; }
+  .categories button span { display: none; }
+  .menuPanel { display: flex; flex-direction: column; }
+  .menuCopy { padding: var(--ds-step-5) var(--ds-step-4); }
+  .menuPhoto { position: relative; top: auto; margin: 0 -1px -1px; height: auto; min-height: 0; aspect-ratio: 4/5; }
+  .drinksNote { margin: 0 var(--ds-step-3) var(--ds-step-3); padding: var(--ds-step-5) var(--ds-step-4); }
+  .proof { grid-template-columns: 1fr; padding: var(--ds-step-5) var(--ds-step-4); gap: var(--ds-step-5); }
+  .locations { grid-template-columns: 1fr; }
+  .locationBody { padding: var(--ds-step-5) var(--ds-step-4); }
+  .locationGrid { gap: var(--ds-step-5); }
+  .arrival { width: 100%; min-height: 0; aspect-ratio: 9/16; border-left: 0; border-top: 1px solid var(--station-line); }
+  .closing { padding: var(--ds-step-5) var(--ds-step-4); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pill, .nav, .logo img { transition: none; }
+  .heroLattice { animation: none; }
+  .hero { position: relative; }
+}
+
+/* ---- the stack -------------------------------------------------------------
+   The reference's signature: sections are rounded panels that slide up over the
+   pinned one before them, so the page assembles instead of scrolling past. It is
+   pure CSS — sticky siblings sharing a top offset, each opaque so it covers the
+   one beneath, painting in DOM order.
+
+   `overflow` must stay visible on every ancestor of a sticky element or the
+   pinning silently stops, which is why `.stack` sets no overflow of its own. */
+.stack { position: relative; }
+.panel {
+  position: sticky;
+  top: 112px;
+  z-index: 1;
+  margin-inline: var(--ds-step-1);
+  background: var(--station-ground);
+  border: 1px solid var(--station-line);
+  border-radius: var(--station-radius);
+  overflow: hidden;
+}
+/* The menu is taller than a viewport. Let it scroll through before the next
+   panel stacks over it, so every category and price stays reachable. */
+.panel.menuSheet { position: relative; top: auto; }
+/* The panel supplies the frame, so sections that used to draw their own border
+   do not draw a second one inside it. */
+.panel.neonPanel, .panel.locations { border: 0; border-radius: 0; margin-inline: 0; }
+.stack > .panel.neonPanel, .stack > .panel.locations {
+  border: 1px solid var(--station-line); border-radius: var(--station-radius);
+  margin-inline: var(--ds-step-1);
+}
+/* The last panel ends the page, so it gets room beneath it to finish travelling
+   rather than being cut off at the document end. */
+.stack > .panel:last-child { margin-bottom: var(--ds-step-6); }
+
+@media (prefers-reduced-motion: reduce) {
+  /* Pinning is motion the visitor did not ask for: the panels become an ordinary
+     stacked column, keeping every frame and all the copy. */
+  .panel { position: static; }
+}
+@media (max-width: 60rem) {
+  .panel { top: 88px; margin-inline: var(--ds-step-1); }
+  .stack > .panel.neonPanel, .stack > .panel.locations { margin-inline: var(--ds-step-1); }
+}
+
+/* ---- the craving index ----------------------------------------------------
+   The reference's most distinctive still: a circular food crop with a caption
+   under it on the left, and on the right a headline, an accent eyebrow, and a
+   list of very large category names in grey behind a thin accent rule. Hovering
+   a category lights it in the accent colour.
+
+   Nabil's version indexes its own menu groups and deep-links into `/menu`, so
+   the section is a real entry point rather than decoration. */
+.cravings {
+  /* Landed on by the film's skip link: clear the solid nav bar. */
+  scroll-margin-top: 104px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--ds-step-6);
+  padding: var(--ds-step-6) var(--ds-step-5);
+}
+.cravingsLeft h2 {
+  font-size: clamp(1.5rem, 2.4vw, 2.2rem);
+  line-height: 1.15;
+  max-width: 16ch;
+}
+/* A perfect circle, cropped from a portrait frame — the subject sits high in
+   these shots, so the crop is held above centre. */
+.cravingRound {
+  position: relative;
+  width: min(420px, 74%);
+  aspect-ratio: 1;
+  margin: var(--ds-step-4) 0 var(--ds-step-4) var(--ds-step-4);
+  border-radius: 50%;
+  overflow: hidden;
+  background: #111;
+}
+.cravingRound img { object-fit: cover; object-position: 50% 38%; }
+.cravingsLeft p {
+  margin-left: var(--ds-step-4);
+  max-width: 20ch;
+  font-size: clamp(1.15rem, 1.8vw, 1.6rem);
+  font-weight: 800;
+  line-height: 1.3;
+}
+.cravingsRight { display: flex; flex-direction: column; }
+.cravingsRight h3 {
+  font-family: var(--font-sans);
+  font-size: clamp(1.15rem, 1.7vw, 1.5rem);
+  font-weight: 800;
+  line-height: 1.35;
+}
+.indexList {
+  margin-top: var(--ds-step-3);
+  padding-left: var(--ds-step-4);
+  border-left: 2px solid var(--ds-honey);
+  display: flex;
+  flex-direction: column;
+}
+.indexList a {
+  /* Sized to the word, not to the column: a category link's hit area should not
+     span the empty half of the row, where the fixed order pill floats. */
+  display: inline-block;
+  width: fit-content;
+  padding: var(--ds-step-2) 0;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: clamp(1.8rem, 3.4vw, 3.1rem);
+  line-height: 1.12;
+  text-transform: uppercase;
+  color: rgb(var(--ds-paper-rgb) / .42);
+  transition: color .18s;
+}
+.indexList a:hover, .indexList a:focus-visible { color: var(--ds-honey); }
+
+/* ---- the reviews band -----------------------------------------------------
+   A full-bleed strip of the word repeated at display size, alternating bright
+   and dim, running off both edges.
+
+   It does NOT scroll. The reference's band was measured across 18 consecutive
+   frames of the recording and is pixel-identical (mean channel difference
+   0.001) once the page stops scrolling, so this matches it deliberately rather
+   than by omission. */
+/* In the reference this band is a bare strip, not a framed panel: no outline,
+   no radius, edge to edge. It still sits in the sticky stack, so it keeps
+   `.panel`'s positioning and just drops the frame. */
+.panel.ticker {
+  margin-inline: 0;
+  border: 0;
+  border-radius: 0;
+  /* Not pinned. Every other panel is inset 8px, so a full-bleed band pinned
+     beneath the next one showed its letters through the side gutters. */
+  position: relative;
+  top: auto;
+}
+.ticker {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-step-4);
+  padding: var(--ds-step-4) 0;
+  overflow: hidden;
+  white-space: nowrap;
+  user-select: none;
+}
+.ticker span {
+  flex: none;
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 4.4vw, 3.6rem);
+  line-height: 1;
+  text-transform: uppercase;
+  color: rgb(var(--ds-paper-rgb) / .38);
+}
+.ticker span:nth-child(4n + 1) { color: var(--ds-paper); }
+.ticker i { flex: none; font-size: 1.6rem; color: rgb(var(--ds-paper-rgb) / .38); font-style: normal; }
+
+/* ---- customer reviews ----------------------------------------------------- */
+.voices {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--ds-step-5);
+  padding: var(--ds-step-6) var(--ds-step-5);
+}
+.voices blockquote {
+  font-size: clamp(1rem, 1.4vw, 1.2rem);
+  line-height: 1.6;
+  font-weight: 600;
+}
+.voices footer {
+  margin-top: var(--ds-step-3);
+  font-size: .85rem;
+  color: var(--station-muted);
+}
+.voices footer b { color: var(--ds-honey-light); font-weight: 800; }
+.voices footer a:hover { color: var(--ds-paper); }
+/* Press sits in the same grid as the Google reviews, spanning wider so the two
+   longer quotes read as the second row rather than as orphans. */
+.voicePressWide { grid-column: 1 / span 2; }
+.voicePress blockquote { font-size: clamp(1.1rem, 1.6vw, 1.45rem); }
+
+@media (max-width: 1100px) {
+  .cravings { gap: var(--ds-step-5); padding: var(--ds-step-5) var(--ds-step-4); }
+  .voices { grid-template-columns: 1fr; gap: var(--ds-step-4); padding: var(--ds-step-5) var(--ds-step-4); }
+  .voicePressWide { grid-column: auto; }
+}
+@media (max-width: 767px) {
+  .cravings { grid-template-columns: 1fr; }
+  .cravingRound { width: 68%; margin-inline: 0; }
+  .cravingsLeft p { margin-left: 0; }
+  .indexList { padding-left: var(--ds-step-3); }
+}
+
+/* ---- review cards (the reference's, measured from the live site) ----------
+   Full bleed, no panel frame: two rows of large rounded outlined cards that run
+   off both edges. ReviewRows slides the rows in opposite directions as the page
+   scrolls. The ticker above and this block are the one stretch of the page
+   that is not inside a framed panel — as in the reference. */
+.reviewsBlock {
+  position: relative;
+  z-index: 1;
+  /* A flex column with centred items, because that is what centres a row
+     WIDER than its container: `margin: auto` cannot (negative free space
+     resolves to 0), and left-aligned rows overflowed only on the right, so
+     the last card never slid fully into view on a 1280-1440px screen. */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #000;
+  padding: var(--ds-step-2) 0 var(--ds-step-6);
+  overflow: hidden;
+  overflow: clip;
+}
+.reviewRow {
+  display: flex;
+  justify-content: center;
+  gap: 36px;
+  width: max-content;
+  flex: none;
+  will-change: transform;
+}
+.reviewRow + .reviewRow { margin-top: 36px; }
+.reviewCard {
+  flex: none;
+  width: min(480px, 34vw);
+  padding: 44px 44px 48px;
+  border: 2px solid var(--ds-paper);
+  border-radius: 3.5rem;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-step-3);
+}
+/* Same width as every other card, as in the reference: equal cards give both
+   rows the same overflow, so the end cards of each row slide fully into view. */
+.reviewCardWide { width: min(480px, 34vw); }
+.reviewCard header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ds-step-2);
+}
+.reviewCard h3 {
+  font-family: var(--font-sans);
+  font-weight: 900;
+  font-size: 1.7rem;
+  line-height: 1.1;
+}
+.reviewCard p {
+  font-size: 1.02rem;
+  line-height: 1.6;
+  color: rgb(var(--ds-paper-rgb) / .86);
+}
+.reviewSource {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  font-size: .85rem;
+  font-weight: 700;
+  color: var(--ds-honey-light);
+}
+.reviewSource svg { width: 1.2rem; height: 1.2rem; }
+.reviewLink {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  align-self: flex-start;
+  font-size: .9rem;
+  font-weight: 800;
+  color: var(--ds-honey-light);
+}
+.reviewLink:hover { color: var(--ds-paper); }
+.ratingList { display: flex; flex-direction: column; gap: var(--ds-step-2); }
+.ratingList a {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: var(--ds-step-2);
+  min-height: 44px;
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+.ratingList a:hover span:first-child { color: var(--ds-honey-light); }
+.ratingList b { font-size: 1.2rem; }
+/* The reference's gold stars. A partial star is a clipped gold overlay on a
+   dim one, so 4.7 reads as 4.7, not rounded up to 5. */
+.stars { display: inline-flex; gap: 4px; font-size: 1.55rem; line-height: 1; }
+.star { position: relative; color: rgb(var(--ds-paper-rgb) / .22); }
+.star > span { position: absolute; inset: 0 auto 0 0; overflow: hidden; color: #f7d774; white-space: nowrap; }
+
+/* Small laptops: tighter cards and gaps, so each row overflows less and its
+   end cards slide fully into view while the row is still on a 768px-tall
+   screen (at the full 36px gap the last card peaked at 98%). */
+@media (min-width: 861px) and (max-width: 1180px) {
+  .reviewRow { gap: 24px; }
+  .reviewRow + .reviewRow { margin-top: 24px; }
+  .reviewCard { padding: 34px 32px 36px; gap: var(--ds-step-2); }
+}
+
+/* Phones: the rows become a column of full-width cards. Sliding rows would put
+   most of each card off a 390px screen at any given moment. */
+@media (max-width: 860px) {
+  .reviewsBlock { padding: 0 var(--ds-step-1) var(--ds-step-5); }
+  .reviewsBlock { align-items: stretch; }
+  .reviewRow { flex-direction: column; width: auto; gap: var(--ds-step-2); }
+  .reviewRow + .reviewRow { margin-top: var(--ds-step-2); }
+  .reviewCard, .reviewCardWide { width: auto; padding: 32px 28px 36px; border-radius: 2.25rem; }
+  .reviewCard h3 { font-size: 1.4rem; }
+  .stars { font-size: 1.3rem; }
+}

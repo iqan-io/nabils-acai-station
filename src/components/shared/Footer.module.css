@@ -1,0 +1,211 @@
+/* The footer as the last panel in the reference's stack. The inset, radius and
+   hairline deliberately repeat the values in StationPage.module.css: the footer
+   renders under every route from the root layout, including the homepage, so it
+   cannot import a page module's scope and must restate them. */
+
+.footer {
+  background: #000;
+  padding: 0.5rem 0.5rem 0.5rem;
+  font-family: var(--font-sans);
+  color: var(--ds-paper);
+}
+
+.panel {
+  border: 1px solid rgb(var(--ds-paper-rgb) / 0.5);
+  border-radius: 3rem;
+  padding: var(--ds-step-5) var(--ds-step-5) var(--ds-step-4);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: var(--ds-step-5);
+}
+
+.brandCol {
+  min-width: 0;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-step-2);
+}
+
+.logo img {
+  width: 84px;
+  height: 84px;
+  object-fit: contain;
+}
+
+.logoName {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  line-height: 1;
+  font-weight: 400;
+}
+
+.logoSub {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--ds-honey-light);
+}
+
+.blurb {
+  margin-top: var(--ds-step-3);
+  max-width: 34ch;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: rgb(var(--ds-paper-rgb) / 0.72);
+}
+
+.tagline {
+  margin-top: var(--ds-step-1);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--ds-honey-light);
+}
+
+.colLabel {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--ds-honey-light);
+}
+
+.visitList {
+  margin-top: var(--ds-step-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-step-3);
+}
+
+.visitName {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--ds-paper);
+}
+
+.visitName:hover {
+  color: var(--ds-honey-light);
+}
+
+.visitAddress {
+  margin-top: 2px;
+  max-width: 26ch;
+  font-size: 0.83rem;
+  line-height: 1.55;
+  color: rgb(var(--ds-paper-rgb) / 0.6);
+}
+
+.exploreNav {
+  margin-top: var(--ds-step-3);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.exploreNav a {
+  display: inline-flex;
+  align-items: center;
+  /* 44px: the comfortable minimum for a thumb. */
+  min-height: 44px;
+  font-size: 0.9rem;
+  color: rgb(var(--ds-paper-rgb) / 0.72);
+}
+
+.exploreNav a:hover {
+  color: var(--ds-honey-light);
+}
+
+.social {
+  margin-top: var(--ds-step-2);
+  display: flex;
+  gap: var(--ds-step-1);
+}
+
+.social a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgb(var(--ds-paper-rgb) / 0.3);
+  border-radius: 999px;
+  color: var(--ds-paper);
+  transition:
+    background 0.2s,
+    color 0.2s,
+    border-color 0.2s;
+}
+
+.social a:hover {
+  background: var(--ds-honey);
+  border-color: var(--ds-honey);
+  color: #000;
+}
+
+.social svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.baseline {
+  margin-top: var(--ds-step-5);
+  padding-top: var(--ds-step-3);
+  border-top: 1px solid rgb(var(--ds-paper-rgb) / 0.14);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-step-2);
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: rgb(var(--ds-paper-rgb) / 0.5);
+}
+
+.footer a:focus-visible {
+  outline: 3px solid var(--ds-honey);
+  outline-offset: 4px;
+}
+
+@media (max-width: 1180px) {
+  .panel {
+    border-radius: 2.25rem;
+    padding: var(--ds-step-4);
+  }
+}
+
+@media (max-width: 860px) {
+  .panel {
+    border-radius: 1.75rem;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--ds-step-4);
+  }
+
+  .blurb,
+  .visitAddress {
+    max-width: none;
+  }
+
+  .baseline {
+    margin-top: var(--ds-step-4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .social a {
+    transition: none;
+  }
+}

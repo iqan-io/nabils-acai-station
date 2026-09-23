@@ -1,0 +1,979 @@
+/* ---------------------------------------------------------------------------
+   THE STATION PAGE KIT — the reference grammar, for every route but `/`.
+
+   The homepage was rebuilt on the PHO K reference in September and approved; the
+   other five routes were left on the older cream "Page.module.css" system
+   pending review. That left the site reading as two different websites: a black
+   cinematic homepage and five cream brochure pages behind a completely
+   different navbar. Navigating one click off `/` undid the whole redesign, which
+   is why the site still "looked nothing like" the reference.
+
+   This module is the reference's page grammar extracted so every route can
+   speak it:
+
+     - one ground, true black, edge to edge, with no cream band anywhere
+     - every section is a large-radius panel inset 8px from the viewport edge and
+       outlined in a single cream hairline
+     - the nav rides over the first panel rather than sitting in its own bar
+     - copy and photography split a panel down the middle, the photograph
+       bleeding to the panel's own rounded edge
+     - the long menu is a left category rail whose active row is a filled cream
+       pill that runs out past the panel edge
+
+   Nabil's keeps its own type (Titan One in sentence case — see the note in
+   globals.css about why these headings are NOT uppercased like the reference's),
+   its honey accent, its logo artwork and its photography. The reference supplies
+   the composition, not the brand.
+   --------------------------------------------------------------------------- */
+
+.page {
+  /* Panels are inset by this much on every side, so the value is also the gap
+     between stacked panels — one number keeps the rhythm even. */
+  --sp-inset: 0.5rem;
+  --sp-radius: 3rem;
+  --sp-line: rgb(var(--ds-paper-rgb) / 0.5);
+  --sp-muted: rgb(var(--ds-paper-rgb) / 0.72);
+  /* The nav is 164px tall until it shrinks at 48px of scroll. The first panel
+     starts at the top of the page and holds its content clear of the nav with
+     this much padding rather than the page reserving layout height — that is
+     what puts the panel's rounded top corners behind the logo, as in the
+     reference. */
+  --sp-nav-clearance: 168px;
+
+  /* The fixed order pill's footprint. Anything that would otherwise place a
+     control under it keeps this much clearance, so the always-on CTA never
+     covers another button. */
+  --sp-pill-safe: 210px;
+
+  background: #000;
+  color: var(--ds-paper);
+  font-family: var(--font-sans);
+  /* Bottom padding clears the pill at full scroll, so it comes to rest over
+     the ground rather than over the last panel's content. */
+  padding: var(--sp-inset) 0 calc(var(--ds-step-5) + 56px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-inset);
+}
+
+.page h1,
+.page h2,
+.page h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.page a:focus-visible,
+.page button:focus-visible {
+  outline: 3px solid var(--ds-honey);
+  outline-offset: 5px;
+}
+
+/* --- the panel ------------------------------------------------------------ */
+
+.panel {
+  position: relative;
+  margin-inline: var(--sp-inset);
+  background: #000;
+  border: 1px solid var(--sp-line);
+  border-radius: var(--sp-radius);
+  /* `clip`, not `hidden`. `hidden` makes the panel a scroll container, and a
+     `position: sticky` child then pins to the panel instead of the viewport —
+     so the menu's rail and photograph never actually stuck. `clip` cuts to
+     the same rounded corners without creating a scroll container. */
+  overflow: hidden;
+  overflow: clip;
+}
+
+/* Stacked: each panel pins and the next slides over it. `top` is set per panel
+   by PanelStack; until it is, `top: auto` means no pinning at all. Later
+   panels paint over earlier ones because they come later in the DOM. */
+.page > .panel {
+  position: sticky;
+}
+
+/* The opening panel of a route. Its copy clears the nav; every panel after it
+   uses ordinary section padding. */
+.opening {
+  min-height: min(560px, 74svh);
+  /* A grid, so the split inside stretches to the panel's minimum height and
+     the photo card reaches the panel's bottom edge instead of stopping short.
+     The column MUST be minmax(0, 1fr): an `auto` track grows to its content's
+     min-content width, and the menu's no-wrap category strip then forced the
+     panel to 905px on a 390px phone — clipped by the panel, so the page never
+     reported overflow, but every category past the second was unreachable. */
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.body {
+  padding: var(--ds-step-5) var(--ds-step-5) var(--ds-step-5);
+}
+
+.opening .body {
+  padding-top: var(--sp-nav-clearance);
+}
+
+/* --- split: copy one side, photograph bleeding to the panel edge ---------- */
+
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
+  min-height: 0;
+}
+
+/* Opening panels sit under the nav, and the reference starts their photograph
+   at ~58% of the width — past the end of the nav links — so no link ever sits
+   on top of the photo's edge. */
+.splitWide {
+  grid-template-columns: 1.4fr 1fr;
+}
+
+/* Photo-first order at the same markup order, for alternating rhythm down a
+   page without reordering the DOM (which would reorder it for screen readers
+   too). */
+.splitFlip .media {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.splitFlip .body {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.media {
+  position: relative;
+  min-height: 420px;
+  background: #0a0a0a;
+  /* The reference's nested card: the photograph carries its own hairline and
+     its own rounded corners, sitting flush against the panel's outer edges, so
+     its inner edge curves away from the copy rather than cutting straight down
+     the middle of the panel. The -1px margin lays its border over the panel's
+     instead of doubling it. */
+  border: 1px solid var(--sp-line);
+  border-radius: var(--sp-radius);
+  margin: -1px;
+  overflow: hidden;
+  overflow: clip;
+}
+
+.media img,
+.media video {
+  object-fit: cover;
+}
+
+/* A photograph that must not be cropped (portrait product shots, the founder
+   portrait) sits on its own ground and is contained instead. */
+.mediaContain {
+  background: var(--ds-paper);
+}
+
+.mediaContain img {
+  object-fit: contain;
+}
+
+.mediaCaption {
+  position: absolute;
+  bottom: var(--ds-step-3);
+  left: var(--ds-step-3);
+  padding: var(--ds-step-1) var(--ds-step-2);
+  border-radius: 999px;
+  background: #080608;
+  color: var(--ds-paper);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+/* --- type ---------------------------------------------------------------- */
+
+.label {
+  display: block;
+  margin-bottom: var(--ds-step-3);
+  color: var(--ds-honey-light);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.title {
+  font-size: clamp(2.6rem, 5.4vw, 5rem);
+  line-height: 1.04;
+  max-width: 22ch;
+}
+
+.heading {
+  font-size: clamp(2rem, 3.8vw, 3.4rem);
+  line-height: 1.08;
+  max-width: 26ch;
+}
+
+.subheading {
+  font-size: clamp(1.4rem, 2.2vw, 2.1rem);
+  line-height: 1.12;
+}
+
+.lede {
+  margin-top: var(--ds-step-3);
+  max-width: 46ch;
+  font-size: 1.02rem;
+  line-height: 1.7;
+  color: var(--sp-muted);
+}
+
+.prose {
+  max-width: 58ch;
+  color: var(--sp-muted);
+  font-size: 0.98rem;
+  line-height: 1.75;
+}
+
+.prose p + p {
+  margin-top: var(--ds-step-2);
+}
+
+.quote {
+  margin-top: var(--ds-step-4);
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 2.1vw, 1.9rem);
+  line-height: 1.3;
+  color: var(--ds-paper);
+  max-width: 32ch;
+}
+
+.note {
+  margin-top: var(--ds-step-3);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: rgb(var(--ds-paper-rgb) / 0.55);
+}
+
+/* --- actions ------------------------------------------------------------- */
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-step-2);
+  margin-top: var(--ds-step-4);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-step-2);
+  min-height: 48px;
+  padding: var(--ds-step-2) var(--ds-step-4);
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  color: inherit;
+  font-size: 0.9rem;
+  font-weight: 800;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+
+.pill:hover {
+  background: var(--ds-paper);
+  color: #000;
+}
+
+.pillFilled {
+  background: var(--ds-paper);
+  color: #000;
+  border-color: var(--ds-paper);
+}
+
+.pillFilled:hover {
+  background: var(--ds-honey-light);
+  border-color: var(--ds-honey-light);
+}
+
+/* The reference's opening actions: no button, just oversized text with an
+   arrow. Used for the primary action on an opening panel. */
+.textActions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  margin-top: var(--ds-step-4);
+}
+
+.textActions a {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  min-height: 48px;
+  font-size: clamp(1.1rem, 1.6vw, 1.7rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: 1.3;
+}
+
+.textActions a::after {
+  content: "→";
+  font-weight: 500;
+}
+
+.textActions a:hover {
+  color: var(--ds-honey-light);
+}
+
+.textLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-step-1);
+  min-height: 44px;
+  color: var(--ds-honey-light);
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.textLink:hover {
+  color: var(--ds-paper);
+}
+
+/* --- data rows (delivery platforms, addresses, hours) -------------------- */
+
+.rows {
+  margin-top: var(--ds-step-3);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ds-step-3);
+  min-height: 64px;
+  padding: var(--ds-step-2) 0;
+  border-bottom: 1px solid rgb(var(--ds-paper-rgb) / 0.16);
+}
+
+.rowMain {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-step-2);
+  min-width: 0;
+}
+
+.rowTitle {
+  display: block;
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.rowNote {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.83rem;
+  line-height: 1.5;
+  color: var(--sp-muted);
+}
+
+.rowArrow {
+  flex-shrink: 0;
+  color: var(--ds-honey-light);
+  font-weight: 700;
+}
+
+.row:hover .rowArrow {
+  color: var(--ds-paper);
+}
+
+.hours {
+  margin-top: var(--ds-step-3);
+  font-size: 0.85rem;
+}
+
+.hours > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--ds-step-3);
+  padding-block: 5px;
+  border-bottom: 1px solid rgb(var(--ds-paper-rgb) / 0.1);
+}
+
+.hours dt {
+  color: var(--sp-muted);
+}
+
+.hours dd {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- two-up grid inside a panel ------------------------------------------ */
+
+.duo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--ds-step-6);
+}
+
+.duo article {
+  min-width: 0;
+}
+
+/* --- the menu browser ---------------------------------------------------- */
+
+/* Three columns, as in the reference: a five-row category rail, the whole menu
+   as one reading list, and a photograph that follows what is on screen. The
+   rail column is wider than its pills so the active pill can run out past the
+   panel's left edge without moving the copy. */
+.menuFrame {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr) minmax(0, 0.9fr);
+  align-items: start;
+  padding-top: var(--sp-nav-clearance);
+}
+
+.rail {
+  position: sticky;
+  top: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  padding: 0 var(--ds-step-3) var(--ds-step-5) 0;
+}
+
+.rail button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ds-step-2);
+  /* Runs out past the panel edge, so the filled pill reads as continuing off
+     the page — the detail that makes the reference's rail feel built in. */
+  margin-left: calc(-1 * var(--sp-radius));
+  padding: var(--ds-step-2) var(--ds-step-3) var(--ds-step-2) calc(var(--sp-radius) + var(--ds-step-3));
+  min-height: 60px;
+  border-radius: 0 999px 999px 0;
+  text-align: left;
+  /* The rail is navigation, and the brand sets navigation in Nunito — which is
+     also narrower than Titan One, so every category stays on one line as the
+     reference's do. */
+  font-family: var(--font-sans);
+  font-weight: 900;
+  font-size: clamp(1.05rem, 1.4vw, 1.4rem);
+  white-space: nowrap;
+  text-transform: uppercase;
+  color: var(--ds-paper);
+  transition:
+    background 0.25s,
+    color 0.25s;
+}
+
+.rail button span {
+  visibility: hidden;
+  flex-shrink: 0;
+  font-family: var(--font-sans);
+}
+
+.rail button:hover {
+  background: rgb(var(--ds-paper-rgb) / 0.12);
+}
+
+.rail button[aria-current="true"] {
+  background: var(--ds-paper);
+  color: #000;
+}
+
+.rail button[aria-current="true"] span {
+  visibility: visible;
+}
+
+.menuCopy {
+  padding: 0 var(--ds-step-4) var(--ds-step-5);
+  min-width: 0;
+}
+
+.menuMeta {
+  font-size: 0.78rem;
+  color: var(--sp-muted);
+  margin-bottom: var(--ds-step-2);
+}
+
+/* Each section clears the fixed nav when landed on by a deep link or a rail
+   click, and sits a clear step from the one before it. */
+.menuSection {
+  scroll-margin-top: 112px;
+  padding-bottom: var(--ds-step-5);
+}
+
+.menuSection + .menuSection {
+  padding-top: var(--ds-step-2);
+}
+
+.menuCopy h2 {
+  font-size: clamp(1.9rem, 2.9vw, 2.8rem);
+  line-height: 1.1;
+}
+
+.menuIntro {
+  margin-top: var(--ds-step-2);
+  font-size: 0.98rem;
+  line-height: 1.65;
+  color: var(--sp-muted);
+  max-width: 46ch;
+}
+
+.prices {
+  margin: var(--ds-step-3) 0 0;
+}
+
+.prices li {
+  padding: var(--ds-step-3) 0 var(--ds-step-2);
+}
+
+/* The reference sets each item as its own heading with the price riding on
+   the same line, and the description in grey underneath — no rules between. */
+.priceHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--ds-step-3);
+  font-size: clamp(1.2rem, 1.7vw, 1.5rem);
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.priceHead > span:last-child:not(:first-child) {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.85em;
+  color: rgb(var(--ds-paper-rgb) / 0.62);
+}
+
+.prices li p {
+  margin-top: var(--ds-step-1);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--sp-muted);
+  max-width: 52ch;
+}
+
+.footnote {
+  margin-top: var(--ds-step-3);
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: var(--sp-muted);
+}
+
+/* The photograph column: the full height of the menu, with the frame pinned
+   inside it, flush to the panel's right edge like the reference's. */
+.menuPhotoCol {
+  align-self: stretch;
+  margin-top: calc(-1 * var(--sp-nav-clearance));
+}
+
+/* Pinned just under the solid nav bar once the page scrolls, so the frame's
+   rounded top corners stay in view; at the top of the page it starts behind
+   the transparent bar, with the nav pill over the photograph, as in the
+   reference. */
+.menuPhoto {
+  position: sticky;
+  top: 104px;
+  height: calc(100svh - 112px);
+  max-height: 1000px;
+  border: 1px solid var(--sp-line);
+  border-radius: var(--sp-radius);
+  margin: -1px -1px 0 0;
+  /* The live menu's studio photographs are every product cut out on one cream
+     sweep. Contained on that same cream, the photograph's edges vanish into
+     the card and nothing is cropped — the site's aspect-ratio rule. */
+  background: var(--ds-paper);
+  overflow: hidden;
+  overflow: clip;
+}
+
+.menuPhoto img {
+  object-fit: contain;
+  padding: var(--ds-step-3);
+}
+
+/* Swaps as the reader moves between sections; keyed by src so each new
+   photograph fades in rather than cutting. */
+.menuPhotoImg {
+  animation: photoIn 0.45s ease both;
+}
+
+@keyframes photoIn {
+  from { opacity: 0; transform: scale(1.02); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Inline photograph per section, for widths with no photograph column. */
+.sectionPhoto {
+  display: none;
+  position: relative;
+  margin-top: var(--ds-step-3);
+  aspect-ratio: 4 / 5;
+  max-height: 70svh;
+  border: 1px solid var(--sp-line);
+  border-radius: calc(var(--sp-radius) * 0.75);
+  overflow: hidden;
+  overflow: clip;
+}
+
+.sectionPhoto {
+  background: var(--ds-paper);
+}
+
+.sectionPhoto img {
+  object-fit: contain;
+}
+
+/* The açaí build strip: five cream cards, as on the live menu. */
+.buildGallery {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--ds-step-1);
+  margin-top: var(--ds-step-3);
+}
+
+.buildGallery li {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border-radius: 1.25rem;
+  background: var(--ds-paper);
+  overflow: hidden;
+  overflow: clip;
+}
+
+.buildGallery img {
+  object-fit: contain;
+}
+
+/* --- closing panel ------------------------------------------------------- */
+
+.closing {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--ds-step-4);
+  padding: var(--ds-step-5);
+}
+
+.closing p {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3vw, 2.6rem);
+  line-height: 1.1;
+}
+
+.closing > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-step-2);
+  /* The closing panel is the one that puts buttons in the bottom-right, which
+     is precisely where the fixed pill lives. */
+  margin-right: var(--sp-pill-safe);
+}
+
+/* --- the persistent order pill ------------------------------------------- */
+
+/* Present in every frame of the reference recording, bottom-right, above
+   everything. It is the one element that never leaves the screen, and the
+   cheapest single thing that makes a page read as the reference. */
+.orderPickup {
+  position: fixed;
+  right: var(--ds-step-3);
+  bottom: var(--ds-step-3);
+  z-index: 45;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-step-1);
+  min-height: 48px;
+  padding: var(--ds-step-2) var(--ds-step-4);
+  border-radius: 999px;
+  background: var(--ds-paper);
+  color: #000;
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  font-weight: 800;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.55);
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+
+.orderPickup:hover {
+  background: var(--ds-honey-light);
+  transform: translateY(-2px);
+}
+
+.orderPickup:focus-visible {
+  outline: 3px solid var(--ds-honey);
+  outline-offset: 4px;
+}
+
+
+/* --- the contact panel ----------------------------------------------------- */
+
+.mediaCard {
+  min-height: 560px;
+}
+
+.contactBody {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--ds-step-2);
+}
+
+.contactTitle {
+  font-size: clamp(3rem, 6.4vw, 6rem);
+  line-height: 1;
+  margin-bottom: var(--ds-step-3);
+}
+
+.contactLine {
+  display: block;
+  /* 44px minimum tap target: these are the address and phone links. */
+  min-height: 44px;
+  padding-block: 6px;
+  font-size: clamp(1.1rem, 1.7vw, 1.55rem);
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--ds-paper);
+  transition: color 0.18s;
+}
+
+.contactLine:hover {
+  color: var(--ds-honey-light);
+}
+
+.contactPlace {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--ds-honey-light);
+  margin-bottom: 2px;
+}
+
+.contactReach {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ds-step-3);
+  margin-top: var(--ds-step-2);
+  max-width: 34rem;
+}
+
+.contactIcons {
+  display: flex;
+  gap: var(--ds-step-2);
+}
+
+.contactIcons a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  color: var(--ds-paper);
+  transition: color 0.18s;
+}
+
+.contactIcons a:hover {
+  color: var(--ds-honey-light);
+}
+
+.contactIcons svg {
+  width: 2rem;
+  height: 2rem;
+}
+
+
+/* One counter inside the locations panel; a deep link lands it clear of the
+   nav. */
+.counter {
+  scroll-margin-top: 112px;
+  margin-top: var(--ds-step-5);
+  padding-top: var(--ds-step-4);
+  border-top: 1px solid rgb(var(--ds-paper-rgb) / 0.16);
+}
+
+
+/* The Ballajura storefront. Two problems, both about its sign, which runs
+   along the TOP of the photograph across most of its width:
+   1. The nav rides over the top of an opening panel, so at 701px+ the
+      "Desserts & drinks" pill sat on the words. This photo's card therefore
+      starts below the nav — still the nested rounded card, inset from the top.
+   2. No narrow crop holds all of "Nabil's Lebanese Sweets", so the crop is
+      set per width to end on a word, never mid-letter.
+   Checked by screenshot at 1440, 1280, 834, 390 and 360. */
+.media:has(> img.storefrontCrop) {
+  margin-top: 124px;
+}
+.media img.storefrontCrop { object-position: 50% 50%; }
+@media (max-width: 1180px) { .media img.storefrontCrop { object-position: 44% 50%; } }
+@media (max-width: 700px) {
+  .media:has(> img.storefrontCrop) { margin-top: -1px; }
+  .media img.storefrontCrop { object-position: 43% 50%; }
+}
+
+/* --- responsive ---------------------------------------------------------- */
+
+@media (max-width: 1180px) {
+  .page {
+    --sp-radius: 2.25rem;
+    --sp-nav-clearance: 132px;
+  }
+
+  .body {
+    padding: var(--ds-step-4);
+  }
+
+  .menuFrame {
+    grid-template-columns: 240px minmax(0, 1fr);
+  }
+
+  .menuPhotoCol {
+    display: none;
+  }
+
+  .sectionPhoto {
+    display: block;
+  }
+
+  .duo {
+    gap: var(--ds-step-5);
+  }
+}
+
+@media (max-width: 860px) {
+  .page {
+    --sp-radius: 1.75rem;
+    --sp-nav-clearance: 104px;
+  }
+
+  .duo {
+    grid-template-columns: 1fr;
+  }
+
+  .title {
+    font-size: clamp(2.2rem, 10vw, 3.2rem);
+    max-width: none;
+  }
+
+  .heading,
+  .lede,
+  .prose {
+    max-width: none;
+  }
+
+  .menuFrame {
+    display: block;
+    padding-top: var(--sp-nav-clearance);
+  }
+
+  /* The rail becomes a horizontal scroller pinned under the nav, so the
+     categories stay reachable without a 13-row column pushing the prices off
+     the first screen. */
+  .rail {
+    position: sticky;
+    top: 80px;
+    z-index: 10;
+    flex-direction: row;
+    overflow-x: auto;
+    gap: var(--ds-step-1);
+    padding: var(--ds-step-2) var(--ds-step-3);
+    margin-bottom: var(--ds-step-3);
+    background: #080608;
+    border-bottom: 1px solid rgb(var(--ds-paper-rgb) / 0.3);
+  }
+
+  .rail button {
+    flex-shrink: 0;
+    white-space: nowrap;
+    min-height: 44px;
+    margin-left: 0;
+    padding: var(--ds-step-1) var(--ds-step-3);
+    border-radius: 999px;
+    font-size: 1rem;
+  }
+
+  .rail button span {
+    display: none;
+  }
+
+  .menuCopy {
+    padding: 0 var(--ds-step-3) var(--ds-step-4);
+  }
+
+  /* The sticky category strip sits under the nav on phones, so a section
+     landed on by a link must clear both. */
+  .menuSection {
+    scroll-margin-top: 172px;
+  }
+
+  .buildGallery {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .closing {
+    padding: var(--ds-step-4) var(--ds-step-3);
+  }
+
+  .closing p {
+    max-width: 20ch;
+  }
+
+  .closing > div {
+    margin-right: 0;
+    /* Stacked actions run full width, so the clearance moves below them. */
+    margin-bottom: 56px;
+  }
+
+  .orderPickup {
+    right: var(--ds-step-2);
+    bottom: var(--ds-step-2);
+    padding: var(--ds-step-1) var(--ds-step-3);
+    font-size: 0.85rem;
+  }
+}
+
+
+/* Split panels go to one column only on phones. At tablet width (834px) a
+   single column drew every panel photograph ~816px wide — more than the
+   founder portrait and the client's phone photographs have, so they went
+   soft. Two columns keep them at a size their files can fill. */
+@media (max-width: 700px) {
+  .split,
+  .splitWide {
+    grid-template-columns: 1fr;
+  }
+
+  /* On one column the photograph goes back under the copy in DOM order — a
+     flipped panel's image must not land above a heading it illustrates. */
+  .splitFlip .media,
+  .splitFlip .body {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .media {
+    min-height: 0;
+    aspect-ratio: 4 / 5;
+  }
+
+  .mediaCard {
+    min-height: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pill,
+  .orderPickup {
+    transition: none;
+  }
+
+  .menuPhotoImg {
+    animation: none;
+  }
+}

@@ -6,9 +6,9 @@ import { track, type ConversionEvent, type ConversionParams } from "@/lib/analyt
 /**
  * An `<a>` that reports a conversion when clicked.
  *
- * This exists so that server components — `OrderInfo`, `LocationsFull`,
- * `FinalCta`, `NightCta`, `Footer` — can track a click without themselves
- * becoming client components. Marking a whole section `"use client"` to count
+ * This exists so that server components — the `/order`, `/menu` and
+ * `/locations` route bodies, and `Footer` — can track a click without
+ * themselves becoming client components. Marking a whole section `"use client"` to count
  * one click ships that entire section's JS to the browser for no reason; this
  * moves the boundary down to the single link that needs it.
  *

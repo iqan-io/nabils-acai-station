@@ -167,8 +167,12 @@ h3 {
 
 html,
 body {
-  background: var(--cream);
-  color: var(--acai-deep);
+  /* Black, not cream. Every route is now a black ground carrying outlined
+     panels, so the document ground has to match — otherwise it shows in the
+     gaps between panels, behind the overscroll at both ends of the page, and as
+     a cream flash on every navigation. */
+  background: #000;
+  color: var(--ds-paper);
   font-family: var(--font-sans), "Segoe UI", sans-serif;
   font-weight: 400;
   font-kerning: normal;

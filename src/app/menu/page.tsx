@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { MenuHero, MenuFull } from "@/components/sections/MenuFull";
-import { CategoryNav } from "@/components/menu/CategoryNav";
+import { StationPage, Panel } from "@/components/station/StationPanels";
+import { StationMenuBrowser } from "@/components/station/StationMenuBrowser";
+import { OrderPickupPill } from "@/components/station/OrderPickupPill";
 import { pageMetadata } from "@/lib/seo";
-import { ScrollReveal } from "@/components/shared/ScrollReveal";
 
 export const metadata: Metadata = pageMetadata({
   title: "Menu",
@@ -19,13 +19,18 @@ export const metadata: Metadata = pageMetadata({
 
 export default function Page() {
   return (
-    <>
-      <ScrollReveal />
-      <MenuHero />
-      <CategoryNav />
-      {/* NightCta removed here: MenuFull now closes on its own night band with
-          the same two actions, so the old purple/lime CTA was a duplicate. */}
-      <MenuFull />
-    </>
+    <StationPage>
+      {/* The menu is the reference's own signature page, so it is the opening
+          panel rather than sitting behind a hero: the categories are the first
+          thing on screen. */}
+      <Panel opening labelledBy="menu-title">
+        <h1 id="menu-title" className="sr-only">
+          Pick your sweet — the full Nabil&apos;s menu
+        </h1>
+        <StationMenuBrowser />
+      </Panel>
+
+      <OrderPickupPill placement="menu_page" />
+    </StationPage>
   );
 }
