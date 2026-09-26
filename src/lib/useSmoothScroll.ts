@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
@@ -24,7 +24,15 @@ import Lenis from "lenis";
  *   - survive unmount, so the other routes get native scrolling back.
  */
 export function useSmoothScroll(enabled = true) {
-  useEffect(() => {
+  /*
+    A LAYOUT effect, so the teardown runs synchronously while the page is being
+    unmounted — before the next route's first frame. As a passive effect its
+    cleanup ran a beat late: a scroll still gliding when a link was clicked got
+    one more tick on the new page and wrote the OLD page's scroll position onto
+    it. Clicking a homepage category mid-glide landed /menu ~4,400px down, near
+    Chocolate & Sweets, instead of on the chosen section.
+  */
+  useLayoutEffect(() => {
     if (!enabled) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
@@ -50,6 +58,8 @@ export function useSmoothScroll(enabled = true) {
     gsap.ticker.lagSmoothing(0);
 
     return () => {
+      // Stop first: kills any in-flight glide before anything else can tick.
+      lenis.stop();
       gsap.ticker.remove(raf);
       gsap.ticker.lagSmoothing(500, 33);
       lenis.off("scroll", onScroll);

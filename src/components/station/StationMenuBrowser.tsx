@@ -67,7 +67,15 @@ export function StationMenuBrowser() {
   */
   useBeforePaint(() => {
     const index = indexFromHash();
-    if (index >= 0) setActive(index);
+    if (index >= 0) {
+      setActive(index);
+      // Land on the section ourselves, before paint. This used to be left to
+      // Next's scroll-to-hash after a client navigation, which on short phones
+      // (640-667px) sometimes did not scroll at all: "Açaí & Bowls" from the
+      // homepage left the page 4,200px down, near Chocolate & Sweets. The
+      // section's scroll-margin clears the nav and the sticky category strip.
+      sectionRefs.current[index]?.scrollIntoView({ block: "start", behavior: "instant" });
+    }
     const raf = requestAnimationFrame(() => requestAnimationFrame(() => setSettled(true)));
     const onHash = () => {
       const i = indexFromHash();
@@ -80,20 +88,45 @@ export function StationMenuBrowser() {
     };
   }, []);
 
-  // Scroll-spy. A section is "on screen" when it crosses a band just above the
-  // middle of the viewport, which is where the eye is while reading a list.
+  /*
+    Scroll-spy: the active section is the LAST one whose top has passed the
+    middle of the viewport — or the last section of all once the page is
+    scrolled to the bottom (short trailing sections never reach the middle).
+
+    This replaced an IntersectionObserver band at 38-45% of the viewport. A
+    category link lands its heading ~280px from the top, which on a 640-667px
+    phone (iPhone SE) sat on the band's edge: the section ABOVE was still in
+    the band, so the strip lit "Açaí & Bowls" over the Classic Crêpes heading.
+    A single line at 50% is always below where a link lands, at any height.
+  */
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const hit = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
-        if (hit) setActive(Number((hit.target as HTMLElement).dataset.index));
-      },
-      { rootMargin: "-38% 0px -55% 0px" },
-    );
-    sectionRefs.current.forEach((el) => el && observer.observe(el));
-    return () => observer.disconnect();
+    let raf = 0;
+    const measure = () => {
+      raf = 0;
+      const line = window.innerHeight * 0.5;
+      const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+      let current = 0;
+      sectionRefs.current.forEach((el, index) => {
+        if (el && el.getBoundingClientRect().top <= line) current = index;
+      });
+      if (atBottom) current = sectionRefs.current.length - 1;
+      setActive(current);
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(measure);
+    };
+    // Arriving on a category link, the hash has already set the category (see
+    // above) and the browser may not have scrolled to it yet: measuring now
+    // would read the top of the page and flash the wrong category. Let the
+    // first real scroll take over instead.
+    if (indexFromHash() < 0) measure();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
   }, []);
 
   const activeGroup = rows[active]?.group ?? 0;
