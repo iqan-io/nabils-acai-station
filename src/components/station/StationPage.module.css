@@ -461,6 +461,11 @@
   white-space: nowrap;
   text-transform: uppercase;
   color: var(--ds-paper);
+}
+
+/* Only once the arrival frame has painted: otherwise a correction on arrival
+   would cross-fade between two lit pills. */
+.menuFrame[data-settled] .rail button {
   transition:
     background 0.25s,
     color 0.25s;
@@ -595,7 +600,9 @@
 }
 
 /* Swaps as the reader moves between sections; keyed by src so each new
-   photograph fades in rather than cutting. */
+   photograph fades in rather than cutting. The component only applies this
+   class once a photo has actually been replaced — never to the one shown on
+   arrival, which fading in from nothing made the card read as empty. */
 .menuPhotoImg {
   animation: photoIn 0.45s ease both;
 }
