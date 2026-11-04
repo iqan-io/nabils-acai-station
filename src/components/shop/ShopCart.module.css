@@ -4,39 +4,41 @@
 
 .cart {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-  gap: var(--ds-step-6);
+  grid-template-columns: minmax(0, 2.4fr) minmax(280px, 1fr);
+  gap: var(--ds-step-5);
   align-items: start;
   margin-top: var(--ds-step-5);
 }
 
+/* A grid of equal cards. Each card is a column whose purchase bar is pushed
+   to the bottom (`margin-top: auto`), and grid rows stretch every card to the
+   tallest, so price and button sit on one line across the whole row however
+   long a name or description runs. */
 .products {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--ds-step-5) var(--ds-step-3);
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
 .product {
-  display: grid;
-  grid-template-columns: 220px minmax(0, 1fr);
-  gap: var(--ds-step-4);
-  padding: var(--ds-step-4) 0;
-  border-bottom: 1px solid rgb(var(--sp-ink-rgb) / 0.16);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
-.product:first-child {
-  padding-top: 0;
-}
-
-/* 4:3, the frame of the owner's own counter shots of each sealed tub (see
-   scripts/build-sweets-assets.py), so they fill it uncropped. The Dubai bar's
-   cream studio frame is covered into the same box; its stack sits centred. */
+/* 4:3, the frame of the owner's counter shots (scripts/build-sweets-assets.py),
+   so no tub is cropped. The photographs are the real sealed tubs: a cutout
+   onto a generated set was tried and rejected (2026-11-04) — clear plastic
+   either drags the granite with it or vanishes, leaving unpackaged food. */
 .photo {
   position: relative;
   aspect-ratio: 4 / 3;
   overflow: hidden;
-  border-radius: calc(var(--sp-radius) / 4);
-  background: var(--ds-paper);
+  border-radius: calc(var(--sp-radius) / 3);
+  background: var(--sp-soft);
 }
 
 .photo img {
@@ -45,35 +47,41 @@
 
 .info {
   display: flex;
+  flex: 1;
   flex-direction: column;
-  gap: var(--ds-step-2);
+  gap: 6px;
+  padding-top: var(--ds-step-3);
   min-width: 0;
 }
 
 .name {
-  font-size: clamp(1.3rem, 2vw, 1.8rem);
-  line-height: 1.12;
+  font-size: clamp(1.15rem, 1.5vw, 1.45rem);
+  line-height: 1.15;
 }
 
 .blurb {
-  max-width: 44ch;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
   color: var(--sp-muted);
-  font-size: 0.95rem;
-  line-height: 1.65;
+  font-size: 0.9rem;
+  line-height: 1.55;
 }
 
 .buy {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: var(--ds-step-3);
+  justify-content: space-between;
+  gap: var(--ds-step-2);
   margin-top: auto;
-  padding-top: var(--ds-step-2);
+  padding-top: var(--ds-step-3);
 }
 
 .price {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 800;
+  font-variant-numeric: tabular-nums;
 }
 
 .soon {
@@ -109,16 +117,32 @@
   border-color: var(--ds-honey-light);
 }
 
+/* "Add to cart" and the stepper that replaces it are the same size, so a
+   card's purchase bar never shifts when something goes in the cart. */
+.add,
+.stepper {
+  min-width: 132px;
+  height: 46px;
+  min-height: 46px;
+}
+
+.add {
+  padding-block: 0;
+  padding-inline: var(--ds-step-3);
+}
+
 .stepper {
   display: inline-flex;
   align-items: center;
+  justify-content: space-between;
   border: 1px solid var(--sp-line);
   border-radius: 999px;
+  flex-shrink: 0;
 }
 
 .stepper button {
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   border: 0;
   background: none;
   color: inherit;
@@ -247,10 +271,23 @@
   max-width: 22rem;
 }
 
-@media (max-width: 860px) {
+/* Three cards beside the summary on wide screens; two once the summary
+   squeezes them; three again when the summary drops below; two on tablets
+   and phones. */
+@media (max-width: 1280px) {
+  .products {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1100px) {
   .cart {
     grid-template-columns: 1fr;
     gap: var(--ds-step-5);
+  }
+
+  .products {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .summary {
@@ -258,17 +295,36 @@
   }
 }
 
-@media (max-width: 520px) {
-  .product {
-    grid-template-columns: 130px minmax(0, 1fr);
-    gap: var(--ds-step-3);
+@media (max-width: 860px) {
+  .products {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Phones: price above a full-width button, so two cards still fit a row. */
+@media (max-width: 560px) {
+  .products {
+    gap: var(--ds-step-4) var(--ds-step-2);
+  }
+
+  .info {
+    padding-top: var(--ds-step-2);
+  }
+
+  .blurb {
+    font-size: 0.82rem;
   }
 
   .buy {
-    gap: var(--ds-step-2);
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--ds-step-1);
+    padding-top: var(--ds-step-2);
   }
 
-  .add {
-    padding-inline: var(--ds-step-3);
+  .add,
+  .stepper {
+    width: 100%;
+    min-width: 0;
   }
 }

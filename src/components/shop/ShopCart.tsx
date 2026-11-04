@@ -96,7 +96,11 @@ export function ShopCart() {
                   src={product.image}
                   alt={product.imageAlt}
                   fill
-                  sizes="(min-width: 44rem) 220px, 40vw"
+                  sizes="(min-width: 1281px) 22vw, (min-width: 861px) 30vw, 48vw"
+                  // Eager, not lazy: inside the sticky, clipped panel stack Chrome
+                  // started lazy product photos and then held some indefinitely
+                  // (the last card stayed blank on screen). Nine small images.
+                  loading="eager"
                   quality={90}
                 />
               </div>
