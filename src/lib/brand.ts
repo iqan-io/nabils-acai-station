@@ -25,6 +25,45 @@ export const brand = {
   },
 };
 
+/*
+  The online shop (`/shop`), posted Australia-wide. Prices are whole cents so
+  the cart and the server compute the same totals; the server never trusts a
+  price sent by the browser, only a product id and a quantity.
+
+  Confirmed by the owner 2026-11-03: the Dubai bar plus his dad's Lebanese
+  sweets go online; Square's $28 is the bar's current price. The sweets wait for
+  their list, prices and photos.
+*/
+const DUBAI_BAR_CENTS = 2800;
+
+export type ShopProduct = {
+  id: string;
+  name: string;
+  priceCents: number;
+  blurb: string;
+  image: string;
+  imageAlt: string;
+};
+
+export const shop = {
+  products: [
+    {
+      id: "dubai-bar",
+      name: "Nabil's Dubai Chocolate",
+      priceCents: DUBAI_BAR_CENTS,
+      blurb:
+        "The viral bar: pistachio kataifi filling in a thick milk chocolate shell. Keeps for two months.",
+      image: productImages.dubaiChocolate.src,
+      imageAlt: productImages.dubaiChocolate.alt,
+    },
+  ] satisfies ShopProduct[],
+  freeShippingFromCents: 10000,
+  // Below $100, still unknown: the owner is setting up an Australia Post
+  // account to see how postage is worked out. `null` keeps the production
+  // checkout closed until it is set — see `shippingFor` in `lib/shop.ts`.
+  flatShippingCents: null as number | null,
+};
+
 export const locations = [
   {
     slug: "mount-lawley",
@@ -236,7 +275,7 @@ export const signatures: Signature[] = [
   },
   {
     name: "Dubai Chocolate",
-    price: "from $18",
+    price: "from $15",
     blurb:
       "Nabil's viral Dubai chocolate with pistachio kataifi filling and a thick milk chocolate shell.",
     image: productImages.dubaiChocolate.src,
@@ -331,8 +370,8 @@ export const menu: MenuSection[] = [
   {
     title: "Dubai Chocolate",
     items: [
-      { name: "Nabil's Dubai Chocolate", price: "$30" },
-      { name: "Small Choc Bar", price: "$18" },
+      { name: "Nabil's Dubai Chocolate", price: `$${DUBAI_BAR_CENTS / 100}` },
+      { name: "Small Choc Bar", price: "$15" },
       { name: "Dubai Crunch Box", price: "$25" },
     ],
   },

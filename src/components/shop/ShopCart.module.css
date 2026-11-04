@@ -1,0 +1,230 @@
+/* The `/shop` cart, inside a station panel: products on the left, the order
+   summary riding alongside on the right, stacked on phones. Hairlines, not
+   borders; one accent (honey); spacing only from --ds-step-*. */
+
+.cart {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: var(--ds-step-6);
+  align-items: start;
+  margin-top: var(--ds-step-5);
+}
+
+.products {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.product {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: var(--ds-step-4);
+  padding: var(--ds-step-4) 0;
+  border-bottom: 1px solid rgb(var(--ds-paper-rgb) / 0.16);
+}
+
+.product:first-child {
+  padding-top: 0;
+}
+
+/* System B photography: the cream sweep is the card, so no border, radius or
+   shadow, and the frame is contained rather than cropped. */
+.photo {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  background: var(--ds-paper);
+}
+
+.photo img {
+  object-fit: contain;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-step-2);
+  min-width: 0;
+}
+
+.name {
+  font-size: clamp(1.3rem, 2vw, 1.8rem);
+  line-height: 1.12;
+}
+
+.blurb {
+  max-width: 44ch;
+  color: var(--sp-muted);
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+.buy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ds-step-3);
+  margin-top: auto;
+  padding-top: var(--ds-step-2);
+}
+
+.price {
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.add,
+.checkout {
+  min-height: 48px;
+  padding: var(--ds-step-2) var(--ds-step-4);
+  border: 1px solid var(--ds-paper);
+  border-radius: 999px;
+  background: var(--ds-paper);
+  color: #000;
+  font-size: 0.9rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease;
+}
+
+.add:hover,
+.checkout:hover:not(:disabled) {
+  background: var(--ds-honey-light);
+  border-color: var(--ds-honey-light);
+}
+
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--sp-line);
+  border-radius: 999px;
+}
+
+.stepper button {
+  width: 48px;
+  height: 48px;
+  border: 0;
+  background: none;
+  color: inherit;
+  font-size: 1.3rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.stepper button:hover:not(:disabled) {
+  color: var(--ds-honey-light);
+}
+
+.stepper button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.stepper output {
+  min-width: 2ch;
+  text-align: center;
+  font-weight: 800;
+}
+
+/* --- summary ------------------------------------------------------------- */
+
+.summary {
+  position: sticky;
+  top: var(--ds-step-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-step-3);
+  padding: var(--ds-step-4);
+  border: 1px solid var(--sp-line);
+  border-radius: calc(var(--sp-radius) / 2);
+}
+
+.summaryTitle {
+  font-size: clamp(1.3rem, 2vw, 1.8rem);
+}
+
+.totals {
+  margin: 0;
+}
+
+.totals > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--ds-step-3);
+  padding: var(--ds-step-1) 0;
+  font-size: 0.95rem;
+}
+
+.totals dt {
+  color: var(--sp-muted);
+}
+
+.totals dd {
+  margin: 0;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.subtotal {
+  margin-top: var(--ds-step-2);
+  border-top: 1px solid rgb(var(--ds-paper-rgb) / 0.16);
+  padding-top: var(--ds-step-2) !important;
+}
+
+.total {
+  font-size: 1.1rem !important;
+}
+
+.total dt,
+.total dd {
+  color: var(--ds-paper);
+  font-weight: 800;
+}
+
+.freeShipping {
+  color: var(--ds-honey-light);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.checkout {
+  width: 100%;
+  font-size: 1rem;
+}
+
+.checkout:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.error {
+  color: var(--ds-honey-light);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.muted {
+  color: rgb(var(--ds-paper-rgb) / 0.55);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 860px) {
+  .cart {
+    grid-template-columns: 1fr;
+    gap: var(--ds-step-5);
+  }
+
+  .summary {
+    position: static;
+  }
+}
+
+@media (max-width: 520px) {
+  .product {
+    grid-template-columns: 110px minmax(0, 1fr);
+    gap: var(--ds-step-3);
+  }
+}
