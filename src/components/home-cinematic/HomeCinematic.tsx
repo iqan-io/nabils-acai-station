@@ -154,7 +154,9 @@ export function HomeCinematic() {
           surface slides up over it, wordmark and all. The pin is scoped to this
           wrapper — hero plus film — so the hero unpins when the film ends and
           can never show through the gutters between the panels further down. */}
-      <div className={styles.heroScene}>
+      {/* `ground-night`: the hero photographs and the film are shot on black,
+          so this opening keeps the dark ground the rest of the site left. */}
+      <div className={`${styles.heroScene} ground-night`}>
       <section className={styles.hero} aria-labelledby="home-title" ref={heroRef}>
         {/* Outer wrapper takes the scroll parallax (written by the effect
             above); the lattice inside it carries the continuous drift, so the

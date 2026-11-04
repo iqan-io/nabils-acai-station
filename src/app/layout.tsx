@@ -95,11 +95,11 @@ export default function RootLayout({
 
   return (
     <html lang="en" className="h-full antialiased">
-      {/* The ground is black on every route now that the inner pages run the
-          reference's panel language. This matters beyond aesthetics: a cream
-          body flashed at the top and bottom of every navigation, and showed
-          through the 8px gaps between the panels. */}
-      <body className="min-h-full flex flex-col bg-black text-[var(--ds-paper)]">
+      {/* The body takes the panels' ground (`--sp-ground`, cream since
+          2026-11-04). It matters beyond aesthetics: a mismatched body flashes at
+          the top and bottom of every navigation and shows through the 8px gaps
+          between the panels. */}
+      <body className="min-h-full flex flex-col bg-[var(--sp-ground)] text-[var(--sp-ink)]">
         <Analytics />
         <VercelAnalytics />
         <SpeedInsights />

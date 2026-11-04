@@ -150,6 +150,40 @@
   --font-sans: "Nunito", "Segoe UI", system-ui, sans-serif;
   --font-home-display: var(--font-display);
   --font-home-body: var(--font-sans);
+
+  /* THE GROUND (2026-11-04). The site moved from a black ground to the cream
+     paper ground at the owner's request ("why's the menu got a black
+     background?"). Every page surface reads these instead of a literal colour,
+     so the ground is set here once:
+       --sp-ground   page and panel background
+       --sp-ink      text and hairlines, with --sp-ink-rgb for alpha tints
+       --sp-accent   accent TEXT (honey-deep: honey-light fails on cream)
+       --sp-fill / --sp-on-fill   a filled pill or active state, and its label
+     `.ground-night` restores the black ground for what has to stay dark: the
+     homepage photo hero and the açaí film are shot on black. Custom properties
+     that are built from these (`--sp-line`, `--station-line`, …) resolve where
+     they are declared, so a dark scope redeclares them too. */
+  --sp-ground: var(--ds-paper);
+  --sp-ink-rgb: var(--ds-ink-rgb);
+  --sp-ink: rgb(var(--sp-ink-rgb));
+  --sp-accent: var(--ds-honey-deep);
+  --sp-fill: var(--ds-ink);
+  --sp-on-fill: var(--ds-paper);
+  --sp-soft: var(--ds-paper-warm);
+}
+
+.ground-night {
+  --sp-ground: #000;
+  --sp-ink-rgb: var(--ds-paper-rgb);
+  --sp-ink: rgb(var(--sp-ink-rgb));
+  --sp-accent: var(--ds-honey-light);
+  --sp-fill: var(--ds-paper);
+  --sp-on-fill: #000;
+  --sp-soft: var(--ds-night-soft);
+  --sp-line: rgb(var(--ds-paper-rgb) / 0.5);
+  --sp-muted: rgb(var(--ds-paper-rgb) / 0.72);
+  --station-line: rgb(var(--ds-paper-rgb) / 0.65);
+  --station-muted: rgb(var(--ds-paper-rgb) / 0.72);
 }
 
 /* Titan One is a single upright 400. Anything that lands `italic` or a bold
@@ -167,12 +201,11 @@ h3 {
 
 html,
 body {
-  /* Black, not cream. Every route is now a black ground carrying outlined
-     panels, so the document ground has to match — otherwise it shows in the
+  /* The document ground matches the panels' ground — otherwise it shows in the
      gaps between panels, behind the overscroll at both ends of the page, and as
-     a cream flash on every navigation. */
-  background: #000;
-  color: var(--ds-paper);
+     a flash on every navigation. */
+  background: var(--sp-ground);
+  color: var(--sp-ink);
   font-family: var(--font-sans), "Segoe UI", sans-serif;
   font-weight: 400;
   font-kerning: normal;

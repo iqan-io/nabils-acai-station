@@ -21,7 +21,7 @@
   grid-template-columns: 220px minmax(0, 1fr);
   gap: var(--ds-step-4);
   padding: var(--ds-step-4) 0;
-  border-bottom: 1px solid rgb(var(--ds-paper-rgb) / 0.16);
+  border-bottom: 1px solid rgb(var(--sp-ink-rgb) / 0.16);
 }
 
 .product:first-child {
@@ -86,12 +86,16 @@
 .checkout {
   min-height: 48px;
   padding: var(--ds-step-2) var(--ds-step-4);
-  border: 1px solid var(--ds-paper);
+  border: 1px solid var(--sp-fill);
   border-radius: 999px;
-  background: var(--ds-paper);
-  color: #000;
+  background: var(--sp-fill);
+  color: var(--sp-on-fill);
   font-size: 0.9rem;
   font-weight: 800;
+  /* One line always: in a phone's narrow product column the label otherwise
+     wrapped word by word into a three-line circle. */
+  white-space: nowrap;
+  flex-shrink: 0;
   cursor: pointer;
   transition:
     background-color 160ms ease,
@@ -101,6 +105,7 @@
 .add:hover,
 .checkout:hover:not(:disabled) {
   background: var(--ds-honey-light);
+  color: var(--ds-ink);
   border-color: var(--ds-honey-light);
 }
 
@@ -123,7 +128,7 @@
 }
 
 .stepper button:hover:not(:disabled) {
-  color: var(--ds-honey-light);
+  color: var(--sp-accent);
 }
 
 .stepper button:disabled {
@@ -178,7 +183,7 @@
 
 .subtotal {
   margin-top: var(--ds-step-2);
-  border-top: 1px solid rgb(var(--ds-paper-rgb) / 0.16);
+  border-top: 1px solid rgb(var(--sp-ink-rgb) / 0.16);
   padding-top: var(--ds-step-2) !important;
 }
 
@@ -188,12 +193,12 @@
 
 .total dt,
 .total dd {
-  color: var(--ds-paper);
+  color: var(--sp-ink);
   font-weight: 800;
 }
 
 .freeShipping {
-  color: var(--ds-honey-light);
+  color: var(--sp-accent);
   font-size: 0.9rem;
   font-weight: 700;
 }
@@ -209,13 +214,13 @@
 }
 
 .error {
-  color: var(--ds-honey-light);
+  color: var(--sp-accent);
   font-size: 0.9rem;
   font-weight: 700;
 }
 
 .muted {
-  color: rgb(var(--ds-paper-rgb) / 0.55);
+  color: rgb(var(--sp-ink-rgb) / 0.66);
   font-size: 0.85rem;
   line-height: 1.6;
 }
@@ -231,8 +236,8 @@
   padding: var(--ds-step-2);
   border: 1px solid var(--sp-line);
   border-radius: calc(var(--sp-radius) / 4);
-  background: rgb(var(--ds-paper-rgb) / 0.06);
-  color: var(--ds-paper);
+  background: rgb(var(--sp-ink-rgb) / 0.06);
+  color: var(--sp-ink);
   font: 0.75rem/1.5 ui-monospace, monospace;
   word-break: break-all;
   resize: none;
@@ -257,5 +262,13 @@
   .product {
     grid-template-columns: 130px minmax(0, 1fr);
     gap: var(--ds-step-3);
+  }
+
+  .buy {
+    gap: var(--ds-step-2);
+  }
+
+  .add {
+    padding-inline: var(--ds-step-3);
   }
 }

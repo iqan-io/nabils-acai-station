@@ -4,14 +4,14 @@
    cannot import a page module's scope and must restate them. */
 
 .footer {
-  background: #000;
+  background: var(--sp-ground);
   padding: 0.5rem 0.5rem 0.5rem;
   font-family: var(--font-sans);
-  color: var(--ds-paper);
+  color: var(--sp-ink);
 }
 
 .panel {
-  border: 1px solid rgb(var(--ds-paper-rgb) / 0.5);
+  border: 1px solid rgb(var(--sp-ink-rgb) / 0.5);
   border-radius: 3rem;
   padding: var(--ds-step-5) var(--ds-step-5) var(--ds-step-4);
 }
@@ -53,7 +53,7 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: var(--ds-honey-light);
+  color: var(--sp-accent);
 }
 
 .blurb {
@@ -61,14 +61,14 @@
   max-width: 34ch;
   font-size: 0.95rem;
   line-height: 1.7;
-  color: rgb(var(--ds-paper-rgb) / 0.72);
+  color: rgb(var(--sp-ink-rgb) / 0.72);
 }
 
 .tagline {
   margin-top: var(--ds-step-1);
   font-size: 1.15rem;
   font-weight: 700;
-  color: var(--ds-honey-light);
+  color: var(--sp-accent);
 }
 
 .colLabel {
@@ -76,7 +76,7 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: var(--ds-honey-light);
+  color: var(--sp-accent);
 }
 
 .visitList {
@@ -93,11 +93,11 @@
   font-family: var(--font-display);
   font-size: 1.5rem;
   font-weight: 400;
-  color: var(--ds-paper);
+  color: var(--sp-ink);
 }
 
 .visitName:hover {
-  color: var(--ds-honey-light);
+  color: var(--sp-accent);
 }
 
 .visitAddress {
@@ -105,7 +105,7 @@
   max-width: 26ch;
   font-size: 0.83rem;
   line-height: 1.55;
-  color: rgb(var(--ds-paper-rgb) / 0.6);
+  color: rgb(var(--sp-ink-rgb) / 0.6);
 }
 
 .exploreNav {
@@ -121,11 +121,11 @@
   /* 44px: the comfortable minimum for a thumb. */
   min-height: 44px;
   font-size: 0.9rem;
-  color: rgb(var(--ds-paper-rgb) / 0.72);
+  color: rgb(var(--sp-ink-rgb) / 0.72);
 }
 
 .exploreNav a:hover {
-  color: var(--ds-honey-light);
+  color: var(--sp-accent);
 }
 
 .social {
@@ -140,9 +140,9 @@
   justify-content: center;
   width: 44px;
   height: 44px;
-  border: 1px solid rgb(var(--ds-paper-rgb) / 0.3);
+  border: 1px solid rgb(var(--sp-ink-rgb) / 0.3);
   border-radius: 999px;
-  color: var(--ds-paper);
+  color: var(--sp-ink);
   transition:
     background 0.2s,
     color 0.2s,
@@ -163,13 +163,13 @@
 .baseline {
   margin-top: var(--ds-step-5);
   padding-top: var(--ds-step-3);
-  border-top: 1px solid rgb(var(--ds-paper-rgb) / 0.14);
+  border-top: 1px solid rgb(var(--sp-ink-rgb) / 0.14);
   display: flex;
   flex-wrap: wrap;
   gap: var(--ds-step-2);
   justify-content: space-between;
   font-size: 0.78rem;
-  color: rgb(var(--ds-paper-rgb) / 0.5);
+  color: rgb(var(--sp-ink-rgb) / 0.66);
 }
 
 .footer a:focus-visible {

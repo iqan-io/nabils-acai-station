@@ -31,8 +31,8 @@
      between stacked panels — one number keeps the rhythm even. */
   --sp-inset: 0.5rem;
   --sp-radius: 3rem;
-  --sp-line: rgb(var(--ds-paper-rgb) / 0.5);
-  --sp-muted: rgb(var(--ds-paper-rgb) / 0.72);
+  --sp-line: rgb(var(--sp-ink-rgb) / 0.5);
+  --sp-muted: rgb(var(--sp-ink-rgb) / 0.72);
   /* The nav is 164px tall until it shrinks at 48px of scroll. The first panel
      starts at the top of the page and holds its content clear of the nav with
      this much padding rather than the page reserving layout height — that is
@@ -45,8 +45,8 @@
      covers another button. */
   --sp-pill-safe: 210px;
 
-  background: #000;
-  color: var(--ds-paper);
+  background: var(--sp-ground);
+  color: var(--sp-ink);
   font-family: var(--font-sans);
   /* Bottom padding clears the pill at full scroll, so it comes to rest over
      the ground rather than over the last panel's content. */
@@ -75,7 +75,7 @@
 .panel {
   position: relative;
   margin-inline: var(--sp-inset);
-  background: #000;
+  background: var(--sp-ground);
   border: 1px solid var(--sp-line);
   border-radius: var(--sp-radius);
   /* `clip`, not `hidden`. `hidden` makes the panel a scroll container, and a
@@ -181,8 +181,8 @@
   left: var(--ds-step-3);
   padding: var(--ds-step-1) var(--ds-step-2);
   border-radius: 999px;
-  background: #080608;
-  color: var(--ds-paper);
+  background: var(--sp-ground);
+  color: var(--sp-ink);
   font-size: 0.78rem;
   font-weight: 700;
 }
@@ -192,7 +192,7 @@
 .label {
   display: block;
   margin-bottom: var(--ds-step-3);
-  color: var(--ds-honey-light);
+  color: var(--sp-accent);
   font-family: var(--font-sans);
   font-size: 0.85rem;
   font-weight: 700;
@@ -239,7 +239,7 @@
   font-family: var(--font-display);
   font-size: clamp(1.3rem, 2.1vw, 1.9rem);
   line-height: 1.3;
-  color: var(--ds-paper);
+  color: var(--sp-ink);
   max-width: 32ch;
 }
 
@@ -247,7 +247,7 @@
   margin-top: var(--ds-step-3);
   font-size: 0.85rem;
   line-height: 1.6;
-  color: rgb(var(--ds-paper-rgb) / 0.55);
+  color: rgb(var(--sp-ink-rgb) / 0.66);
 }
 
 /* --- actions ------------------------------------------------------------- */
@@ -277,18 +277,19 @@
 }
 
 .pill:hover {
-  background: var(--ds-paper);
-  color: #000;
+  background: var(--sp-fill);
+  color: var(--sp-on-fill);
 }
 
 .pillFilled {
-  background: var(--ds-paper);
-  color: #000;
-  border-color: var(--ds-paper);
+  background: var(--sp-fill);
+  color: var(--sp-on-fill);
+  border-color: var(--sp-ink);
 }
 
 .pillFilled:hover {
   background: var(--ds-honey-light);
+  color: var(--ds-ink);
   border-color: var(--ds-honey-light);
 }
 
@@ -319,7 +320,7 @@
 }
 
 .textActions a:hover {
-  color: var(--ds-honey-light);
+  color: var(--sp-accent);
 }
 
 .textLink {
@@ -327,13 +328,13 @@
   align-items: center;
   gap: var(--ds-step-1);
   min-height: 44px;
-  color: var(--ds-honey-light);
+  color: var(--sp-accent);
   font-size: 0.88rem;
   font-weight: 800;
 }
 
 .textLink:hover {
-  color: var(--ds-paper);
+  color: var(--sp-ink);
 }
 
 /* --- data rows (delivery platforms, addresses, hours) -------------------- */
@@ -349,7 +350,7 @@
   gap: var(--ds-step-3);
   min-height: 64px;
   padding: var(--ds-step-2) 0;
-  border-bottom: 1px solid rgb(var(--ds-paper-rgb) / 0.16);
+  border-bottom: 1px solid rgb(var(--sp-ink-rgb) / 0.16);
 }
 
 .rowMain {
@@ -375,12 +376,12 @@
 
 .rowArrow {
   flex-shrink: 0;
-  color: var(--ds-honey-light);
+  color: var(--sp-accent);
   font-weight: 700;
 }
 
 .row:hover .rowArrow {
-  color: var(--ds-paper);
+  color: var(--sp-ink);
 }
 
 .hours {
@@ -393,7 +394,7 @@
   justify-content: space-between;
   gap: var(--ds-step-3);
   padding-block: 5px;
-  border-bottom: 1px solid rgb(var(--ds-paper-rgb) / 0.1);
+  border-bottom: 1px solid rgb(var(--sp-ink-rgb) / 0.1);
 }
 
 .hours dt {
@@ -460,7 +461,7 @@
   font-size: clamp(1.05rem, 1.4vw, 1.4rem);
   white-space: nowrap;
   text-transform: uppercase;
-  color: var(--ds-paper);
+  color: var(--sp-ink);
 }
 
 /* Only once the arrival frame has painted: otherwise a correction on arrival
@@ -478,12 +479,12 @@
 }
 
 .rail button:hover {
-  background: rgb(var(--ds-paper-rgb) / 0.12);
+  background: rgb(var(--sp-ink-rgb) / 0.12);
 }
 
 .rail button[aria-current="true"] {
-  background: var(--ds-paper);
-  color: #000;
+  background: var(--sp-fill);
+  color: var(--sp-on-fill);
 }
 
 .rail button[aria-current="true"] span {
@@ -549,7 +550,7 @@
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
   font-size: 0.85em;
-  color: rgb(var(--ds-paper-rgb) / 0.62);
+  color: rgb(var(--sp-ink-rgb) / 0.62);
 }
 
 .prices li p {
@@ -696,12 +697,12 @@
   min-height: 48px;
   padding: var(--ds-step-2) var(--ds-step-4);
   border-radius: 999px;
-  background: var(--ds-paper);
-  color: #000;
+  background: var(--sp-fill);
+  color: var(--sp-on-fill);
   font-family: var(--font-sans);
   font-size: 0.92rem;
   font-weight: 800;
-  box-shadow: 0 10px 30px rgb(0 0 0 / 0.55);
+  box-shadow: 0 10px 30px rgb(var(--ds-ink-rgb) / 0.22);
   transition:
     background 0.2s,
     transform 0.2s;
@@ -709,6 +710,7 @@
 
 .orderPickup:hover {
   background: var(--ds-honey-light);
+  color: var(--ds-ink);
   transform: translateY(-2px);
 }
 
@@ -745,19 +747,19 @@
   font-size: clamp(1.1rem, 1.7vw, 1.55rem);
   font-weight: 700;
   line-height: 1.35;
-  color: var(--ds-paper);
+  color: var(--sp-ink);
   transition: color 0.18s;
 }
 
 .contactLine:hover {
-  color: var(--ds-honey-light);
+  color: var(--sp-accent);
 }
 
 .contactPlace {
   display: block;
   font-size: 0.8rem;
   font-weight: 800;
-  color: var(--ds-honey-light);
+  color: var(--sp-accent);
   margin-bottom: 2px;
 }
 
@@ -782,12 +784,12 @@
   justify-content: center;
   width: 48px;
   height: 48px;
-  color: var(--ds-paper);
+  color: var(--sp-ink);
   transition: color 0.18s;
 }
 
 .contactIcons a:hover {
-  color: var(--ds-honey-light);
+  color: var(--sp-accent);
 }
 
 .contactIcons svg {
@@ -802,7 +804,7 @@
   scroll-margin-top: 112px;
   margin-top: var(--ds-step-5);
   padding-top: var(--ds-step-4);
-  border-top: 1px solid rgb(var(--ds-paper-rgb) / 0.16);
+  border-top: 1px solid rgb(var(--sp-ink-rgb) / 0.16);
 }
 
 
@@ -891,8 +893,8 @@
     gap: var(--ds-step-1);
     padding: var(--ds-step-2) var(--ds-step-3);
     margin-bottom: var(--ds-step-3);
-    background: #080608;
-    border-bottom: 1px solid rgb(var(--ds-paper-rgb) / 0.3);
+    background: var(--sp-ground);
+    border-bottom: 1px solid rgb(var(--sp-ink-rgb) / 0.3);
   }
 
   .rail button {

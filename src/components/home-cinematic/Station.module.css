@@ -2,12 +2,12 @@
    Nabil's owns the type, colour, imagery and film. Scoped to the representative
    homepage so the remaining sitemap can be reviewed before rollout. */
 .root {
-  --station-ground: #000;
-  --station-line: rgb(var(--ds-paper-rgb) / .65);
-  --station-muted: rgb(var(--ds-paper-rgb) / .72);
+  --station-ground: var(--sp-ground);
+  --station-line: rgb(var(--sp-ink-rgb) / .65);
+  --station-muted: rgb(var(--sp-ink-rgb) / .72);
   --station-radius: 3rem;
   background: var(--station-ground);
-  color: var(--ds-paper);
+  color: var(--sp-ink);
   font-family: var(--font-sans);
 }
 .root h1, .root h2, .root h3 { font-weight: 400; letter-spacing: 0; }
@@ -18,34 +18,36 @@
 .nav {
   position: fixed; inset: 0 0 auto; z-index: 40; display: flex;
   align-items: center; gap: 4.5vw; height: 164px;
-  padding: 18px 7.5vw 18px 9vw; color: #fff;
+  padding: 18px 7.5vw 18px 9vw; color: var(--sp-ink);
   background: transparent; font-family: var(--font-sans);
   transition: background .25s, height .25s;
 }
-.navSolid { height: 96px; background: #000; }
+.navSolid { height: 96px; background: var(--sp-ground); box-shadow: 0 1px 0 rgb(var(--sp-ink-rgb) / .12); }
+/* Over the homepage's black photo hero: pure white, as the hero copy is. */
+.navOverPhoto { --sp-ink-rgb: 255 255 255; --sp-ink: #fff; }
 .logo { flex-shrink: 0; }
 .logo img { width: clamp(80px, 6.8vw, 128px); height: auto; transition: width .25s; }
 .navSolid .logo img { width: 68px; }
-.navLinks { display: flex; align-items: center; gap: 2.4vw; }
-.navLinks a { display: flex; align-items: center; min-height: 44px; font-weight: 700; font-size: clamp(.95rem, 1.55vw, 1.85rem); text-transform: uppercase; white-space: nowrap; }
+.navLinks { display: flex; align-items: center; gap: clamp(14px, 2.4vw, 46px); }
+.navLinks a { display: flex; align-items: center; min-height: 44px; font-weight: 700; font-size: clamp(.85rem, 1.55vw, 1.85rem); text-transform: uppercase; white-space: nowrap; }
 /* The reference dims every link except the page you are on, which is what makes
    the bar read as navigation rather than as four equal words. The circled ORDER
    is an action, not a location, so it stays bright. */
-.navLinks a { color: rgb(var(--ds-paper-rgb) / .6); transition: color .18s; }
-.navLinks a:hover, .navLinks a:focus-visible { color: var(--ds-honey-light); }
-.textLink:hover { color: var(--ds-honey-light); }
-.navLinks a[aria-current], .navLinks a.navOrder { color: #fff; }
+.navLinks a { color: rgb(var(--sp-ink-rgb) / .6); transition: color .18s; }
+.navLinks a:hover, .navLinks a:focus-visible { color: var(--sp-accent); }
+.textLink:hover { color: var(--sp-accent); }
+.navLinks a[aria-current], .navLinks a.navOrder { color: var(--sp-ink); }
 .navOrder { position: relative; padding: 9px 13px; }
 .navOrder::before { content: ""; position: absolute; inset: 0; border: 2px solid currentColor; border-radius: 50%; transform: rotate(-7deg); }
 .navActions { margin-left: auto; display: flex; align-items: center; gap: var(--ds-step-2); }
-.navActions .pill { background: #000; border-width: 2px; font-size: clamp(.95rem, 1.7vw, 2rem); text-transform: uppercase; white-space: nowrap; padding: 15px 25px; }
+.navActions .pill { background: var(--sp-ground); border-width: 2px; font-size: clamp(.95rem, 1.7vw, 2rem); text-transform: uppercase; white-space: nowrap; padding: 15px 25px; }
 .pill {
   display: inline-flex; align-items: center; justify-content: center; gap: var(--ds-step-3);
   padding: var(--ds-step-2) var(--ds-step-4); min-height: 44px;
   border: 1px solid currentColor; border-radius: 999px; color: inherit;
   font-size: .88rem; font-weight: 800; transition: background .2s, color .2s;
 }
-.pill:hover { background: var(--ds-paper); color: var(--ds-night); }
+.pill:hover { background: var(--sp-fill); color: var(--sp-on-fill); }
 .navToggle { display: none; }
 /* The pin's containing block: hero plus film. Sticky only works within it, so
    the hero stops being pinned the moment the film has finished. */
@@ -53,7 +55,7 @@
 .hero {
   height: max(700px, 100svh);
   position: sticky; top: 0; z-index: 0;
-  overflow: hidden; color: #fff; background: #000;
+  overflow: hidden; color: #fff; background: var(--sp-ground);
 }
 /* Oversized on the axis the collage travels along, so there is always another
    capsule waiting outside the frame to move into it. `will-change` keeps the
@@ -155,16 +157,16 @@
 .heroActions { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; margin-top: 12vh; }
 .heroActions a { display: inline-flex; align-items: center; gap: 20px; min-height: 44px; font-size: clamp(1.25rem, 1.9vw, 2.3rem); line-height: 1.35; font-weight: 900; text-transform: uppercase; }
 .heroActions a::after { content: "→"; font-weight: 500; }
-.heroActions a:hover { color: var(--ds-honey-light); }
+.heroActions a:hover { color: var(--sp-accent); }
 .textLink { display: inline-flex; gap: var(--ds-step-3); align-items: center; min-height: 44px; font-size: .9rem; font-weight: 800; }
 /* Everything that slides over the pinned hero. Opaque and above it. */
-.heroCover { position: relative; z-index: 1; background: #000; }
+.heroCover { position: relative; z-index: 1; background: var(--sp-ground); }
 /* The leading edge of the cover is the reference's panel edge: rounded top
    corners in the cream hairline, inset 8px, so what rises over the hero reads
    as a panel arriving rather than a black rectangle. */
 .storyIntro {
   padding: var(--ds-step-4); display: flex; justify-content: center;
-  color: var(--station-muted); font-size: .85rem; background: #000;
+  color: var(--station-muted); font-size: .85rem; background: var(--sp-ground);
   margin: 0 var(--ds-step-1);
   /* Top hairline only: it tapers away round the corners. Side lines stopped
      dead where the full-bleed film begins and read as a tab. */
@@ -178,7 +180,7 @@
 .neonPhoto { position: relative; min-height: 470px; border: 1px solid var(--station-line); border-radius: var(--station-radius); margin: -1px; overflow: hidden; overflow: clip; }
 .neonPhoto img { object-fit: cover; }
 .neonCopy { padding: var(--ds-step-6); display: flex; flex-direction: column; align-items: flex-start; justify-content: center; }
-.label { font-size: .85rem; font-weight: 700; color: var(--ds-honey-light); margin-bottom: var(--ds-step-3); }
+.label { font-size: .85rem; font-weight: 700; color: var(--sp-accent); margin-bottom: var(--ds-step-3); }
 .neonCopy > p:not(.label) { max-width: 35ch; margin: var(--ds-step-4) 0; line-height: 1.7; color: var(--station-muted); }
 .menuSection { padding: var(--ds-step-6) 0 0; scroll-margin-top: 16px; }
 .menuHeading { display: flex; justify-content: space-between; align-items: end; gap: var(--ds-step-4); padding: 0 var(--ds-step-5) var(--ds-step-5); }
@@ -186,8 +188,8 @@
 .categories { padding: var(--ds-step-3) 0; display: flex; flex-direction: column; align-items: stretch; gap: 3px; }
 .categories button { display: flex; align-items: center; justify-content: space-between; gap: var(--ds-step-2); text-align: left; min-height: 44px; padding: var(--ds-step-2) var(--ds-step-3); border-radius: 999px; font-size: .83rem; font-weight: 800; }
 .categories button span { visibility: hidden; }
-.categories button:hover { background: rgb(var(--ds-paper-rgb) / .1); }
-.categories button[aria-selected="true"] { color: var(--ds-night); background: var(--ds-paper); }
+.categories button:hover { background: rgb(var(--sp-ink-rgb) / .1); }
+.categories button[aria-selected="true"] { color: var(--sp-on-fill); background: var(--sp-fill); }
 .categories button[aria-selected="true"] span { visibility: visible; }
 .menuPanel { display: grid; grid-template-columns: 1fr 1fr; min-width: 0; }
 .menuCopy { padding: var(--ds-step-4) var(--ds-step-5); min-width: 0; }
@@ -195,21 +197,21 @@
 .menuCopy h3 { font-size: clamp(1.5rem, 2.3vw, 2.15rem); line-height: 1.13; }
 .menuIntro { font-size: .9rem; color: var(--station-muted); line-height: 1.6; margin-top: var(--ds-step-3); }
 .prices { margin: var(--ds-step-4) 0; }
-.prices li { padding: var(--ds-step-3) 0; border-bottom: 1px solid rgb(var(--ds-paper-rgb) / .16); }
+.prices li { padding: var(--ds-step-3) 0; border-bottom: 1px solid rgb(var(--sp-ink-rgb) / .16); }
 .prices li > div { display: flex; justify-content: space-between; gap: var(--ds-step-3); font-weight: 800; font-size: 1rem; }
-.prices li > div > span:last-child:not(:first-child) { white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--ds-honey-light); }
+.prices li > div > span:last-child:not(:first-child) { white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--sp-accent); }
 .prices li p, .footnote { font-size: .85rem; color: var(--station-muted); line-height: 1.65; margin-top: var(--ds-step-2); }
 .footnote { margin-bottom: var(--ds-step-4); }
 .menuPhoto { position: sticky; top: 112px; min-height: 540px; height: min(680px, calc(100svh - 130px)); margin: -1rem -1px -1rem 0; border: 1px solid var(--station-line); border-radius: var(--station-radius); background: var(--ds-paper); overflow: hidden; }
 .menuPhoto img { object-fit: contain; }
 .photoLabel { position: absolute; bottom: var(--ds-step-4); inset-inline: 0; text-align: center; color: var(--ds-ink-soft); font-size: .8rem; font-weight: 700; }
-.drinksNote { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: var(--ds-step-4); padding: var(--ds-step-5); background: var(--ds-night-soft); border-radius: var(--station-radius); margin-right: var(--ds-step-3); }
-.drinksNote > span { font-size: .85rem; color: var(--ds-honey-light); }
+.drinksNote { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: var(--ds-step-4); padding: var(--ds-step-5); background: var(--sp-soft); border-radius: var(--station-radius); margin-right: var(--ds-step-3); }
+.drinksNote > span { font-size: .85rem; color: var(--sp-accent); }
 .drinksNote > p { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); line-height: 1.15; }
 .proof { display: grid; grid-template-columns: 1fr 1fr; gap: var(--ds-step-6); padding: var(--ds-step-6) var(--ds-step-5); }
 .proof article { max-width: 48ch; }
 .proof blockquote { font-size: clamp(1.05rem, 1.6vw, 1.4rem); line-height: 1.55; font-weight: 600; margin-bottom: var(--ds-step-3); }
-.proof a { color: var(--ds-honey-light); font-size: .85rem; font-weight: 800; }
+.proof a { color: var(--sp-accent); font-size: .85rem; font-weight: 800; }
 .locations { display: grid; grid-template-columns: 1fr minmax(280px, 32%); border: 1px solid var(--station-line); border-radius: var(--station-radius); overflow: hidden; }
 .locationBody { padding: var(--ds-step-6) var(--ds-step-5); }
 .locationBody h2 { scroll-margin-top: 16px; }
@@ -222,7 +224,7 @@
 .locationActions { display: flex; flex-wrap: wrap; gap: var(--ds-step-3); margin-top: var(--ds-step-4); }
 .arrival { position: relative; border-left: 1px solid var(--station-line); border-radius: var(--station-radius); overflow: hidden; background: var(--ds-night); min-height: 650px; }
 .arrival video, .arrival img { width: 100%; height: 100%; position: absolute; inset: 0; object-fit: cover; }
-.arrival figcaption { position: absolute; bottom: var(--ds-step-4); left: var(--ds-step-4); background: #080608; padding: var(--ds-step-2) var(--ds-step-3); border-radius: 999px; font-size: .8rem; }
+.arrival figcaption { position: absolute; bottom: var(--ds-step-4); left: var(--ds-step-4); background: var(--sp-ground); padding: var(--ds-step-2) var(--ds-step-3); border-radius: 999px; font-size: .8rem; }
 .closing { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--ds-step-4); padding: var(--ds-step-5); }
 .closing p { font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 2.4rem); }
 .closing > div { display: flex; flex-wrap: wrap; gap: var(--ds-step-4); }
@@ -249,6 +251,15 @@
     --drift-duration: 46s;
   }
 }
+/* Upright tablets: the five links run into the inner pages' hero photographs
+   (measured: up to 23px into them at 768), so the bar uses the phone's Menu
+   button here too. The bar keeps its tablet height; the list drops below it. */
+@media (min-width: 768px) and (max-width: 880px) {
+  .navLinks { display: none; }
+  .navToggle { display: block; min-height: 44px; padding-inline: var(--ds-step-2); font-size: .95rem; font-weight: 800; }
+  .navDropdown { position: absolute; top: 95px; left: 0; right: 0; padding: var(--ds-step-3) 9vw; background: var(--sp-ground); border-bottom: 1px solid rgb(var(--sp-ink-rgb) / .3); display: flex; flex-direction: column; }
+  .navDropdown a { padding: var(--ds-step-3); font-weight: 800; }
+}
 @media (max-width: 767px) {
   .root { --station-radius: 1.75rem; }
   .nav { height: 80px; padding: var(--ds-step-2) var(--ds-step-3); gap: var(--ds-step-2); }
@@ -256,7 +267,7 @@
   .navLinks { display: none; }
   .navActions .pill { padding: 10px 13px; font-size: .75rem; gap: var(--ds-step-2); }
   .navToggle { display: block; min-height: 44px; padding-inline: var(--ds-step-2); font-size: .8rem; font-weight: 800; }
-  .navDropdown { position: absolute; top: 79px; left: 0; right: 0; padding: var(--ds-step-3); background: #080608; border-bottom: 1px solid var(--ds-paper); display: flex; flex-direction: column; }
+  .navDropdown { position: absolute; top: 79px; left: 0; right: 0; padding: var(--ds-step-3); background: var(--sp-ground); border-bottom: 1px solid rgb(var(--sp-ink-rgb) / .3); display: flex; flex-direction: column; }
   .navDropdown a { padding: var(--ds-step-3); font-weight: 800; }
   .hero { height: max(680px, 100svh); }
   .heroCopy { top: 37%; }
@@ -276,7 +287,7 @@
   .menuSection { padding-top: var(--ds-step-5); scroll-margin-top: 0; }
   .menuHeading { padding: 0 var(--ds-step-4) var(--ds-step-4); align-items: start; flex-direction: column; gap: var(--ds-step-2); }
   .menuFrame { display: block; padding: 0; }
-  .categories { position: sticky; top: 80px; z-index: 10; flex-direction: row; overflow-x: auto; padding: var(--ds-step-3); border-radius: var(--station-radius) var(--station-radius) 0 0; background: #080608; border-bottom: 1px solid rgb(var(--ds-paper-rgb) / .3); }
+  .categories { position: sticky; top: 80px; z-index: 10; flex-direction: row; overflow-x: auto; padding: var(--ds-step-3); border-radius: var(--station-radius) var(--station-radius) 0 0; background: var(--sp-ground); border-bottom: 1px solid rgb(var(--sp-ink-rgb) / .3); }
   .categories button { white-space: nowrap; flex-shrink: 0; }
   .categories button span { display: none; }
   .menuPanel { display: flex; flex-direction: column; }
@@ -404,7 +415,7 @@
   font-size: clamp(1.8rem, 3.4vw, 3.1rem);
   line-height: 1.12;
   text-transform: uppercase;
-  color: rgb(var(--ds-paper-rgb) / .42);
+  color: rgb(var(--sp-ink-rgb) / .55);
   transition: color .18s;
 }
 .indexList a:hover, .indexList a:focus-visible { color: var(--ds-honey); }
@@ -444,10 +455,10 @@
   font-size: clamp(1.9rem, 4.4vw, 3.6rem);
   line-height: 1;
   text-transform: uppercase;
-  color: rgb(var(--ds-paper-rgb) / .38);
+  color: rgb(var(--sp-ink-rgb) / .38);
 }
-.ticker span:nth-child(4n + 1) { color: var(--ds-paper); }
-.ticker i { flex: none; font-size: 1.6rem; color: rgb(var(--ds-paper-rgb) / .38); font-style: normal; }
+.ticker span:nth-child(4n + 1) { color: var(--sp-ink); }
+.ticker i { flex: none; font-size: 1.6rem; color: rgb(var(--sp-ink-rgb) / .38); font-style: normal; }
 
 /* ---- customer reviews ----------------------------------------------------- */
 .voices {
@@ -466,8 +477,8 @@
   font-size: .85rem;
   color: var(--station-muted);
 }
-.voices footer b { color: var(--ds-honey-light); font-weight: 800; }
-.voices footer a:hover { color: var(--ds-paper); }
+.voices footer b { color: var(--sp-accent); font-weight: 800; }
+.voices footer a:hover { color: var(--sp-ink); }
 /* Press sits in the same grid as the Google reviews, spanning wider so the two
    longer quotes read as the second row rather than as orphans. */
 .voicePressWide { grid-column: 1 / span 2; }
@@ -500,7 +511,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #000;
+  background: var(--sp-ground);
   padding: var(--ds-step-2) 0 var(--ds-step-6);
   overflow: hidden;
   overflow: clip;
@@ -518,9 +529,9 @@
   flex: none;
   width: min(480px, 34vw);
   padding: 44px 44px 48px;
-  border: 2px solid var(--ds-paper);
+  border: 2px solid var(--sp-ink);
   border-radius: 3.5rem;
-  background: #000;
+  background: var(--sp-ground);
   display: flex;
   flex-direction: column;
   gap: var(--ds-step-3);
@@ -543,7 +554,7 @@
 .reviewCard p {
   font-size: 1.02rem;
   line-height: 1.6;
-  color: rgb(var(--ds-paper-rgb) / .86);
+  color: rgb(var(--sp-ink-rgb) / .86);
 }
 .reviewSource {
   display: inline-flex;
@@ -552,7 +563,7 @@
   flex: none;
   font-size: .85rem;
   font-weight: 700;
-  color: var(--ds-honey-light);
+  color: var(--sp-accent);
 }
 .reviewSource svg { width: 1.2rem; height: 1.2rem; }
 .reviewLink {
@@ -563,9 +574,9 @@
   align-self: flex-start;
   font-size: .9rem;
   font-weight: 800;
-  color: var(--ds-honey-light);
+  color: var(--sp-accent);
 }
-.reviewLink:hover { color: var(--ds-paper); }
+.reviewLink:hover { color: var(--sp-ink); }
 .ratingList { display: flex; flex-direction: column; gap: var(--ds-step-2); }
 .ratingList a {
   display: grid;
@@ -576,12 +587,12 @@
   font-size: 1.05rem;
   font-weight: 800;
 }
-.ratingList a:hover span:first-child { color: var(--ds-honey-light); }
+.ratingList a:hover span:first-child { color: var(--sp-accent); }
 .ratingList b { font-size: 1.2rem; }
 /* The reference's gold stars. A partial star is a clipped gold overlay on a
    dim one, so 4.7 reads as 4.7, not rounded up to 5. */
 .stars { display: inline-flex; gap: 4px; font-size: 1.55rem; line-height: 1; }
-.star { position: relative; color: rgb(var(--ds-paper-rgb) / .22); }
+.star { position: relative; color: rgb(var(--sp-ink-rgb) / .22); }
 .star > span { position: absolute; inset: 0 auto 0 0; overflow: hidden; color: #f7d774; white-space: nowrap; }
 
 /* Small laptops: tighter cards and gaps, so each row overflows less and its

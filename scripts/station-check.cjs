@@ -123,7 +123,9 @@ const settle = ms => new Promise(resolve => setTimeout(resolve, ms));
         await page.evaluate(() => window.scrollTo(0, 0));
         await settle(400);
         await page.click('button[aria-label="Open menu"]');
-        assert.equal(await page.$$eval('#station-navigation a', links => links.length), 5);
+        // Six since 2026-11-04: "Shop online" joined Menu, Our story, Locations,
+        // Specials and Order delivery.
+        assert.equal(await page.$$eval('#station-navigation a', links => links.length), 6);
         await page.keyboard.press('Escape');
         assert.equal(await page.$('#station-navigation'), null);
         assert.equal(await page.evaluate(() => document.activeElement.getAttribute('aria-label')), 'Open menu');

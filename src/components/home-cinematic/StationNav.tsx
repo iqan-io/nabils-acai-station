@@ -16,8 +16,13 @@ import styles from "./Station.module.css";
   is path-aware: one bar, one look, links that work on every page.
 */
 
+/*
+  No "Home" link: the round logo is the way home, as it is on most sites. It
+  was dropped (2026-11-04) when Shop joined the bar — five words ran the bar
+  past the 58% mark where the inner pages' hero photographs begin, and on the
+  cream ground ink lettering over a dark photograph is unreadable.
+*/
 const HOME_LINKS = [
-  { href: "#home-title", label: "Home" },
   { href: "/about", label: "Our story" },
   { href: "/order", label: "Order", order: true },
   { href: "/shop", label: "Shop" },
@@ -25,7 +30,6 @@ const HOME_LINKS = [
 ] as const;
 
 const ROUTE_LINKS = [
-  { href: "/", label: "Home" },
   { href: "/about", label: "Our story" },
   { href: "/order", label: "Order", order: true },
   { href: "/shop", label: "Shop" },
@@ -84,17 +88,21 @@ export function StationNav() {
   const lineupHref = "/menu";
 
   return (
-    <header ref={root} className={`${styles.nav} ${scrolled || open ? styles.navSolid : ""}`}>
+    <header
+      ref={root}
+      // Over the homepage's black photo hero the bar is white on transparent;
+      // everywhere else, and once it turns solid, it is ink on the cream ground.
+      className={`${styles.nav} ${
+        scrolled || open ? styles.navSolid : isHome ? `${styles.navOverPhoto} ground-night` : ""
+      }`}
+    >
       <a href="/" aria-label="Nabil's Açaí Station home" className={styles.logo}>
         <Image src="/brand/logo-round.png" alt="Nabil's Açaí Station" width={120} height={120} priority />
       </a>
       <nav className={styles.navLinks} aria-label="Primary">
         {links.map((link) => {
-          const current = link.href.startsWith("#")
-            ? link.label === "Home"
-            : link.href === "/"
-              ? pathname === "/"
-              : pathname.startsWith(link.href);
+          // An in-page anchor (the homepage's "Find us") is never the page you are on.
+          const current = !link.href.startsWith("#") && pathname.startsWith(link.href);
           const className = "order" in link && link.order ? styles.navOrder : undefined;
           // In-page anchors must stay plain `<a>`; the router would treat them
           // as a navigation and lose the smooth scroll the film depends on.
