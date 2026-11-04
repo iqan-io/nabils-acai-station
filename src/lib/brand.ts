@@ -25,6 +25,83 @@ export const brand = {
   },
 };
 
+/*
+  The online shop (`/shop`), posted Australia-wide. Prices are whole cents so
+  the cart and the server compute the same totals; the server never trusts a
+  price sent by the browser, only a product id and a quantity.
+
+  Confirmed by the owner 2026-11-03: the Dubai bar plus his dad's Lebanese
+  sweets go online; Square's $28 is the bar's current price.
+
+  The sweets, names, weights and prices are the owner's own list (2026-11-04);
+  photos from `scripts/build-sweets-assets.py`. "Shortbread" is shown with the
+  Assorted Batifor'e tub, the one 400g shortbread biscuit he photographed (to
+  confirm). The 2 Pieces Baklava pack is not on his list, so it is not sold
+  online. A product with `priceCents: null` would show as "price coming soon",
+  never addable to the cart, and `quote()` drops it.
+*/
+const DUBAI_BAR_CENTS = 2800;
+
+export type ShopProduct = {
+  id: string;
+  name: string;
+  priceCents: number | null;
+  blurb: string;
+  image: string;
+  imageAlt: string;
+};
+
+const SWEETS = "/images/products/sweets";
+
+/** One of the owner's Nabil's Lebanese Sweets tubs. */
+function sweet(
+  id: string,
+  name: string,
+  weight: string,
+  priceCents: number,
+  image: string,
+): ShopProduct {
+  return {
+    id,
+    name,
+    priceCents,
+    blurb: `${weight} tub from Nabil's Lebanese Sweets.`,
+    image: `${SWEETS}/${image}.webp`,
+    imageAlt: `A sealed ${weight} tub of Nabil's Lebanese Sweets ${name.toLowerCase()}`,
+  };
+}
+
+export const shop = {
+  products: [
+    {
+      id: "dubai-bar",
+      name: "Nabil's Dubai Chocolate",
+      priceCents: DUBAI_BAR_CENTS,
+      blurb:
+        "The viral bar: pistachio kataifi filling in a thick milk chocolate shell. Keeps for two months.",
+      image: productImages.dubaiChocolate.src,
+      imageAlt: productImages.dubaiChocolate.alt,
+    },
+    sweet("pistachio-baklava", "Pistachio Baklava", "350g", 1500, "pistachio-baklava-350g"),
+    sweet("walnut-baklava", "Walnut Baklava", "350g", 1350, "walnut-baklava-350g"),
+    sweet("almond-baklava", "Almond Baklava", "350g", 1350, "almond-baklava-350g"),
+    sweet("assorted-baklava", "Assorted Baklava", "500g", 1750, "assorted-baklava-500g"),
+    sweet("lady-finger-baklava", "Lady Finger Baklava", "400g", 1350, "lady-fingers-400g"),
+    sweet("almond-crescent", "Almond Crescent", "400g", 1250, "almond-crescent-400g"),
+    sweet("barazik", "Barazik", "400g", 1250, "barazik-400g"),
+    sweet("shortbread", "Shortbread", "400g", 1250, "assorted-batifore-400g"),
+  ] satisfies ShopProduct[],
+  freeShippingFromCents: 10000,
+  // Below $100: a flat $12 Express Post, the owner's interim rate (2026-11-04)
+  // until his Australia Post account shows what postage really costs. Prices,
+  // including this, are GST-inclusive (the business is GST-registered).
+  // `null` here would close the production checkout — see `shippingFor`.
+  flatShippingCents: 1200 as number | null,
+  shippingLabel: "Express shipping",
+  /** Australian GST, included in every price above. */
+  gstPercent: 10,
+};
+
 export const locations = [
   {
     slug: "mount-lawley",
@@ -236,7 +313,7 @@ export const signatures: Signature[] = [
   },
   {
     name: "Dubai Chocolate",
-    price: "from $18",
+    price: "from $15",
     blurb:
       "Nabil's viral Dubai chocolate with pistachio kataifi filling and a thick milk chocolate shell.",
     image: productImages.dubaiChocolate.src,
@@ -331,8 +408,8 @@ export const menu: MenuSection[] = [
   {
     title: "Dubai Chocolate",
     items: [
-      { name: "Nabil's Dubai Chocolate", price: "$30" },
-      { name: "Small Choc Bar", price: "$18" },
+      { name: "Nabil's Dubai Chocolate", price: `$${DUBAI_BAR_CENTS / 100}` },
+      { name: "Small Choc Bar", price: "$15" },
       { name: "Dubai Crunch Box", price: "$25" },
     ],
   },

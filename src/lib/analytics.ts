@@ -26,18 +26,21 @@ export type ConversionEvent =
   | "order_click"
   | "call_click"
   | "directions_click"
-  | "social_click";
+  | "social_click"
+  | "checkout_start";
 
 /**
  * Meta rewards its own standard events with better optimisation than custom
  * ones, so map to a standard name wherever the meaning genuinely matches.
  * `order_click` has no honest standard equivalent — the order happens on
  * someone else's domain, so calling it `Purchase` or `InitiateCheckout` would
- * be a lie we then optimise against. It stays custom.
+ * be a lie we then optimise against. It stays custom. `checkout_start` is the
+ * `/shop` cart handing a real order to Square, so it is `InitiateCheckout`.
  */
 const META_STANDARD_EVENT: Partial<Record<ConversionEvent, string>> = {
   call_click: "Contact",
   directions_click: "FindLocation",
+  checkout_start: "InitiateCheckout",
 };
 
 export type ConversionParams = {

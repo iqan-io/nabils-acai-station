@@ -36,14 +36,18 @@ export function pageMetadata({
   description,
   path,
   keywords = [],
+  noindex = false,
 }: {
   title: string;
   description: string;
   path: string;
   keywords?: string[];
+  /** Keeps a page out of search, e.g. `/shop` until it launches. */
+  noindex?: boolean;
 }): Metadata {
   return {
     title,
+    ...(noindex && { robots: { index: false, follow: false } }),
     description,
     keywords: [...defaultKeywords, ...keywords],
     alternates: {
