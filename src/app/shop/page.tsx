@@ -14,14 +14,16 @@ import { formatAud } from "@/lib/shop";
 import { productImages } from "@/lib/productImages";
 import { pageMetadata } from "@/lib/seo";
 
-// Kept out of search and off the nav until launch: postage rates and the
-// Lebanese sweets range are still to come from the owner (C-047).
 export const metadata: Metadata = pageMetadata({
   title: "Shop online",
   description:
     "Order Nabil's Dubai chocolate and Lebanese sweets online, posted anywhere in Australia. Free shipping from $100.",
   path: "/shop",
-  noindex: true,
+  keywords: [
+    "Dubai chocolate online Australia",
+    "baklava online Australia",
+    "Lebanese sweets delivery Australia",
+  ],
 });
 
 export default function Page() {

@@ -20,6 +20,7 @@ const HOME_LINKS = [
   { href: "#home-title", label: "Home" },
   { href: "/about", label: "Our story" },
   { href: "/order", label: "Order", order: true },
+  { href: "/shop", label: "Shop" },
   { href: "#find-title", label: "Find us" },
 ] as const;
 
@@ -27,11 +28,13 @@ const ROUTE_LINKS = [
   { href: "/", label: "Home" },
   { href: "/about", label: "Our story" },
   { href: "/order", label: "Order", order: true },
+  { href: "/shop", label: "Shop" },
   { href: "/locations", label: "Find us" },
 ] as const;
 
 const DROPDOWN = [
   { href: "/menu", label: "Menu" },
+  { href: "/shop", label: "Shop online" },
   { href: "/about", label: "Our story" },
   { href: "/locations", label: "Locations" },
   { href: "/specials", label: "Specials" },

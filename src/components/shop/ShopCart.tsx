@@ -202,8 +202,11 @@ export function ShopCart() {
             {error}
           </p>
         )}
+        {/* Square's hosted checkout cannot restrict the shipping country, so
+            this line is the guard; a non-Australian order is refunded. */}
         <p className={styles.muted}>
-          Secure payment by Square. You&apos;ll add your delivery address there.
+          We post within Australia only. Secure payment by Square; you&apos;ll
+          add your delivery address there.
         </p>
       </aside>
     </div>
