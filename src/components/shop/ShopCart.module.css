@@ -221,7 +221,84 @@
   font-weight: 800;
 }
 
-.freeShipping {
+.postage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-step-1);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.postage legend {
+  margin-bottom: var(--ds-step-1);
+  padding: 0;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+/* Radio, name and price on one line; the delivery time runs full width under
+   the name, so a narrow phone summary doesn't fold it into a thin column. */
+.option {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas:
+    "radio name price"
+    ".     eta  eta";
+  align-items: center;
+  column-gap: var(--ds-step-2);
+  row-gap: 0.15rem;
+  padding: var(--ds-step-2);
+  border: 1px solid var(--sp-line);
+  border-radius: calc(var(--sp-radius) / 4);
+  cursor: pointer;
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+.option:hover {
+  border-color: rgb(var(--sp-ink-rgb) / 0.4);
+}
+
+.option:has(input:checked) {
+  border-color: var(--sp-accent);
+  background: rgb(var(--sp-ink-rgb) / 0.04);
+}
+
+.option input {
+  grid-area: radio;
+  width: 1.1rem;
+  height: 1.1rem;
+  margin: 0;
+  accent-color: var(--sp-accent);
+}
+
+.option:has(input:focus-visible) {
+  outline: 2px solid var(--sp-accent);
+  outline-offset: 2px;
+}
+
+.optionName {
+  grid-area: name;
+  white-space: nowrap;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.optionEta {
+  grid-area: eta;
+  color: rgb(var(--sp-ink-rgb) / 0.66);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.optionPrice {
+  grid-area: price;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.postageNote {
   color: var(--sp-accent);
   font-size: 0.9rem;
   font-weight: 700;

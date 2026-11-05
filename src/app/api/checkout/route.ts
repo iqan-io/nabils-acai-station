@@ -1,6 +1,6 @@
 import { shop } from "@/lib/brand";
 import { quote } from "@/lib/shop";
-import { accessToken, isProduction, squareUrl, SQUARE_VERSION } from "@/lib/square";
+import { accessToken, squareUrl, SQUARE_VERSION } from "@/lib/square";
 
 /*
   Turns a cart into one Square checkout page.
@@ -12,14 +12,8 @@ import { accessToken, isProduction, squareUrl, SQUARE_VERSION } from "@/lib/squa
   Credentials and environment: see `lib/square.ts`.
 */
 
-// Lets a sandbox order be placed end to end if postage is ever unset again.
-// Never used against production: an unknown postage closes the real checkout
-// instead of guessing.
-const SANDBOX_PLACEHOLDER_SHIPPING_CENTS = 1000;
-
 export async function POST(request: Request) {
   const locationId = process.env.SQUARE_LOCATION_ID;
-  const production = isProduction();
 
   let token: string | null;
   try {
@@ -43,21 +37,18 @@ export async function POST(request: Request) {
     return Response.json({ error: "Bad request." }, { status: 400 });
   }
 
-  const order = quote((body as { items?: unknown })?.items);
+  const { items, service } = (body ?? {}) as { items?: unknown; service?: unknown };
+  const order = quote(items, service);
   if (!order.lines.length) {
     return Response.json({ error: "Your cart is empty." }, { status: 400 });
   }
 
-  let shippingCents = order.shippingCents;
-  if (shippingCents === null) {
-    if (production) {
-      return Response.json(
-        { error: "Shipping rates are still being set up." },
-        { status: 503 },
-      );
-    }
-    shippingCents = SANDBOX_PLACEHOLDER_SHIPPING_CENTS;
-  }
+  const shippingCents = order.shippingCents;
+  // Named so the owner's Square order says what to post it as.
+  const postageName =
+    order.parcels > 1
+      ? `${order.service.name} (${order.parcels} parcels)`
+      : order.service.name;
 
   const origin = new URL(request.url).origin;
   const response = await fetch(
@@ -97,7 +88,7 @@ export async function POST(request: Request) {
           ...(shippingCents > 0 && {
             service_charges: [
               {
-                name: shop.shippingLabel,
+                name: postageName,
                 amount_money: { amount: shippingCents, currency: "AUD" },
                 calculation_phase: "SUBTOTAL_PHASE",
                 taxable: true,

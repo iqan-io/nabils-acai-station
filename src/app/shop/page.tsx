@@ -10,14 +10,13 @@ import {
 import { ContactPanel } from "@/components/station/ContactPanel";
 import { ShopCart } from "@/components/shop/ShopCart";
 import { shop } from "@/lib/brand";
-import { formatAud } from "@/lib/shop";
 import { productImages } from "@/lib/productImages";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
   title: "Shop online",
   description:
-    "Order Nabil's Dubai chocolate and Lebanese sweets online, posted anywhere in Australia. Free shipping from $100.",
+    "Order Nabil's Dubai chocolate and Lebanese sweets online, posted anywhere in Australia by Australia Post.",
   path: "/shop",
   keywords: [
     "Dubai chocolate online Australia",
@@ -38,9 +37,9 @@ export default function Page() {
             </h1>
             <p className={s.lede}>
               Order the Dubai chocolate and Nabil&apos;s Lebanese sweets online
-              and we&apos;ll post them to you, anywhere in Australia. Free
-              shipping from{" "}
-              {formatAud(shop.freeShippingFromCents)}.
+              and we&apos;ll post them to you, anywhere in Australia, by{" "}
+              {shop.postage.carrier}{" "}
+              {shop.postage.services.map((service) => service.name).join(" or ")}.
             </p>
           </PanelBody>
           <PanelMedia

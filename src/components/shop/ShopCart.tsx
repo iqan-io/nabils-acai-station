@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { shop } from "@/lib/brand";
 import { track } from "@/lib/analytics";
-import { formatAud, isForSale, MAX_QUANTITY, quote } from "@/lib/shop";
+import { formatAud, isForSale, MAX_QUANTITY, postageService, quote } from "@/lib/shop";
 import styles from "./ShopCart.module.css";
 
 /*
@@ -15,6 +15,7 @@ import styles from "./ShopCart.module.css";
 */
 
 const STORAGE_KEY = "nabils-shop-cart";
+const POSTAGE_KEY = "nabils-shop-postage";
 
 type Quantities = Record<string, number>;
 
@@ -27,8 +28,17 @@ function readStored(): Quantities {
   }
 }
 
+function readPostage(): string {
+  try {
+    return postageService(localStorage.getItem(POSTAGE_KEY)).id;
+  } catch {
+    return postageService(null).id;
+  }
+}
+
 export function ShopCart() {
   const [quantities, setQuantities] = useState<Quantities>({});
+  const [service, setService] = useState(() => postageService(null).id);
   const [loaded, setLoaded] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
@@ -37,6 +47,7 @@ export function ShopCart() {
   // agree (both empty) and hydration stays clean.
   useEffect(() => {
     setQuantities(readStored());
+    setService(readPostage());
     setLoaded(true);
   }, []);
 
@@ -44,14 +55,16 @@ export function ShopCart() {
     if (!loaded) return;
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(quantities));
+      localStorage.setItem(POSTAGE_KEY, service);
     } catch {
       // Storage blocked (private window, previews): the cart still works.
     }
-  }, [quantities, loaded]);
+  }, [quantities, service, loaded]);
 
   const items = Object.entries(quantities).map(([id, quantity]) => ({ id, quantity }));
-  const order = quote(items);
+  const order = quote(items, service);
   const empty = order.lines.length === 0;
+  const choosePostage = order.postageOptions.length > 1;
 
   function setQuantity(id: string, quantity: number) {
     setError("");
@@ -71,7 +84,7 @@ export function ShopCart() {
       const response = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items }),
+        body: JSON.stringify({ items, service: order.service.id }),
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok || typeof data.url !== "string") {
@@ -167,30 +180,41 @@ export function ShopCart() {
               <dd data-subtotal>{formatAud(order.subtotalCents)}</dd>
             </div>
             <div>
-              <dt>Shipping</dt>
-              <dd data-shipping>
-                {order.shippingCents === 0
-                  ? "Free"
-                  : order.shippingCents === null
-                    ? "At checkout"
-                    : formatAud(order.shippingCents)}
-              </dd>
+              <dt>
+                {order.service.name}
+                {order.parcels > 1 && ` (${order.parcels} parcels)`}
+              </dt>
+              <dd data-shipping>{formatAud(order.shippingCents)}</dd>
             </div>
-            {order.shippingCents !== null && (
-              <div className={styles.total}>
-                <dt>Total</dt>
-                <dd data-total>{formatAud(order.subtotalCents + order.shippingCents)}</dd>
-              </div>
-            )}
+            <div className={styles.total}>
+              <dt>Total</dt>
+              <dd data-total>{formatAud(order.subtotalCents + order.shippingCents)}</dd>
+            </div>
           </dl>
         )}
 
-        <p className={styles.freeShipping} data-free-shipping>
-          {order.freeShippingGapCents === 0
-            ? "You've got free shipping."
-            : `Free shipping Australia-wide from ${formatAud(shop.freeShippingFromCents)}${
-                empty ? "." : ` — add ${formatAud(order.freeShippingGapCents)} more.`
-              }`}
+        {!empty && choosePostage && (
+          <fieldset className={styles.postage}>
+            <legend>Postage</legend>
+            {order.postageOptions.map((option) => (
+              <label key={option.id} className={styles.option} data-postage={option.id}>
+                <input
+                  type="radio"
+                  name="postage"
+                  value={option.id}
+                  checked={option.id === order.service.id}
+                  onChange={() => setService(option.id)}
+                />
+                <span className={styles.optionName}>{option.name}</span>
+                <span className={styles.optionPrice}>{formatAud(option.cents)}</span>
+                <span className={styles.optionEta}>{option.eta}</span>
+              </label>
+            ))}
+          </fieldset>
+        )}
+
+        <p className={styles.postageNote}>
+          Posted with {shop.postage.carrier}, priced by your parcel&apos;s weight.
         </p>
 
         <button

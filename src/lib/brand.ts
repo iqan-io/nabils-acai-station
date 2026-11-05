@@ -46,18 +46,37 @@ export type ShopProduct = {
   id: string;
   name: string;
   priceCents: number | null;
+  /** Weight as posted (product + its own tub or wrapper), for postage. */
+  packedGrams: number;
   blurb: string;
   image: string;
   imageAlt: string;
 };
 
+export type PostageService = {
+  id: string;
+  name: string;
+  eta: string;
+  /** Ascending [up to grams, cents] brackets; the last is the parcel limit. */
+  rates: [number, number][];
+};
+
 const SWEETS = "/images/products/sweets";
+
+/*
+  ESTIMATES, NOT WEIGHED (2026-11-05). Australia Post charges on packed
+  weight, and the owner has been asked to weigh one packed tub and one bar.
+  Until then: a tub is its net weight plus 50g of tub, and the bar is 250g.
+  Replace with his numbers before this goes live.
+*/
+const TUB_GRAMS = 50;
+const DUBAI_BAR_PACKED_GRAMS = 250;
 
 /** One of the owner's Nabil's Lebanese Sweets tubs. */
 function sweet(
   id: string,
   name: string,
-  weight: string,
+  weight: `${number}g`,
   priceCents: number,
   image: string,
 ): ShopProduct {
@@ -65,6 +84,7 @@ function sweet(
     id,
     name,
     priceCents,
+    packedGrams: parseInt(weight, 10) + TUB_GRAMS,
     blurb: `${weight} tub from Nabil's Lebanese Sweets.`,
     image: `${SWEETS}/${image}.webp`,
     imageAlt: `A sealed ${weight} tub of Nabil's Lebanese Sweets ${name.toLowerCase()}`,
@@ -77,6 +97,7 @@ export const shop = {
       id: "dubai-bar",
       name: "Nabil's Dubai Chocolate",
       priceCents: DUBAI_BAR_CENTS,
+      packedGrams: DUBAI_BAR_PACKED_GRAMS,
       blurb:
         "The viral bar: pistachio kataifi filling in a thick milk chocolate shell. Keeps for two months.",
       image: productImages.dubaiChocolate.src,
@@ -91,13 +112,50 @@ export const shop = {
     sweet("barazik", "Barazik", "400g", 1250, "barazik-400g"),
     sweet("shortbread", "Shortbread", "400g", 1250, "assorted-batifore-400g"),
   ] satisfies ShopProduct[],
-  freeShippingFromCents: 10000,
-  // Below $100: a flat $12 Express Post, the owner's interim rate (2026-11-04)
-  // until his Australia Post account shows what postage really costs. Prices,
-  // including this, are GST-inclusive (the business is GST-registered).
-  // `null` here would close the production checkout — see `shippingFor`.
-  flatShippingCents: 1200 as number | null,
-  shippingLabel: "Express shipping",
+  /*
+    Postage: the owner's Australia Post MyPost Business price list (his
+    screenshot, 2026-11-05), "Own Packaging" by weight, at the Band 0 standard
+    rate. Band 0 is one price Australia-wide, and every higher band only
+    discounts it, so charging this never undercharges him. He asked for free
+    shipping over $100 to be dropped (2026-11-05). GST-inclusive, like every
+    price here.
+
+    Each rate is [up to grams, cents]. A cart heavier than `maxParcelGrams`
+    goes as several parcels, each priced on this same table.
+  */
+  postage: {
+    carrier: "Australia Post",
+    /** Box or satchel plus padding, once per parcel. ESTIMATE, see above. */
+    packagingGrams: 100,
+    maxParcelGrams: 5000,
+    services: [
+      {
+        id: "parcel",
+        name: "Parcel Post",
+        eta: "2+ business days",
+        rates: [
+          [250, 1020],
+          [500, 1170],
+          [1000, 1600],
+          [3000, 2025],
+          [5000, 2445],
+        ],
+      },
+      {
+        id: "express",
+        name: "Express Post",
+        // Australia Post's own wording: next day only within its Express network.
+        eta: "Next business day (Express Post network)",
+        rates: [
+          [250, 1320],
+          [500, 1520],
+          [1000, 2000],
+          [3000, 2475],
+          [5000, 3295],
+        ],
+      },
+    ] as PostageService[],
+  },
   /** Australian GST, included in every price above. */
   gstPercent: 10,
 };
