@@ -7,7 +7,7 @@ import { quote } from "../src/lib/shop";
 type Case = { name: string; cart: { id: string; quantity: number }[]; parcel: number; express: number; parcels: number };
 
 // Expected numbers follow from the table plus the packed weights in brand.ts
-// (tub = net + 50g, bar = 475g so 1 boxed bar = the weighed 575g, packaging 100g per parcel). Re-derive them
+// (tub = net + 50g, bar = 475g so 1 boxed bar = the weighed 575g, 4 bars per box, packaging 100g per parcel). Re-derive them
 // whenever the owner's weighed numbers replace those estimates.
 const cases: Case[] = [
   // 475 + 100 = 575g (the owner's scale) -> up to 1kg
@@ -18,14 +18,20 @@ const cases: Case[] = [
   { name: "1 Pistachio 350g", cart: [{ id: "pistachio-baklava", quantity: 1 }], parcel: 1170, express: 1520, parcels: 1 },
   // 550 + 100 = 650g -> up to 1kg
   { name: "1 Assorted 500g", cart: [{ id: "assorted-baklava", quantity: 1 }], parcel: 1600, express: 2000, parcels: 1 },
+  // 4 x 475 + 100 = 2000g -> up to 3kg; 4 bars fill one Small box
+  { name: "4 Dubai bars", cart: [{ id: "dubai-bar", quantity: 4 }], parcel: 2025, express: 2475, parcels: 1 },
+  // 5th bar opens a 2nd box: 2000g (3kg) + 575g (1kg)
+  { name: "5 Dubai bars", cart: [{ id: "dubai-bar", quantity: 5 }], parcel: 2025 + 1600, express: 2475 + 2000, parcels: 2 },
+  // 2 full boxes of 2000g
+  { name: "8 Dubai bars", cart: [{ id: "dubai-bar", quantity: 8 }], parcel: 2 * 2025, express: 2 * 2475, parcels: 2 },
   // 475 + 400 + 100 = 975g -> up to 1kg  (the reel's $43 cart)
   { name: "Bar + Pistachio", cart: [{ id: "dubai-bar", quantity: 1 }, { id: "pistachio-baklava", quantity: 1 }], parcel: 1600, express: 2000, parcels: 1 },
   // 4 x 450 + 100 = 1900g -> up to 3kg
   { name: "4 Barazik", cart: [{ id: "barazik", quantity: 4 }], parcel: 2025, express: 2475, parcels: 1 },
   // 10 x 450 + 100 = 4600g -> up to 5kg
   { name: "10 Barazik", cart: [{ id: "barazik", quantity: 10 }], parcel: 2445, express: 3295, parcels: 1 },
-  // 12 x 550 = 6600g item -> 2 parcels of 3300 + 100 = 3400g -> each up to 5kg
-  { name: "12 Assorted", cart: [{ id: "assorted-baklava", quantity: 12 }], parcel: 2 * 2445, express: 2 * 3295, parcels: 2 },
+  // 12 x 550g: 8 tubs fit under 5kg (4400 + 100 = 4500g, 5kg bracket), 4 go in a 2nd (2300g, 3kg)
+  { name: "12 Assorted", cart: [{ id: "assorted-baklava", quantity: 12 }], parcel: 2445 + 2025, express: 3295 + 2475, parcels: 2 },
 ];
 
 let failed = 0;

@@ -48,6 +48,8 @@ export type ShopProduct = {
   priceCents: number | null;
   /** Weight as posted (product + its own tub or wrapper), for postage. */
   packedGrams: number;
+  /** How many fit in one parcel box, if the owner has said; otherwise weight alone splits parcels. */
+  perBox?: number;
   blurb: string;
   image: string;
   imageAlt: string;
@@ -101,6 +103,8 @@ export const shop = {
       name: "Nabil's Dubai Chocolate",
       priceCents: DUBAI_BAR_CENTS,
       packedGrams: DUBAI_BAR_PACKED_GRAMS,
+      // Owner, 2026-11-07: "around 4 fit in this box" (the Small Parcel Box).
+      perBox: 4,
       blurb:
         "The viral bar: pistachio kataifi filling in a thick milk chocolate shell. Keeps for two months.",
       image: productImages.dubaiChocolate.src,

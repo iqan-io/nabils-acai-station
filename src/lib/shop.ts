@@ -48,18 +48,34 @@ export function postageService(id: unknown): PostageService {
 }
 
 /**
- * Splits a cart's item weight into parcels, each within the parcel limit with
- * its own packaging. Returns each parcel's packed weight.
+ * Packs a cart into parcels the way the owner packs them: items go into a box
+ * in order until the next one would break the weight limit or overfill the
+ * box (a product with `perBox` fills 1/perBox of one), then a new box starts.
+ * Returns each parcel's packed weight, its packaging included.
  */
-export function parcelWeights(itemGrams: number): number[] {
-  if (itemGrams <= 0) return [];
+export function parcelWeights(
+  lines: { product: ShopProduct; quantity: number }[],
+): number[] {
   const { packagingGrams, maxParcelGrams } = shop.postage;
   const room = maxParcelGrams - packagingGrams;
-  const count = Math.ceil(itemGrams / room);
-  // Spread evenly, as a packer would, rather than one full parcel and a
-  // near-empty one. An approximation: tubs don't split, so it's close, not exact.
-  const each = itemGrams / count;
-  return Array.from({ length: count }, () => each + packagingGrams);
+  const parcels: { grams: number; fill: number }[] = [];
+  for (const { product, quantity } of lines) {
+    const fill = product.perBox ? 1 / product.perBox : 0;
+    for (let i = 0; i < quantity; i++) {
+      const open = parcels[parcels.length - 1];
+      if (
+        open &&
+        open.grams + product.packedGrams <= room &&
+        open.fill + fill <= 1 + 1e-9
+      ) {
+        open.grams += product.packedGrams;
+        open.fill += fill;
+      } else {
+        parcels.push({ grams: product.packedGrams, fill });
+      }
+    }
+  }
+  return parcels.map((parcel) => parcel.grams + packagingGrams);
 }
 
 /** One parcel's price on a service's table, by packed weight. */
@@ -70,12 +86,9 @@ export function parcelCents(service: PostageService, grams: number): number {
   return (bracket ?? service.rates[service.rates.length - 1])[1];
 }
 
-/** Postage for a cart's item weight on one service. The one place the rule lives. */
-export function postageFor(service: PostageService, itemGrams: number): number {
-  return parcelWeights(itemGrams).reduce(
-    (sum, grams) => sum + parcelCents(service, grams),
-    0,
-  );
+/** Postage for a set of packed parcels on one service. The one place the rule lives. */
+export function postageFor(service: PostageService, parcels: number[]): number {
+  return parcels.reduce((sum, grams) => sum + parcelCents(service, grams), 0);
 }
 
 /** On sale means priced: a product without a price is listed but not sold. */
@@ -109,23 +122,19 @@ export function quote(cart: unknown, serviceId?: unknown): Quote {
     });
 
   const subtotalCents = lines.reduce((sum, line) => sum + line.totalCents, 0);
-  const itemGrams = lines.reduce(
-    (sum, line) => sum + line.product.packedGrams * line.quantity,
-    0,
-  );
-  const parcels = parcelWeights(itemGrams);
+  const parcels = parcelWeights(lines);
   const service = postageService(serviceId);
 
   return {
     lines,
     subtotalCents,
     service,
-    shippingCents: postageFor(service, itemGrams),
+    shippingCents: postageFor(service, parcels),
     postageOptions: shop.postage.services.map((option) => ({
       id: option.id,
       name: option.name,
       eta: option.eta,
-      cents: postageFor(option, itemGrams),
+      cents: postageFor(option, parcels),
     })),
     packedGrams: Math.round(parcels.reduce((sum, grams) => sum + grams, 0)),
     parcels: parcels.length,
