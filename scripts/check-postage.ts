@@ -7,16 +7,18 @@ import { quote } from "../src/lib/shop";
 type Case = { name: string; cart: { id: string; quantity: number }[]; parcel: number; express: number; parcels: number };
 
 // Expected numbers follow from the table plus the packed weights in brand.ts
-// (tub = net + 50g, bar = 250g, packaging 100g per parcel). Re-derive them
+// (tub = net + 50g, bar = 475g so 1 boxed bar = the weighed 575g, packaging 100g per parcel). Re-derive them
 // whenever the owner's weighed numbers replace those estimates.
 const cases: Case[] = [
-  // 250 + 100 = 350g -> up to 500g
-  { name: "1 Dubai bar", cart: [{ id: "dubai-bar", quantity: 1 }], parcel: 1170, express: 1520, parcels: 1 },
+  // 475 + 100 = 575g (the owner's scale) -> up to 1kg
+  { name: "1 Dubai bar", cart: [{ id: "dubai-bar", quantity: 1 }], parcel: 1600, express: 2000, parcels: 1 },
+  // 2 x 475 + 100 = 1050g -> up to 3kg
+  { name: "2 Dubai bars", cart: [{ id: "dubai-bar", quantity: 2 }], parcel: 2025, express: 2475, parcels: 1 },
   // 400 + 100 = 500g -> up to 500g (boundary is inclusive)
   { name: "1 Pistachio 350g", cart: [{ id: "pistachio-baklava", quantity: 1 }], parcel: 1170, express: 1520, parcels: 1 },
   // 550 + 100 = 650g -> up to 1kg
   { name: "1 Assorted 500g", cart: [{ id: "assorted-baklava", quantity: 1 }], parcel: 1600, express: 2000, parcels: 1 },
-  // 250 + 400 + 100 = 750g -> up to 1kg  (the reel's $43 cart)
+  // 475 + 400 + 100 = 975g -> up to 1kg  (the reel's $43 cart)
   { name: "Bar + Pistachio", cart: [{ id: "dubai-bar", quantity: 1 }, { id: "pistachio-baklava", quantity: 1 }], parcel: 1600, express: 2000, parcels: 1 },
   // 4 x 450 + 100 = 1900g -> up to 3kg
   { name: "4 Barazik", cart: [{ id: "barazik", quantity: 4 }], parcel: 2025, express: 2475, parcels: 1 },

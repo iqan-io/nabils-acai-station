@@ -64,13 +64,16 @@ export type PostageService = {
 const SWEETS = "/images/products/sweets";
 
 /*
-  ESTIMATES, NOT WEIGHED (2026-11-05). Australia Post charges on packed
-  weight, and the owner has been asked to weigh one packed tub and one bar.
-  Until then: a tub is its net weight plus 50g of tub, and the bar is 250g.
-  Replace with his numbers before this goes live.
+  Packed weights. Australia Post charges on packed weight.
+  - Dubai bar: WEIGHED by the owner (2026-11-07): one bar packed in an
+    Australia Post Small Parcel Box = 575g on the scale. With the 100g
+    per-parcel packaging below, the bar counts as 475g, so a single-bar
+    parcel prices at exactly the measured 575g (the 1kg bracket).
+  - Tubs: still an ESTIMATE (net weight plus 50g of tub) until he weighs a
+    packed tub.
 */
 const TUB_GRAMS = 50;
-const DUBAI_BAR_PACKED_GRAMS = 250;
+const DUBAI_BAR_PACKED_GRAMS = 475;
 
 /** One of the owner's Nabil's Lebanese Sweets tubs. */
 function sweet(
@@ -125,7 +128,7 @@ export const shop = {
   */
   postage: {
     carrier: "Australia Post",
-    /** Box or satchel plus padding, once per parcel. ESTIMATE, see above. */
+    /** Small Parcel Box plus padding, once per parcel (estimate; the bar absorbs the rest of the weighed 575g). */
     packagingGrams: 100,
     maxParcelGrams: 5000,
     services: [
